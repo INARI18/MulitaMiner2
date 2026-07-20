@@ -62,7 +62,12 @@ contract from the record type (block_id + LLM-produced fields, extra=forbid).
 **Verify:** `pytest tests/test_reader.py` (both backends extract non-empty
 text from a baseline PDF); run `compare_backends.py` — record results in this
 file, pick the default backend, and note the decision here.
-**State:** not started
+**State:** DONE. Bake-off results (2026-07-20): marker counts IDENTICAL across
+backends on all 5 baseline PDFs (OpenVAS: 34/59/116; Tenable: 128/152);
+pypdfium2 is 10-40x faster (e.g. 0.6s vs 21.8s on TenableWAS_JuiceShop).
+**Decision: pypdfium2 is the default backend**; pdfplumber stays as fallback
+via `--pdf-backend`. v1's heuristic sentence-continuation merge was not ported
+(explicit continuation markers are stripped; parity run guards this).
 
 ## Phase 3 — Scanner profiles and segmentation
 
