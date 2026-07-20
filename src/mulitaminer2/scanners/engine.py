@@ -141,7 +141,13 @@ def _build_consolidator(cfg: dict):
             name = strip_suffix.sub("", name)
         return (normalize_name(name), *(getattr(record, f) for f in pair["by"]))
 
+    exceptions = {normalize_name(n) for n in cfg.get("identity_exceptions", [])}
+
     def _identity_key(record: VulnRecord):
+        if normalize_name(record.name) in exceptions:
+            # Exception names (e.g. OpenVAS 'Services') legitimately repeat
+            # with different content — only a fully identical record is a dup.
+            return json.dumps(record.model_dump(mode="json"), sort_keys=True)
         return tuple(
             normalize_name(getattr(record, f)) if f == "name" else getattr(record, f)
             for f in identity

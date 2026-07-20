@@ -16,5 +16,7 @@
     "host_line": "^\\s*(?:\\d+(?:\\.\\d+)*\\s+)?((?:\\d{1,3}\\.){3}\\d{1,3})\\s*$",
     "_host_lesson": "The scanned IP sits on the nearest non-blank line above 'Host scan start', in the report preamble (before any marker) — context tracking is the only way to recover it."
   },
-  "identity": ["name", "host", "port", "protocol"]
+  "identity": ["name", "host", "port", "protocol"],
+  "identity_exceptions": ["Services"],
+  "_identity_lesson": "The 'Services' NVT legitimately repeats on the same host/port with different content (one record per detected service) — v1 special-cased it to dedupe only fully identical records. Without this exception, dedup merges real findings and moves the count AWAY from the ground truth."
 }

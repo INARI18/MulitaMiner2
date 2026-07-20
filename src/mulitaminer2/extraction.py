@@ -57,10 +57,13 @@ def _to_record(item: BaseModel, block: Block, profile: ScannerProfile) -> VulnRe
     record = profile.record_type.model_validate({**data, "host": block.host})
     if not record.source:  # generic record types carry no pinned source
         record.source = profile.source
-    # Backfill from segmentation context what the LLM could not see.
+    # Backfill from segmentation context what the LLM could not see. OpenVAS
+    # emits pseudo-protocols in headers ("general/CPE-T"); those stay context
+    # for the LLM but never enter the typed protocol field.
     if record.port is None and block.port is not None:
         record.port = block.port
-        record.protocol = block.protocol
+        if block.protocol in ("tcp", "udp"):
+            record.protocol = block.protocol
     return record
 
 

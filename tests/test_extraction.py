@@ -108,3 +108,15 @@ def test_port_backfill_from_block_context():
     client = FakeClient([[item]])
     records, _ = extract_blocks(blocks, PROFILE, client, TokenUsage())
     assert records[0].port == 80 and records[0].protocol == "tcp"
+
+
+def test_pseudo_protocol_context_never_enters_the_record():
+    """OpenVAS 'general/CPE-T' headers are context for the LLM, not data."""
+    block = Block(id=0, text="Log (CVSS: 0.0)\nNVT: CPE Inventory",
+                  port="general", protocol="cpe-t")
+    item = {"block_id": 0, "Name": "CPE Inventory", "severity": "LOG", "cvss": 0.0,
+            "port": None, "protocol": None}
+    records, warnings = extract_blocks([block], PROFILE, FakeClient([[item]]), TokenUsage())
+    assert records[0].port == "general"
+    assert records[0].protocol is None
+    assert not warnings

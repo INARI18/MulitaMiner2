@@ -40,7 +40,10 @@ class VulnRecord(BaseModel):
     # rather than hard-failing. Safety net, not the organizing mechanism.
     # populate_by_name: accept BOTH the JSON key `Name` (v1 output format,
     # kept for baseline compatibility) and the pythonic attribute `name`.
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
+    # validate_assignment: post-validation writes (context backfill, merge
+    # backfill, severity normalization) must obey the schema too — a bad
+    # value can never enter a record after the fact.
+    model_config = ConfigDict(extra="allow", populate_by_name=True, validate_assignment=True)
 
     name: str = Field(alias="Name")
     description: list[str] = []
