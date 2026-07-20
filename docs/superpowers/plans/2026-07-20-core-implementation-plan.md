@@ -223,3 +223,32 @@ landed: config-driven scanner engine (JSON is the whole definition,
 MULITAMINER2_SCANNERS_DIR plug dir), configs split into scanners/ + prompts/,
 --allow-duplicates removed (consolidation always runs, `identity_exceptions`
 honors the v1 Services lesson), backfill type-guard + validate_assignment.
+
+## Phase 11 — Full live validation (user-chosen next step)
+
+- [ ] Live DeepSeek extraction on the 4 remaining baselines (OpenVAS bBWA 59,
+  artifactory 116; Tenable JuiceShop 152, bWAAP 128 markers). Compare final
+  counts to marker counts and ground-truth rows.
+- [x] v1 prioritization consumes v2 `results.json` unchanged — VERIFIED
+  (34 findings ranked, queue written into the v2 run dir). Porting the
+  prioritization subsystem is deprioritized accordingly.
+- [ ] Investigate: bBWA run shows several `JSONDecodeError` chunk failures
+  (JuiceShop had zero) — content-dependent; retries are recovering. Diagnose
+  with a `--debug` rerun once the batch finishes; suspect payload-heavy bWAPP
+  content (quotes/backslashes) breaking DeepSeek's json_object output.
+
+**State:** running (detached script, log in session scratchpad).
+
+## Phase 12 — Export seam (user-chosen next step)
+
+- [x] `exporters/` registry; `--export/-e` repeatable CLI option (+ `--xlsx`/
+  `--csv` shorthands); `mulitaminer2 formats` lists the registry.
+- [x] `generic`: DefectDojo Generic Findings Import JSON (severity map
+  LOG→Info, CVE extraction from references, endpoints host:port).
+- [x] `sarif`: SARIF 2.1.0 (rules deduped by plugin/name slug, logicalLocations
+  host:port, property bag with cvss/port/protocol/source, solution as rule
+  help).
+- [ ] Next exporters when wanted: CAIS (v1 OUTPUT_STANDARDS §6 — deterministic
+  V3→CAIS mapper; golden available from old CAIS-prompt outputs), CSAF 2.0.
+
+**State:** seam + generic + sarif DONE (62 tests passing).
