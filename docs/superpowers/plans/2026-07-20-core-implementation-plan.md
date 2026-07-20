@@ -104,7 +104,8 @@ host recovery works on the real JuiceShop report.
 **Verify:** `pytest tests/test_chunking.py` — invariants: union of chunks ==
 all blocks, no duplicates, budgets respected, oversized single block goes
 alone into its own chunk with a warning.
-**State:** not started
+**State:** DONE (5 tests). Token budget is derived from the model's OUTPUT cap
+(extraction output mirrors input, so output is the binding constraint).
 
 ## Phase 5 — LLM client and model profiles
 
@@ -122,7 +123,9 @@ alone into its own chunk with a warning.
 **Verify:** `pytest tests/test_llm.py` with a stubbed transport — schema mode,
 json_object fallback, think-tag stripping, keyless local profile, missing env
 var for cloud profile raises.
-**State:** not started
+**State:** DONE (8 tests). DeepSeek profile: deepseek-v4-flash via /v1,
+json_object mode. Legacy v1 env names accepted as fallbacks. Few-shot examples
+restored into both prompts after user review (v1 evidence: wording matters).
 
 ## Phase 6 — Block-anchored extraction
 
@@ -134,7 +137,8 @@ var for cloud profile raises.
 **Verify:** `pytest tests/test_extraction.py` with a fake client scripted to
 (a) succeed, (b) miss IDs then recover, (c) return unknown IDs — assert final
 count == block count and warnings recorded.
-**State:** not started
+**State:** DONE (7 tests). Targeted retry re-packs only unresolved blocks;
+port/protocol backfilled from Block context when the LLM returns null.
 
 ## Phase 7 — Consolidation and writers
 
@@ -147,7 +151,10 @@ count == block count and warnings recorded.
   (v1 lesson).
 
 **Verify:** `pytest tests/test_consolidate.py test_writers.py`.
-**State:** not started
+**State:** DONE (11 tests). v2 semantics simplified vs v1's activation matrix:
+Tenable base+instances pairing ALWAYS runs (structure, not dedup);
+--allow-duplicates only skips duplicate merging. Fuzzy name matching
+(v1 rapidfuzz pass) intentionally deferred — revisit if parity shows misses.
 
 ## Phase 8 — Pipeline, CLI, run artifacts
 
@@ -162,7 +169,8 @@ count == block count and warnings recorded.
 **Verify:** `pytest tests/test_pipeline.py` end-to-end with fake client (no
 network); manual: `uv run mulitaminer2 extract` on a baseline PDF with
 `--model deepseek` — see Phase 9.
-**State:** not started
+**State:** DONE (55 tests total). Without --debug a run dir contains exactly
+results.json + run.json (in-memory rule verified by test).
 
 ## Phase 9 — Live validation (DeepSeek cloud) and v1 parity
 
