@@ -196,6 +196,17 @@ all records carried description, cvss (incl. 0.0 for LOG), host, port.
 Block-anchored extraction delivered the design goal: raw count == truth
 without deduplication.
 
+Field-quality metrics (v1's own harness, matched pairs vs ground truth):
+v1 matched 34/37 (3 spurious extras unmatched — NOT penalized by field
+metrics); v2 matched 34/34. On easy fields (description/solution/impact/
+detection_*) the two are statistically comparable (BERTScore ~0.93-1.00 both).
+v2 clearly wins on the tail: v1 has total misses (min=0.0, std up to 0.19) on
+insight / log_method / references; v2's minima are 0.67-0.94 with std ≤0.08
+(BERTScore avg: insight 0.967→0.997, log_method 0.930→0.963, references
+0.952→0.982). Known quirk affecting both: rouge_l scores plugin_details as 0
+(dict field); token_f1/bertscore score it 1.0. Reports in session scratchpad;
+regenerate anytime with v1's metrics/pipelines/compare_extractions.py.
+
 ## Phase 10 — README and publishing
 
 - [ ] `README.md` (English): what it is, install (`uv sync`), quickstart,
