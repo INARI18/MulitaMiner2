@@ -209,11 +209,17 @@ regenerate anytime with v1's metrics/pipelines/compare_extractions.py.
 
 ## Phase 10 — README and publishing
 
-- [ ] `README.md` (English): what it is, install (`uv sync`), quickstart,
+- [x] `README.md` (English): what it is, install (`uv sync`), quickstart,
   supported models/scanners, `.env` setup, debug mode.
-- [ ] Push to a **private repo on the user's personal GitHub account** (not
+- [x] Push to a **private repo on the user's personal GitHub account** (not
   AnonShield): user creates the empty repo or we install `gh` — ask when
   reaching this step.
-- [ ] Tag nothing yet; versioning starts at `2.0.0-alpha` in `pyproject.toml`.
+- [x] Tag nothing yet; versioning starts at `2.0.0a1` in `pyproject.toml`.
 
-**State:** not started
+**State:** DONE. Published to https://github.com/INARI18/MulitaMiner2
+(PRIVATE, user-authorized `gh` install + device login as INARI18). Verified:
+no `.env` in git (only `.env.example`). Post-parity user-driven revisions also
+landed: config-driven scanner engine (JSON is the whole definition,
+MULITAMINER2_SCANNERS_DIR plug dir), configs split into scanners/ + prompts/,
+--allow-duplicates removed (consolidation always runs, `identity_exceptions`
+honors the v1 Services lesson), backfill type-guard + validate_assignment.
