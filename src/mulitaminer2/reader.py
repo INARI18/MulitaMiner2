@@ -26,6 +26,12 @@ log = logging.getLogger(__name__)
 
 # CID glyphs pdfplumber leaves unresolved in OpenVAS reports (v1 _CID_MAP).
 _CID_MAP = {16: '"', 17: '"', 27: "ff", 28: "fi", 29: "fl", 30: "ffi", 31: "ffl"}
+# pypdfium2 emits the SAME broken glyphs as raw control characters instead of
+# "(cid:N)" markers (bBWA lesson: "a\x1bected" = "affected"). Same map, then
+# any leftover C0 control char (except \t \n) is stripped — a control char
+# reaching an LLM response makes the JSON invalid by definition.
+_CTRL_LIGATURES = str.maketrans({chr(cid): glyph for cid, glyph in _CID_MAP.items()})
+_CTRL_STRIP_RE = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 # Report footers and page-continuation scaffolding (v1 lessons).
 _FOOTER_RE = re.compile(r"Page \d+ of \d+")
@@ -145,6 +151,7 @@ def extract_pdf(path: Path, backend: str = DEFAULT_BACKEND) -> ExtractedDoc:
     raw_pages = impl.extract_pages(path)
     log.info("Extracted %d pages from %s with %s", len(raw_pages), path.name, backend)
     text = "".join(_clean_page(p) for p in raw_pages)
+    text = _CTRL_STRIP_RE.sub("", text.translate(_CTRL_LIGATURES).replace("\r", ""))
     text = unicodedata.normalize("NFKC", text)
     text = _restore_cid_glyphs(text)
     text = _TENABLE_EXPORT_FOOTER_RE.sub("", text)

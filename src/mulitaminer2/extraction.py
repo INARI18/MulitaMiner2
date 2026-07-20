@@ -90,9 +90,14 @@ def extract_blocks(
             log.info(
                 "Retry round %d: re-sending %d unresolved block(s)", round_no, len(pending)
             )
+        # Shrink chunks each retry round (4 -> 2 -> 1): a chunk whose response
+        # hit the output-token cap fails identically at the same size, so
+        # re-sending smaller groups is what actually makes retries converge
+        # (bBWA lesson: reasoning models spend hidden thinking tokens from the
+        # same completion budget).
         chunks, pack_warnings = pack(
             pending,
-            max_blocks_per_chunk=profile.max_vulns_per_chunk,
+            max_blocks_per_chunk=max(1, profile.max_vulns_per_chunk // (2 ** round_no)),
             token_budget=client.profile.max_output_tokens,
             encoding_name=client.profile.encoding,
         )

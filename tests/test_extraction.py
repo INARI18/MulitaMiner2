@@ -76,6 +76,27 @@ def test_unknown_and_duplicate_ids_dropped_with_warning():
     assert any("unknown block_id 99" in w for w in warnings)
 
 
+def test_retry_rounds_shrink_chunks():
+    """A chunk that hit the output cap fails identically at the same size —
+    retry rounds must re-send progressively smaller groups (4 -> 2 -> 1)."""
+    blocks = _blocks(4)
+    bad = json.JSONDecodeError("bad", "doc", 0)
+    client = FakeClient([
+        bad,                      # round 0: one chunk of 4 -> fails
+        [_item(0), _item(1)],     # round 1: chunks of <=2
+        bad,
+        [_item(2)],               # round 2: chunks of 1
+        [_item(3)],
+    ])
+    records, warnings = extract_blocks(blocks, PROFILE, client, TokenUsage())
+    assert len(records) == 4
+    assert not warnings
+    round1_first = client.calls[1]
+    assert "### BLOCK 0" in round1_first and "### BLOCK 1" in round1_first
+    assert "### BLOCK 2" not in round1_first  # round 1 capped at 2 blocks
+    assert client.calls[3].count("### BLOCK") == 1  # round 2 capped at 1
+
+
 def test_invalid_json_retries_then_gives_up_with_warning():
     blocks = _blocks(1)
     bad = json.JSONDecodeError("bad", "doc", 0)
