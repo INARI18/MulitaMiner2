@@ -55,6 +55,8 @@ def render_chunk(blocks: list[Block]) -> str:
 def _to_record(item: BaseModel, block: Block, profile: ScannerProfile) -> VulnRecord:
     data = item.model_dump(by_alias=True, exclude={"block_id"})
     record = profile.record_type.model_validate({**data, "host": block.host})
+    if not record.source:  # generic record types carry no pinned source
+        record.source = profile.source
     # Backfill from segmentation context what the LLM could not see.
     if record.port is None and block.port is not None:
         record.port = block.port

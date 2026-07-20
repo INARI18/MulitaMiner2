@@ -1,0 +1,20 @@
+{
+  "name": "tenable",
+  "source": "TENABLEWAS",
+  "record": "tenable",
+  "prompt": "tenable_prompt.txt",
+  "max_vulns_per_chunk": 3,
+  "marker_pattern": "(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?VULNERABILITY\\s+(CRITICAL|HIGH|MEDIUM|LOW|INFO)\\s+PLUGIN\\s+ID\\s+\\d+",
+  "marker_ignorecase": true,
+  "name_walkback": 2,
+  "name_stop_pattern": "^\\s*(Description|Solution|Risk Information|Plugin Details|Reference Information|Identification|HTTP Info|See Also)\\b.*:?\\s*$|^\\s*https?://",
+  "_name_lesson": "The vulnerability NAME sits on the line(s) immediately BEFORE the VULNERABILITY header — the walk-back pulls it into the block it names (mirror image of the OpenVAS NVT lesson). Wrapped names span up to 2 lines and never end with sentence punctuation; previous-block body content usually does.",
+  "pair": {
+    "strip_name_suffix": "\\s*Instances\\s*\\(\\d+\\)\\s*$",
+    "by": ["plugin"],
+    "merge_instances": true,
+    "_lesson": "A finding appears as TWO consecutive blocks — Base (Description/Solution/Risk/Plugin Details) and 'Name Instances (N)' (per-URL evidence). Pairing them is structure, not deduplication: it always runs."
+  },
+  "severity_map": { "INFO": "LOG" },
+  "identity": ["name", "plugin"]
+}

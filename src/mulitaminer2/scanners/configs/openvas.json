@@ -1,0 +1,20 @@
+{
+  "name": "openvas",
+  "source": "OPENVAS",
+  "record": "openvas",
+  "prompt": "openvas_prompt.txt",
+  "max_vulns_per_chunk": 4,
+  "marker_pattern": "^\\s*(Critical|High|Medium|Low|Log)\\s+\\(CVSS:",
+  "_marker_lesson": "The marker is the `Severity (CVSS: X.Y)` line that sits immediately ABOVE each `NVT:` line. v1 originally marked at `NVT:` itself, which left the severity header in the previous segment and forced the LLM to guess severity (often LOG) — misclassification on Ingreslock/Telnet in the bWAPP report. Breaking one line earlier makes the header travel with its NVT. One marker line == one finding.",
+  "context": {
+    "header_patterns": [
+      "^(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?(?P<sev>Critical|High|Medium|Low|Log)\\s+(?P<port>\\d+|general)/(?P<proto>[a-zA-Z0-9_-]+)",
+      "^(?:#+\\s+)?(?P<port>\\d+|general)/(?P<proto>[a-zA-Z0-9_-]+)\\s+(?P<sev>Critical|High|Medium|Low|Log)"
+    ],
+    "_header_lesson": "Port/protocol headers ('High 443/tcp') appear in three layouts: plain, reversed order (markdown extractor), and with a '2.1.1 ' section-number prefix. The latest header above a marker becomes that block's port/protocol context.",
+    "host_anchor": "^\\s*host scan start",
+    "host_line": "^\\s*(?:\\d+(?:\\.\\d+)*\\s+)?((?:\\d{1,3}\\.){3}\\d{1,3})\\s*$",
+    "_host_lesson": "The scanned IP sits on the nearest non-blank line above 'Host scan start', in the report preamble (before any marker) — context tracking is the only way to recover it."
+  },
+  "identity": ["name", "host", "port", "protocol"]
+}

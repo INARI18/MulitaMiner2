@@ -4,16 +4,15 @@ v1 had three competing notions of "same vulnerability" (scanner strategies,
 central consolidation, metrics aligner); v2 keeps a single one here.
 
 Semantics (cleaner than v1's activation matrix, documented for the CLI):
-- Tenable base+instances pairing ALWAYS runs — without it records are broken
-  halves of the same finding (it is structure, not deduplication).
+- Structural pairing (e.g. Tenable base+instances) ALWAYS runs — without it
+  records are broken halves of the same finding (structure, not dedup).
 - Duplicate merging (same identity seen repeatedly) is skipped when the user
   passes --allow-duplicates.
 
-Ported v1 rules: identity key = normalized name + port + protocol (OpenVAS) /
-name + plugin (Tenable); the surviving record is the most complete one, where
-cvss=0.0 COUNTS as filled (a Log finding's legitimate score — v1's
-count_filled_fields nuance); INFO normalizes to LOG after Tenable pairing so
-both scanners share one informational tier.
+The surviving record of a merge is the most complete one, where cvss=0.0
+COUNTS as filled (a Log finding's legitimate score — v1's count_filled_fields
+nuance). Which fields define identity is declared per scanner in its JSON
+config (see scanners/engine.py).
 """
 from __future__ import annotations
 
@@ -76,28 +75,6 @@ def dedupe(
     return list(merged.values()), log_lines
 
 
-def consolidate_openvas(
-    records: list[VulnRecord], allow_duplicates: bool
-) -> tuple[list[VulnRecord], list[str]]:
-    if allow_duplicates:
-        return records, []
-    return dedupe(records, lambda r: (normalize_name(r.name), r.host, r.port, r.protocol))
-
-
-def consolidate_tenable(
-    records: list[VulnRecord], allow_duplicates: bool
-) -> tuple[list[VulnRecord], list[str]]:
-    # Structural pairing first (always): base + Instances halves of a finding.
-    records, log_lines = dedupe(
-        records,
-        lambda r: (normalize_name(re.sub(r"\s*Instances\s*\(\d+\)\s*$", "", r.name or "",
-                                         flags=re.IGNORECASE)), r.plugin),
-        merge_instances=True,
-    )
-    for record in records:  # both scanners share one informational tier (v1)
-        if record.severity == "INFO":
-            record.severity = "LOG"
-    if not allow_duplicates:
-        more, lines = dedupe(records, lambda r: (normalize_name(r.name), r.plugin))
-        return more, log_lines + lines
-    return records, log_lines
+# Scanner-specific consolidation policies (identity fields, structural
+# pairing, severity normalization) are declared in each scanner's JSON config
+# and assembled by scanners/engine.py on top of dedupe() above.

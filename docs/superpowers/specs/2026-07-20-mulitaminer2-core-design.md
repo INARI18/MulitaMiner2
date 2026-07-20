@@ -72,7 +72,8 @@ MulitaMiner2/
 ```
 
 Design rule: each module has one purpose, a typed interface, and no knowledge of
-the CLI. Adding a scanner = one module + one prompt file + one dict entry.
+the CLI. Adding a scanner = one JSON config + one prompt file, no Python
+(revised after user review — see §5).
 
 ## 3. Data models (`models.py`)
 
@@ -131,7 +132,17 @@ class ScannerProfile:
     consolidate: Callable[[list[VulnRecord]], list[VulnRecord]]
 ```
 
-Carried-over domain knowledge (verbatim, with provenance comments):
+**Revised after user review (2026-07-20):** the profile is BUILT FROM a JSON
+config by a generic engine (`scanners/engine.py`) — a lay user plugs a scanner
+by dropping `<name>.json` + `<name>_prompt.txt` into `scanners/configs/` or a
+directory named by `MULITAMINER2_SCANNERS_DIR`, no Python needed. Marker
+pattern, name walk-back, context tracking, structural pairing, severity map
+and duplicate identity are all config fields; `_`-prefixed keys carry the
+empirical lessons as documentation. Unlike v1, the JSON is the WHOLE
+definition (v1 split it between JSON, chunker regexes, and a strategy class).
+A typed record subclass is optional (`record: "generic"` works without one).
+
+Carried-over domain knowledge (verbatim, now inside the JSON configs):
 
 - **OpenVAS** marker: `^\s*(?:Critical|High|Medium|Low|Log)\s+\(CVSS:` — breaks
   ONE line **before** the `NVT:` line so the `Severity (CVSS: X.Y)` header
@@ -303,3 +314,4 @@ inherited: profile keys name the actual model).
 | Intermediate state | In memory; disk only for results + `--debug` dumps | User requirement; v1 round-tripped blocks/layout through disk |
 | Local models | Ollama/LM Studio (+ any OpenAI-compatible server), no API key | Same client path as cloud; keyless profiles |
 | In-process HF inference | Deferred to a post-1.0 optional extra | Heavy torch dependency; servers cover the same models |
+| Scanner definition | JSON config + generic engine (no Python per scanner) | User requirement: lay users plug scanners; JSON is the WHOLE definition, unlike v1 |

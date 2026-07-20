@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from mulitaminer2.llm import MODELS, FatalLLMError
 from mulitaminer2.reader import BACKENDS, DEFAULT_BACKEND
-from mulitaminer2.scanners import SCANNERS
+from mulitaminer2.scanners import all_scanners
 
 app = typer.Typer(
     name="mulitaminer2",
@@ -30,7 +30,7 @@ def _setup_logging(debug: bool) -> None:
 @app.command()
 def extract(
     report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
-    scanner: str = typer.Option(..., "--scanner", "-s", help=f"One of: {sorted(SCANNERS)}"),
+    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer2 scanners`"),
     model: str = typer.Option("deepseek", "--model", "-m", help=f"One of: {sorted(MODELS)}"),
     model_name: str | None = typer.Option(
         None, "--model-name", help="Provider model id override (for ollama/lmstudio)"
@@ -93,8 +93,8 @@ def models() -> None:
 
 @app.command()
 def scanners() -> None:
-    """List available scanner profiles."""
-    for key, p in SCANNERS.items():
+    """List available scanner profiles (built-in + MULITAMINER2_SCANNERS_DIR)."""
+    for key, p in all_scanners().items():
         typer.echo(f"{key:<10} source={p.source:<11} max_vulns_per_chunk={p.max_vulns_per_chunk}")
 
 
