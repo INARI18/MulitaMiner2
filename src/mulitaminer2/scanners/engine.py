@@ -165,6 +165,23 @@ def _build_consolidator(cfg: dict):
     return consolidate
 
 
+def _resolve_prompt(config_path: Path, prompt_name: str) -> Path:
+    """Prompts may sit next to the JSON (flat user dirs) or in a sibling
+    `prompts/` folder (the package convention: configs/scanners + configs/prompts)."""
+    candidates = (
+        config_path.parent / prompt_name,
+        config_path.parent.parent / "prompts" / prompt_name,
+        config_path.parent / "prompts" / prompt_name,
+    )
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    raise ValueError(
+        f"Prompt '{prompt_name}' for scanner config {config_path} not found in: "
+        + ", ".join(str(c.parent) for c in candidates)
+    )
+
+
 def load_profile(config_path: Path) -> ScannerProfile:
     cfg = json.loads(config_path.read_text(encoding="utf-8"))
     try:
@@ -175,7 +192,7 @@ def load_profile(config_path: Path) -> ScannerProfile:
             record_type=record_type,
             marker=re.compile(cfg["marker_pattern"],
                               re.IGNORECASE if cfg.get("marker_ignorecase") else 0),
-            prompt_path=config_path.parent / cfg["prompt"],
+            prompt_path=_resolve_prompt(config_path, cfg["prompt"]),
             max_vulns_per_chunk=int(cfg["max_vulns_per_chunk"]),
             segment=_build_segmenter(cfg),
             consolidate=_build_consolidator(cfg),

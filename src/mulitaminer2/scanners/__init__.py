@@ -1,8 +1,10 @@
 """Scanner registry, loaded from JSON configs (see engine.py for the format).
 
-Built-in scanners live in `scanners/configs/`. Users plug new scanners with no
-Python: drop `<name>.json` + its prompt into a directory and point the
-MULITAMINER2_SCANNERS_DIR env var at it (same-name configs override built-ins).
+Built-in scanners live in `configs/scanners/` with their prompts in
+`configs/prompts/`. Users plug new scanners with no Python: drop
+`<name>.json` + its prompt into a directory (flat, or with the same
+scanners/prompts split) and point the MULITAMINER2_SCANNERS_DIR env var at it
+(same-name configs override built-ins).
 """
 from __future__ import annotations
 
@@ -13,13 +15,17 @@ from pathlib import Path
 from mulitaminer2.scanners.engine import load_profile
 from mulitaminer2.scanners.profile import ScannerProfile
 
-_BUILTIN_DIR = Path(__file__).parent / "configs"
+_BUILTIN_DIR = Path(__file__).parent.parent / "configs" / "scanners"
 
 
 @lru_cache
 def _registry(extra_dir: str | None) -> dict[str, ScannerProfile]:
     profiles: dict[str, ScannerProfile] = {}
-    dirs = [_BUILTIN_DIR] + ([Path(extra_dir)] if extra_dir else [])
+    dirs = [_BUILTIN_DIR]
+    if extra_dir:
+        user_dir = Path(extra_dir)
+        # Accept both a flat user dir and one mirroring the scanners/ split.
+        dirs += [user_dir, user_dir / "scanners"]
     for directory in dirs:
         for config in sorted(directory.glob("*.json")):
             profile = load_profile(config)

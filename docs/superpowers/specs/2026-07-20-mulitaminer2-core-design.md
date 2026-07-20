@@ -50,12 +50,12 @@ MulitaMiner2/
 │   ├── settings.py           # tunables with provenance comments (v1 calibrations)
 │   ├── reader.py             # PdfReader protocol + backends (§4)
 │   ├── scanners/
-│   │   ├── __init__.py       # SCANNERS dict (plain registry)
+│   │   ├── __init__.py       # registry (built-ins + MULITAMINER2_SCANNERS_DIR)
 │   │   ├── profile.py        # ScannerProfile dataclass
-│   │   ├── openvas.py        # profile + segmentation (single source of truth)
-│   │   ├── openvas_prompt.txt
-│   │   ├── tenable.py
-│   │   └── tenable_prompt.txt
+│   │   └── engine.py         # generic segmenter/consolidator built from JSON
+│   ├── configs/
+│   │   ├── scanners/         # openvas.json, tenable.json (whole definition)
+│   │   └── prompts/          # openvas_prompt.txt, tenable_prompt.txt
 │   ├── chunking.py           # pack whole blocks into token-budgeted chunks
 │   ├── llm.py                # one OpenAI-compatible client + model profiles
 │   ├── extraction.py         # block-anchored extract loop + targeted retry
