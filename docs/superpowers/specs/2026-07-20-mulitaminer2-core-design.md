@@ -195,7 +195,12 @@ class ModelProfile:
     key: str            # CLI name, e.g. "deepseek"
     model: str          # e.g. "deepseek-chat"
     base_url: str | None
-    api_key_env: str    # env var NAME only — the value is read by the SDK
+    api_key_env: str | None  # env var NAME only; None for local servers
+                             # (Ollama/LM Studio need no key — a dummy value
+                             # is sent to satisfy the SDK). Cloud profiles
+                             # fail fast with a clear message if the var is
+                             # missing. The env var VALUE is only ever read
+                             # by the SDK, never by tooling.
     context_window: int
     supports_json_schema: bool
     price_in / price_out: float  # USD per 1M tokens
@@ -212,6 +217,16 @@ class ModelProfile:
   messages. Semantic retries are §6's targeted block re-sends.
 - API keys come from `.env` via `python-dotenv`. Tooling and agents must
   **never read `.env` contents** — only `.env.example` documents variable names.
+- **Local models need no API key.** Ollama and LM Studio profiles ship with
+  `base_url` pointing at their default localhost ports and `api_key_env=None`.
+  A custom `base_url` also covers any other OpenAI-compatible server (vLLM,
+  llama.cpp, TGI), which is how HuggingFace-hosted models are run locally.
+- **Deferred (not in v1.0):** v1's in-process HuggingFace provider
+  (transformers/torch loaded inside the MulitaMiner process, `.[hf-local]`
+  extra). Local models are served via Ollama/LM Studio instead — lighter
+  install, better structured-output support. If a future experiment needs an
+  HF model unavailable through those servers, add a second client
+  implementation behind the same `llm.py` interface as an optional extra.
 
 ## 9. Testing and validation
 
@@ -286,3 +301,5 @@ inherited: profile keys name the actual model).
 | Language | English everywhere | User requirement |
 | Test provider | DeepSeek cloud | User designation |
 | Intermediate state | In memory; disk only for results + `--debug` dumps | User requirement; v1 round-tripped blocks/layout through disk |
+| Local models | Ollama/LM Studio (+ any OpenAI-compatible server), no API key | Same client path as cloud; keyless profiles |
+| In-process HF inference | Deferred to a post-1.0 optional extra | Heavy torch dependency; servers cover the same models |
