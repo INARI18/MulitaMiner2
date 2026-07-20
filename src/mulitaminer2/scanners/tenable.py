@@ -16,6 +16,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from mulitaminer2.consolidate import consolidate_tenable
 from mulitaminer2.models import Block, TenableRecord
 from mulitaminer2.scanners.profile import ScannerProfile
 
@@ -91,4 +92,5 @@ PROFILE = ScannerProfile(
     prompt_path=Path(__file__).with_name("tenable_prompt.txt"),
     max_vulns_per_chunk=3,  # v1 calibration (configs/scanners/tenable.json)
     segment=segment,
+    consolidate=consolidate_tenable,
 )

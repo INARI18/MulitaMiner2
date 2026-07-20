@@ -21,6 +21,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from mulitaminer2.consolidate import consolidate_openvas
 from mulitaminer2.models import Block, OpenVASRecord
 from mulitaminer2.scanners.profile import ScannerProfile
 
@@ -113,4 +114,5 @@ PROFILE = ScannerProfile(
     prompt_path=Path(__file__).with_name("openvas_prompt.txt"),
     max_vulns_per_chunk=4,  # v1 calibration (configs/scanners/openvas.json)
     segment=segment,
+    consolidate=consolidate_openvas,
 )
