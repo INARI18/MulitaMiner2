@@ -35,7 +35,6 @@ def test_end_to_end_run_with_fake_llm(tmp_path):
         input_path=BASELINE_PDF,
         scanner="openvas",
         model="deepseek",           # profile only; client is injected
-        allow_duplicates=True,
         formats=("xlsx",),
         output_dir=tmp_path,
         debug=True,
@@ -69,7 +68,6 @@ def test_no_intermediate_files_without_debug(tmp_path):
         input_path=BASELINE_PDF,
         scanner="openvas",
         model="deepseek",
-        allow_duplicates=True,
         output_dir=tmp_path,
         debug=False,
     )

@@ -32,7 +32,6 @@ class RunConfig:
     model: str
     model_name: str | None = None      # override for generic local profiles
     pdf_backend: str = DEFAULT_BACKEND
-    allow_duplicates: bool = False
     formats: tuple[str, ...] = ()      # extra outputs: "xlsx", "csv"
     output_dir: Path | None = None     # default: settings.OUTPUTS_DIR
     debug: bool = False
@@ -44,7 +43,6 @@ class RunConfig:
             "model": self.model,
             "model_name": self.model_name,
             "pdf_backend": self.pdf_backend,
-            "allow_duplicates": self.allow_duplicates,
             "formats": list(self.formats),
             "debug": self.debug,
         }
@@ -90,7 +88,7 @@ def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, 
         debug_sink: list | None = [] if config.debug else None
         records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink)
         raw_count = len(records)
-        records, merge_log = profile.consolidate(records, config.allow_duplicates)
+        records, merge_log = profile.consolidate(records)
         log.info(
             "Extracted %d/%d blocks; %d records after consolidation",
             raw_count, len(blocks), len(records),

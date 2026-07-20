@@ -24,8 +24,9 @@ class ScannerProfile:
     prompt_path: Path
     max_vulns_per_chunk: int      # v1 calibration, per scanner
     segment: Callable[[str], list[Block]]
-    # (records, allow_duplicates) -> (consolidated records, merge-log lines)
-    consolidate: Callable[[list[VulnRecord], bool], tuple[list[VulnRecord], list[str]]]
+    # records -> (consolidated records, merge-log lines). Always runs:
+    # structural pairing + severity normalization + identical-identity dedup.
+    consolidate: Callable[[list[VulnRecord]], tuple[list[VulnRecord], list[str]]]
 
     def prompt(self) -> str:
         return self.prompt_path.read_text(encoding="utf-8")

@@ -43,8 +43,9 @@ uv run mulitaminer2 scanners  # list scanner profiles
 Each run writes to `outputs/runs/<timestamp>_<input>_<model>/`:
 `results.json` (+ `results.xlsx`/`.csv` on request) and `run.json` with the
 config snapshot, token/cost accounting, duration, and any warnings.
-`--allow-duplicates` skips duplicate merging (Tenable base+instances pairing
-always runs — that is structure, not deduplication).
+Consolidation (Tenable base+instances pairing, severity normalization,
+identical-record merging) always runs — block-anchored extraction already
+yields one record per report finding, so there is no dedup knob to tune.
 
 ## Design
 

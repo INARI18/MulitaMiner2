@@ -315,3 +315,4 @@ inherited: profile keys name the actual model).
 | Local models | Ollama/LM Studio (+ any OpenAI-compatible server), no API key | Same client path as cloud; keyless profiles |
 | In-process HF inference | Deferred to a post-1.0 optional extra | Heavy torch dependency; servers cover the same models |
 | Scanner definition | JSON config + generic engine (no Python per scanner) | User requirement: lay users plug scanners; JSON is the WHOLE definition, unlike v1 |
+| --allow-duplicates flag | Removed; consolidation always runs | User decision: the flag repaired v1 over-extraction, which no longer exists; identical-identity merge is a safe no-op on well-formed reports |

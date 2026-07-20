@@ -153,7 +153,7 @@ def _build_consolidator(cfg: dict):
             for f in identity
         )
 
-    def consolidate(records: list[VulnRecord], allow_duplicates: bool):
+    def consolidate(records: list[VulnRecord]):
         log_lines: list[str] = []
         if pair:
             records, lines = dedupe(records, _pair_key,
@@ -163,10 +163,8 @@ def _build_consolidator(cfg: dict):
             mapped = severity_map.get(record.severity)
             if mapped:
                 record.severity = mapped
-        if not allow_duplicates:
-            records, lines = dedupe(records, _identity_key)
-            log_lines += lines
-        return records, log_lines
+        records, lines = dedupe(records, _identity_key)
+        return records, log_lines + lines
 
     return consolidate
 

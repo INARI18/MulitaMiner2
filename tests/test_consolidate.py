@@ -20,27 +20,34 @@ def test_normalize_name_collapses_case_and_whitespace():
 def test_openvas_dedupe_merges_same_identity_keeps_most_complete():
     a = _ov("TLS Weak Cipher")
     b = _ov("TLS  weak  cipher", **{"description": ["Weak ciphers enabled."]})
-    merged, log_lines = consolidate_openvas([a, b], False)
+    merged, log_lines = consolidate_openvas([a, b])
     assert len(merged) == 1
     assert merged[0].description == ["Weak ciphers enabled."]
     assert log_lines
 
 
 def test_openvas_different_port_is_a_different_finding():
-    merged, _ = consolidate_openvas([_ov("X", port=80), _ov("X", port=443)], False)
+    merged, _ = consolidate_openvas([_ov("X", port=80), _ov("X", port=443)])
     assert len(merged) == 2
 
 
-def test_openvas_allow_duplicates_keeps_everything():
-    merged, _ = consolidate_openvas([_ov("X"), _ov("X")], True)
+def test_openvas_services_repeats_are_not_merged():
+    """v1 lesson (identity_exceptions): 'Services' repeats legitimately on the
+    same host/port — only a fully identical record is a duplicate."""
+    a = _ov("Services", description=["ssh detected"])
+    b = _ov("Services", description=["http detected"])
+    merged, _ = consolidate_openvas([a, b])
     assert len(merged) == 2
+    identical = _ov("Services", description=["ssh detected"])
+    merged, _ = consolidate_openvas([a, identical])
+    assert len(merged) == 1
 
 
 def test_cvss_zero_counts_as_filled():
     """v1 nuance: a Log finding's 0.0 must not lose to a null-cvss duplicate."""
     with_zero = _ov("Log finding", cvss=0.0)
     without = _ov("Log finding", cvss=None, description=["text"])
-    merged, _ = consolidate_openvas([with_zero, without], False)
+    merged, _ = consolidate_openvas([with_zero, without])
     assert merged[0].cvss == 0.0
 
 
@@ -55,7 +62,7 @@ def test_tenable_base_and_instances_blocks_pair_up_always():
     base = _tn("HSTS Missing", description=["No HSTS header."])
     inst = _tn("HSTS Missing Instances (2)",
                instances=[{"instance": "https://a"}, {"instance": "https://b"}])
-    merged, _ = consolidate_tenable([base, inst], True)
+    merged, _ = consolidate_tenable([base, inst])
     assert len(merged) == 1
     assert merged[0].description == ["No HSTS header."]
     assert len(merged[0].instances) == 2
@@ -65,5 +72,5 @@ def test_tenable_base_and_instances_blocks_pair_up_always():
 def test_tenable_info_normalizes_to_log_after_pairing():
     rec = _tn("Info finding")
     rec.severity = "INFO"
-    merged, _ = consolidate_tenable([rec], True)
+    merged, _ = consolidate_tenable([rec])
     assert merged[0].severity == "LOG"

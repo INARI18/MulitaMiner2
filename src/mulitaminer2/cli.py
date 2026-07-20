@@ -38,9 +38,6 @@ def extract(
     pdf_backend: str = typer.Option(
         DEFAULT_BACKEND, "--pdf-backend", help=f"One of: {sorted(BACKENDS)}"
     ),
-    allow_duplicates: bool = typer.Option(
-        False, "--allow-duplicates", help="Skip duplicate merging (structural pairing still runs)"
-    ),
     xlsx: bool = typer.Option(False, "--xlsx", help="Also write results.xlsx"),
     csv: bool = typer.Option(False, "--csv", help="Also write results.csv"),
     output_dir: Path | None = typer.Option(None, "--output-dir", help="Run artifacts root"),
@@ -58,7 +55,6 @@ def extract(
         model=model,
         model_name=model_name,
         pdf_backend=pdf_backend,
-        allow_duplicates=allow_duplicates,
         formats=formats,
         output_dir=output_dir,
         debug=debug,
