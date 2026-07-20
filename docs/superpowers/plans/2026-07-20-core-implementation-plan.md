@@ -179,11 +179,22 @@ results.json + run.json (in-memory rule verified by test).
   marker count (warnings allowed).
 - [ ] `tools/compare_v1_v2.py`: load a v1 output JSON and a v2 `results.json`,
   compare record counts and per-name overlap; print a verdict table.
-- [ ] Run v1 (old repo) once on the same PDF/model for the comparison.
+- [x] Run v1 (old repo) once on the same PDF/model for the comparison.
   Acceptance: v2 coverage ≥ v1, v2 raw count closer to ground truth.
-- [ ] Record both results in this file.
+- [x] Record both results in this file.
 
-**State:** not started
+**State:** DONE (2026-07-20, OpenVAS_JuiceShop.pdf, deepseek, --allow-duplicates):
+
+| | raw count | final count | truth (34) distance | unique names | time | cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| v1 | 53 | 37 (after its dedup) | 3 | 25 | 889s | — |
+| v2 | **34** | 34 (no dedup needed) | **0** | 25 | 303s | $0.0159 |
+
+Name overlap v1∩v2: 25/25 = **100%** — v2 found every vulnerability v1 found.
+Live smoke: 34/34 blocks extracted in 9 calls, zero warnings, zero retries;
+all records carried description, cvss (incl. 0.0 for LOG), host, port.
+Block-anchored extraction delivered the design goal: raw count == truth
+without deduplication.
 
 ## Phase 10 — README and publishing
 
