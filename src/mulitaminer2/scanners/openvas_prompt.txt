@@ -38,3 +38,53 @@ FIELD EXTRACTION RULES:
 6. plugin: null. plugin_details: {}. instances: [].
 
 7. Extract only content explicitly present. Never infer, extrapolate, or invent. Include ALL content of a section — never use "...", "etc.", or abbreviations; split long content into multiple array elements instead. Arrays are [] when a section is absent.
+
+EXAMPLE:
+
+Input:
+---
+### BLOCK 12 (host: 10.0.0.5, port: 443/tcp)
+High (CVSS: 7.5)
+NVT: SSL/TLS: Certificate Expired
+Summary:
+The SSL/TLS certificate of the remote service has expired.
+Impact:
+Users will receive warnings when accessing the service, potentially leading to loss of trust.
+Solution:
+Replace the SSL/TLS certificate with a valid one.
+Vulnerability Detection Result:
+The certificate expired on 2024-01-15T00:00:00+00:00
+Vulnerability Detection Method:
+Check the expiration date of the SSL/TLS certificate.
+OID: 1.3.6.1.4.1.25623.1.0.103955
+References:
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-0001
+---
+
+Expected extraction object for this block:
+{"block_id":12,"Name":"SSL/TLS: Certificate Expired","description":["The SSL/TLS certificate of the remote service has expired."],"detection_result":["The certificate expired on 2024-01-15T00:00:00+00:00"],"detection_method":["Check the expiration date of the SSL/TLS certificate.","OID: 1.3.6.1.4.1.25623.1.0.103955"],"product_detection_result":[],"impact":["Users will receive warnings when accessing the service, potentially leading to loss of trust."],"solution":["Replace the SSL/TLS certificate with a valid one."],"insight":[],"log_method":[],"cvss":7.5,"port":443,"protocol":"tcp","severity":"HIGH","references":["https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-0001"],"plugin":null,"plugin_details":{},"instances":[]}
+
+SECOND EXAMPLE (multi-line NVT name — the name continues until the next section header; port comes from the block BODY, which beats the header context):
+
+Input:
+---
+### BLOCK 13
+Critical (CVSS: 9.8)
+NVT: PHP 5.x < 5.6.34, 7.x < 7.0.28, 7.1.x < 7.1.15, 7.2.x < 7.2.3 Stack Buffer Overflow
+Vulnerability (Mar 2018) - Linux
+Summary:
+A stack-based buffer overflow flaw was found in PHP versions prior to the listed releases.
+Vulnerability Detection Result:
+path / port: 80/tcp
+Impact:
+Successful exploitation may allow arbitrary code execution.
+Solution:
+Update PHP to a patched version.
+References:
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-7584
+---
+
+Expected extraction object for this block:
+{"block_id":13,"Name":"PHP 5.x < 5.6.34, 7.x < 7.0.28, 7.1.x < 7.1.15, 7.2.x < 7.2.3 Stack Buffer Overflow Vulnerability (Mar 2018) - Linux","description":["A stack-based buffer overflow flaw was found in PHP versions prior to the listed releases."],"detection_result":["path / port: 80/tcp"],"detection_method":[],"product_detection_result":[],"impact":["Successful exploitation may allow arbitrary code execution."],"solution":["Update PHP to a patched version."],"insight":[],"log_method":[],"cvss":9.8,"port":80,"protocol":"tcp","severity":"CRITICAL","references":["https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-7584"],"plugin":null,"plugin_details":{},"instances":[]}
+
+Respond with a JSON object: {"items": [<one extraction object per block>]}.
