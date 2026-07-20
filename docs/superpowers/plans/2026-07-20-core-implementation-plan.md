@@ -88,7 +88,12 @@ via `--pdf-backend`. v1's heuristic sentence-continuation merge was not ported
 **Verify:** `pytest tests/test_segmentation.py` — block counts on baseline
 fixtures match the known finding counts from the ground-truth XLSX; severity
 header line is INSIDE its block (the NVT lesson).
-**State:** not started
+**State:** DONE. v2 Blocks are FINDING-level (one per CVSS/VULNERABILITY
+marker), unlike v1's port-section/severity-group blocks; port/host/severity
+context travels as Block metadata rendered into the `### BLOCK` prompt header.
+Tenable name walk-back pulls the name line(s) from above the header (stops at
+sentence punctuation). Real-PDF counts verified: 34/59 OpenVAS, 152 Tenable;
+host recovery works on the real JuiceShop report.
 
 ## Phase 4 — Chunk packer
 

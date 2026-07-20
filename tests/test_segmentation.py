@@ -1,0 +1,109 @@
+"""Segmentation tests: synthetic fixtures for the rules, real PDFs for counts."""
+import re
+from pathlib import Path
+
+import pytest
+
+from mulitaminer2.reader import extract_pdf
+from mulitaminer2.scanners import get_scanner
+
+OPENVAS_FIXTURE = """\
+Scan Report
+1.2.3.4
+Host scan start Tue Jul 15 10:00:00 2026
+High 443/tcp
+High (CVSS: 7.5)
+NVT: SSL/TLS: Certificate Expired
+Summary:
+The certificate expired.
+Medium (CVSS: 5.3)
+NVT: Weak Cipher Suites
+Summary:
+Weak ciphers are enabled.
+Low 25/tcp
+Low (CVSS: 3.1)
+NVT: SMTP Banner Disclosure
+Summary:
+The banner reveals version information.
+"""
+
+TENABLE_FIXTURE = """\
+Missing HTTP Strict Transport Security Policy
+VULNERABILITY HIGH PLUGIN ID 98056
+Description:
+The remote web server does not send the HSTS header.
+Solution:
+Enable HSTS.
+Missing HTTP Strict Transport Security Policy Instances (2)
+VULNERABILITY HIGH PLUGIN ID 98056
+Identification:
+https://example.com/
+HTTP Info:
+GET / 200
+"""
+
+
+def test_openvas_marker_starts_each_block_with_severity_header():
+    blocks = get_scanner("openvas").segment(OPENVAS_FIXTURE)
+    assert len(blocks) == 3
+    # The NVT lesson: the CVSS header line must be INSIDE its block, line one.
+    for block in blocks:
+        assert re.match(r"(Critical|High|Medium|Low|Log)\s+\(CVSS:", block.text.splitlines()[0])
+
+
+def test_openvas_context_tracking():
+    blocks = get_scanner("openvas").segment(OPENVAS_FIXTURE)
+    assert [b.severity_hint for b in blocks] == ["HIGH", "MEDIUM", "LOW"]
+    # Port headers apply to the blocks that follow them; state persists until
+    # the next header ("Weak Cipher Suites" inherits 443/tcp).
+    assert [(b.port, b.protocol) for b in blocks] == [(443, "tcp"), (443, "tcp"), (25, "tcp")]
+    # Host recovered from the preamble (line above "Host scan start").
+    assert all(b.host == "1.2.3.4" for b in blocks)
+
+
+def test_openvas_preamble_yields_no_block():
+    blocks = get_scanner("openvas").segment(OPENVAS_FIXTURE)
+    assert "Scan Report" not in blocks[0].text
+
+
+def test_tenable_name_walkback_pulls_name_into_block():
+    blocks = get_scanner("tenable").segment(TENABLE_FIXTURE)
+    assert len(blocks) == 2
+    # The name line ABOVE the VULNERABILITY header belongs to this block.
+    assert blocks[0].text.splitlines()[0] == "Missing HTTP Strict Transport Security Policy"
+    assert blocks[1].text.splitlines()[0].endswith("Instances (2)")
+    # And the previous block must NOT have swallowed the next block's name.
+    assert "Instances (2)" not in blocks[0].text
+
+
+def test_tenable_severity_hint():
+    blocks = get_scanner("tenable").segment(TENABLE_FIXTURE)
+    assert all(b.severity_hint == "HIGH" for b in blocks)
+
+
+# --- Real baseline PDFs: block count == marker count (the count-parity core) --
+
+REAL_CASES = [
+    ("openvas", Path("resources/openvas/OpenVAS_JuiceShop.pdf"), 34),
+    ("openvas", Path("resources/openvas/OpenVAS_bBWA.pdf"), 59),
+    ("tenable", Path("resources/tenable/TenableWAS_JuiceShop.pdf"), 152),
+]
+
+
+@pytest.mark.parametrize("scanner,pdf,expected", REAL_CASES)
+def test_block_count_matches_marker_count_on_real_reports(scanner, pdf, expected):
+    profile = get_scanner(scanner)
+    doc = extract_pdf(pdf)
+    blocks = profile.segment(doc.text)
+    assert len(blocks) == expected
+    assert [b.id for b in blocks] == list(range(expected))
+
+
+def test_real_openvas_recovers_host():
+    doc = extract_pdf(Path("resources/openvas/OpenVAS_JuiceShop.pdf"))
+    blocks = get_scanner("openvas").segment(doc.text)
+    assert blocks, "no blocks segmented"
+    hosts = {b.host for b in blocks}
+    assert hosts != {None}, "host was not recovered from the per-host preamble"
+    for host in hosts - {None}:
+        assert re.fullmatch(r"(?:\d{1,3}\.){3}\d{1,3}", host)

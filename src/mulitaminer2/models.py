@@ -158,12 +158,20 @@ def extraction_model_for(record_type: type[VulnRecord]) -> type[BaseModel]:
 
 
 class Block(BaseModel):
-    """One marker-delimited report segment: exactly one candidate finding."""
+    """One marker-delimited report segment: exactly one candidate finding.
+
+    host/port/protocol/severity_hint are context recovered by the scanner's
+    segmentation from headers *around* the block (they may not appear inside
+    its text). They are rendered into the block's prompt header and used to
+    backfill fields the LLM could not see.
+    """
 
     id: int
     text: str
-    host: str | None = None  # recovered from the report section, when known
-    page_hint: int | None = None
+    host: str | None = None
+    port: int | str | None = None
+    protocol: str | None = None
+    severity_hint: str | None = None
 
 
 class Chunk(BaseModel):
