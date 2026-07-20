@@ -28,7 +28,11 @@ cp .env.example .env    # cloud API keys only; legacy MulitaMiner v1 names also 
 
 ```bash
 # Cloud (DeepSeek)
-uv run mulitaminer2 extract report.pdf --scanner openvas --model deepseek --xlsx
+uv run mulitaminer2 extract report.pdf --scanner openvas --model deepseek --export xlsx
+
+# Interoperability exports: SARIF (GitHub/DefectDojo/SonarQube) and
+# DefectDojo Generic Findings JSON
+uv run mulitaminer2 extract report.pdf --scanner openvas --model deepseek -e sarif -e generic
 
 # Local (Ollama), keyless
 uv run mulitaminer2 extract report.pdf --scanner tenable --model ollama --model-name qwen3

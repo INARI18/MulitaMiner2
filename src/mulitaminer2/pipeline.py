@@ -20,7 +20,8 @@ from mulitaminer2.llm import LLMClient, get_model
 from mulitaminer2.models import RunResult, TokenUsage
 from mulitaminer2.reader import DEFAULT_BACKEND, extract_pdf
 from mulitaminer2.scanners import get_scanner
-from mulitaminer2.writers import write_csv, write_json, write_xlsx
+from mulitaminer2.exporters import get_exporter
+from mulitaminer2.writers import write_json
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class RunConfig:
     model: str
     model_name: str | None = None      # override for generic local profiles
     pdf_backend: str = DEFAULT_BACKEND
-    formats: tuple[str, ...] = ()      # extra outputs: "xlsx", "csv"
+    formats: tuple[str, ...] = ()      # extra exports (see exporters registry)
     output_dir: Path | None = None     # default: settings.OUTPUTS_DIR
     debug: bool = False
 
@@ -105,10 +106,8 @@ def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, 
         )
 
         write_json(records, run_dir / "results.json")
-        if "xlsx" in config.formats:
-            write_xlsx(records, profile.record_type, run_dir / "results.xlsx")
-        if "csv" in config.formats:
-            write_csv(records, profile.record_type, run_dir / "results.csv")
+        for fmt in config.formats:
+            get_exporter(fmt)(records, profile.record_type, run_dir)
 
         (run_dir / "run.json").write_text(
             json.dumps(

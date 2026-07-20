@@ -38,8 +38,12 @@ def extract(
     pdf_backend: str = typer.Option(
         DEFAULT_BACKEND, "--pdf-backend", help=f"One of: {sorted(BACKENDS)}"
     ),
-    xlsx: bool = typer.Option(False, "--xlsx", help="Also write results.xlsx"),
-    csv: bool = typer.Option(False, "--csv", help="Also write results.csv"),
+    export: list[str] = typer.Option(
+        [], "--export", "-e",
+        help="Extra output formats (repeatable). See `mulitaminer2 formats`.",
+    ),
+    xlsx: bool = typer.Option(False, "--xlsx", help="Shorthand for --export xlsx"),
+    csv: bool = typer.Option(False, "--csv", help="Shorthand for --export csv"),
     output_dir: Path | None = typer.Option(None, "--output-dir", help="Run artifacts root"),
     debug: bool = typer.Option(False, "--debug", help="Dump layout/blocks/LLM traffic to the run dir"),
 ) -> None:
@@ -48,14 +52,15 @@ def extract(
     load_dotenv()
     from mulitaminer2.pipeline import RunConfig, run
 
-    formats = tuple(f for f, on in (("xlsx", xlsx), ("csv", csv)) if on)
     config = RunConfig(
         input_path=report,
         scanner=scanner,
         model=model,
         model_name=model_name,
         pdf_backend=pdf_backend,
-        formats=formats,
+        formats=tuple(dict.fromkeys(
+            list(export) + (["xlsx"] if xlsx else []) + (["csv"] if csv else [])
+        )),
         output_dir=output_dir,
         debug=debug,
     )
@@ -85,6 +90,15 @@ def models() -> None:
         kind = "local " if p.is_local else "cloud "
         keys = " / ".join(p.api_key_envs) or "no key needed"
         typer.echo(f"{key:<16} {kind} {p.model:<28} {keys}")
+
+
+@app.command()
+def formats() -> None:
+    """List available export formats for --export."""
+    from mulitaminer2.exporters import EXPORTERS
+
+    for name in sorted(EXPORTERS):
+        typer.echo(name)
 
 
 @app.command()
