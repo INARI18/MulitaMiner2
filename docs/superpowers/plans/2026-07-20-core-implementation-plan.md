@@ -27,7 +27,10 @@ Conventions for every phase:
 
 **Verify:** `uv sync` succeeds; `uv run mulitaminer2 --help` prints usage;
 `uv run pytest` runs (0 tests is fine).
-**State:** not started
+**State:** DONE (commit 033438f). Notes: `uv` lives at `~\.cargo\bin\uv.exe`
+(not on PATH); venv is CPython 3.13. Model profiles must accept legacy v1 env
+var names (`API_KEY_DEEPSEEK` …) as fallbacks — the user's `.env` (copied,
+never read) uses them.
 
 ## Phase 1 — Data models and settings
 
@@ -42,7 +45,8 @@ Conventions for every phase:
 
 **Verify:** `pytest tests/test_models.py` — validation accepts a known-good
 record dict, rejects wrong types, `source` stamping works.
-**State:** not started
+**State:** DONE (9 tests passing). `extraction_model_for()` derives the LLM
+contract from the record type (block_id + LLM-produced fields, extra=forbid).
 
 ## Phase 2 — PDF reader with competing backends
 
