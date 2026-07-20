@@ -239,6 +239,15 @@ class ModelProfile:
   No `print()`. No `except: pass`: config errors raise immediately; per-block
   extraction failures accumulate as warnings surfaced in the final summary.
 - No PID-named files, no glob+rename, no `os.environ` as a data channel.
+- **In-memory pipeline (explicit rule):** all intermediate state — extracted
+  page text, visual layout, `Block`s, `Chunk`s, LLM payloads — flows between
+  stages as in-memory objects. v1 round-tripped blocks through disk (wrote each
+  block to a file, then re-read it) and did the same for the visual layout and
+  token info; v2 does **no intermediate disk I/O on the happy path**. Disk is
+  touched only for (a) the final run artifacts above and (b) optional debug
+  dumps: with `--debug`, the extracted layout, block boundaries, chunk
+  contents, and raw LLM requests/responses are also written to the run
+  directory for inspection.
 
 ## 11. CLI (`cli.py`, Typer)
 
@@ -276,3 +285,4 @@ inherited: profile keys name the actual model).
 | Count fidelity | Block-anchored extraction | User requirement: raw count ≈ baseline without dedup |
 | Language | English everywhere | User requirement |
 | Test provider | DeepSeek cloud | User designation |
+| Intermediate state | In memory; disk only for results + `--debug` dumps | User requirement; v1 round-tripped blocks/layout through disk |
