@@ -16,7 +16,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, create_model
+from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
 # Severity spans both scanners' vocabularies: OpenVAS uses LOG for the
 # informational tier, Tenable WAS uses INFO. One shared Literal on purpose —
@@ -83,6 +83,16 @@ class VulnRecord(BaseModel):
     # Overflow bucket: a new scanner can dump anything here with zero changes
     # to this file. Promote entries to a subclass when they deserve typing.
     scanner_specific: dict = Field(default_factory=dict, **_PIPELINE_FILLED)
+
+    @field_validator("plugin_details", "instances", mode="before")
+    @classmethod
+    def _junk_empty_to_container(cls, value, info):
+        """LLMs occasionally emit "-" / "" / null for empty structured fields
+        (the report's own empty-idiom leaking into JSON). Coerce to the empty
+        container instead of failing the whole record."""
+        if value in ("", "-", None):
+            return {} if info.field_name == "plugin_details" else []
+        return value
 
 
 class PluginDetails(BaseModel):

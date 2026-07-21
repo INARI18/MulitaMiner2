@@ -237,7 +237,29 @@ honors the v1 Services lesson), backfill type-guard + validate_assignment.
   with a `--debug` rerun once the batch finishes; suspect payload-heavy bWAPP
   content (quotes/backslashes) breaking DeepSeek's json_object output.
 
-**State:** running (detached script, log in session scratchpad).
+**State:** DONE (2026-07-21, sequential queue, deepseek). Final table
+(marker/block count == deterministic candidate count; GT == baseline rows):
+
+| PDF | blocks | raw extracted | final | GT | notes |
+| --- | --- | --- | --- | --- | --- |
+| OpenVAS JuiceShop | 34 | 34 | 34 | 34 | zero warnings |
+| OpenVAS bBWA | 59 | 59 | 59 | 58 | GT likely merged 1 identical repeat |
+| OpenVAS artifactory | 116 | 116 | 114 | 116 | 2 identical-repeat merges (Tomcat, logged) |
+| Tenable JuiceShop | 152 | 139 | 78 | 76 | 61 pairings; 10 declared truncations; 13 dropped |
+| Tenable bWAAP | 128 | 116 | 66 | 64 | 50 pairings; 7 declared truncations; 12 dropped |
+
+Before/after the ligature+retry fixes: bBWA 47→59, artifactory 74→116 (raw).
+Tenable JuiceShop before name-walkback fix: 97 final w/ broken pairs → 78.
+Total validation cost ≈ $0.40.
+
+Residual: Tenable dropped blocks are NOT content-impossible — post-run
+diagnosis showed three modes: (a) missing {"items": ...} envelope on
+single-block calls, (b) "-" junk in structured fields, (c) pure flakiness
+(same block succeeds on manual retry; DeepSeek hidden reasoning consumes a
+variable share of the output budget). Fixes for (a) envelope re-wrap and
+(b) junk coercion are implemented + tested (commit after this one); an
+optional future rerun should bring drops near zero. merge_logs confirm the
+user's domain theory: zero exact-duplicate merges in Tenable runs.
 
 **Baseline data caveat (from the user, 2026-07-21):** the Tenable ground-truth
 XLSX files often left `instances` UNFILLED (typically ~25 per finding — too
@@ -285,12 +307,9 @@ instances; user wants a closer look at this later.
   21/21 input_type. Writes `*_instances_generated.xlsx` copies (gitignored)
   for the user to review and adopt — originals untouched.
 
-- [ ] (user request) Drop the `_prompt` suffix from prompt filenames:
-  `configs/prompts/openvas_prompt.txt` → `openvas.txt`, same for tenable.
-  While at it, make the config's `prompt` key optional, defaulting to
-  `<name>.txt` (same inference pattern as the record class) — both built-in
-  JSONs then lose the key. Update engine docstring, SCANNER_CONFIGS.md and
-  tests. DO NOT apply while extraction runs are in flight (mid-run code
-  changes lesson).
+- [x] (user request) Drop the `_prompt` suffix from prompt filenames:
+  `configs/prompts/openvas.txt` / `tenable.txt`; `prompt` key now optional,
+  defaulting to `<name>.txt` — both built-in JSONs lost the key. Applied
+  after the queue finished, as required.
 
 **State:** seam + generic + sarif DONE (62 tests passing).

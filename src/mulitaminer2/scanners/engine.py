@@ -11,7 +11,7 @@ JSON fields:
                        matches (openvas/tenable); otherwise the base VulnRecord
                        is used. An explicit "record" key overrides.
 - source:              stamped into every record's `source` field.
-- prompt:              prompt filename, relative to the JSON file.
+- prompt:              optional prompt filename; defaults to `<name>.txt`.
 - max_vulns_per_chunk: chunk-size cap for this scanner.
 - marker_pattern:      regex; ONE match line == ONE finding block. If it has a
                        capture group 1, that group is the severity hint. Use
@@ -182,7 +182,7 @@ def load_profile(config_path: Path) -> ScannerProfile:
             source=cfg["source"],
             record_type=record_type,
             marker=re.compile(cfg["marker_pattern"]),
-            prompt_path=_resolve_prompt(config_path, cfg["prompt"]),
+            prompt_path=_resolve_prompt(config_path, cfg.get("prompt", f"{cfg['name']}.txt")),
             max_vulns_per_chunk=int(cfg["max_vulns_per_chunk"]),
             segment=_build_segmenter(cfg),
             consolidate=_build_consolidator(cfg),

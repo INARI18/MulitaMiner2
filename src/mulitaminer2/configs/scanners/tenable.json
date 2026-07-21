@@ -1,7 +1,6 @@
 {
   "name": "tenable",
   "source": "TENABLEWAS",
-  "prompt": "tenable_prompt.txt",
   "max_vulns_per_chunk": 3,
   "marker_pattern": "(?i)(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?VULNERABILITY\\s+(CRITICAL|HIGH|MEDIUM|LOW|INFO)\\s+PLUGIN\\s+ID\\s+\\d+",
   "name_above_marker": true,

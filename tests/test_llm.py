@@ -84,6 +84,30 @@ def test_extract_propagates_invalid_json_for_retry_policy():
         client.extract("sys", "user", Items)
 
 
+def test_envelope_slips_are_rewrapped():
+    """Dropped-blocks lesson: models sometimes skip the {"items": [...]}
+    envelope, especially on single-block calls. Shape is adapted; content
+    is never repaired."""
+
+    class Item(BaseModel):
+        block_id: int
+
+    class Envelope(BaseModel):
+        items: list[Item]
+
+    bare_object = FakeTransport('{"block_id": 44}')
+    parsed, _ = LLMClient(MODELS["deepseek"], transport=bare_object).extract("s", "u", Envelope)
+    assert [i.block_id for i in parsed.items] == [44]
+
+    bare_list = FakeTransport('[{"block_id": 1}, {"block_id": 2}]')
+    parsed, _ = LLMClient(MODELS["deepseek"], transport=bare_list).extract("s", "u", Envelope)
+    assert [i.block_id for i in parsed.items] == [1, 2]
+
+    garbage = FakeTransport('{"nothing": true}')
+    with pytest.raises(Exception):
+        LLMClient(MODELS["deepseek"], transport=garbage).extract("s", "u", Envelope)
+
+
 def test_unknown_model_key_raises():
     with pytest.raises(ValueError, match="Unknown model"):
         get_model("gpt4")  # v1's misleading alias intentionally not carried over

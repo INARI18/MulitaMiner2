@@ -82,6 +82,16 @@ def test_extraction_json_schema_closes_objects():
     assert "Name" in schema["properties"]
 
 
+def test_junk_empty_structured_fields_are_coerced():
+    """Dropped-blocks lesson: the report's empty-idiom ("-") leaks into the
+    LLM's JSON for structured fields; coerce instead of failing the record."""
+    rec = TenableRecord.model_validate(
+        {"Name": "X", "severity": "LOW", "cvss": [], "plugin_details": "-", "instances": ""}
+    )
+    assert rec.plugin_details.model_dump()["plugin_id"] is None
+    assert rec.instances == []
+
+
 def test_base_record_requires_name_and_severity():
     with pytest.raises(ValidationError):
         VulnRecord.model_validate({"description": ["no name"]})

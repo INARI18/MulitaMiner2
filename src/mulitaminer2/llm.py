@@ -20,7 +20,7 @@ import re
 from dataclasses import dataclass
 
 from openai import APIStatusError, AuthenticationError, OpenAI, PermissionDeniedError
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -218,9 +218,29 @@ class LLMClient:
 
         raw = response.choices[0].message.content or ""
         cleaned = clean_response(raw, self.profile.reasoning_tags)
-        parsed = response_model.model_validate(json.loads(cleaned))
+        data = json.loads(cleaned)
+        parsed = self._validate_envelope(data, response_model)
 
         usage = getattr(response, "usage", None)
+        return self._package(parsed, usage, raw)
+
+    @staticmethod
+    def _validate_envelope(data, response_model: type[BaseModel]) -> BaseModel:
+        """Validate the response, tolerating ONE known shape slip: models
+        sometimes return the item(s) without the {"items": [...]} envelope
+        (especially on single-block calls). Re-wrapping is a deterministic
+        envelope adaptation — item content is never repaired, and block-id
+        reconciliation still guards the result."""
+        try:
+            return response_model.model_validate(data)
+        except ValidationError:
+            if isinstance(data, list):
+                return response_model.model_validate({"items": data})
+            if isinstance(data, dict) and "block_id" in data:
+                return response_model.model_validate({"items": [data]})
+            raise
+
+    def _package(self, parsed: BaseModel, usage, raw: str) -> tuple[BaseModel, dict]:
         prompt_tokens = getattr(usage, "prompt_tokens", 0) or 0
         completion_tokens = getattr(usage, "completion_tokens", 0) or 0
         cost = (

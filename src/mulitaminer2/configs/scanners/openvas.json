@@ -1,7 +1,6 @@
 {
   "name": "openvas",
   "source": "OPENVAS",
-  "prompt": "openvas_prompt.txt",
   "max_vulns_per_chunk": 4,
   "marker_pattern": "^\\s*(Critical|High|Medium|Low|Log)\\s+\\(CVSS:",
   "context": {

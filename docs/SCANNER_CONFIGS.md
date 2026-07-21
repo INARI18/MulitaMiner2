@@ -10,8 +10,10 @@ then during the v2 validation runs.
 
 ## Adding a scanner in short
 
-Start minimal — `name`, `source`, `prompt`, `max_vulns_per_chunk`, and the
+Start minimal — `name`, `source`, `max_vulns_per_chunk`, and the
 `marker_pattern` (the line that opens every finding; one match = one block).
+The prompt file defaults to `<name>.txt` next to the JSON (or in a sibling
+`prompts/` folder); an explicit `prompt` key overrides.
 Then look at YOUR report and answer three questions; each "yes" adds one key:
 
 1. Is the finding's NAME on the line above the marker? → `name_above_marker`
