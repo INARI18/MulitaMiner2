@@ -441,3 +441,16 @@ sync, per-record signals, SSVC tree, queue) + CLI `sync-feeds` and
 1 (asset-context input file), 3 (Automatable from CVSS vector), 5 (point-in-time
 snapshot stored in run.json; the snapshot_date column is a partial step). 80
 tests passing.
+
+## Phase 17 - Embedded specialist model (planned, user-approved direction)
+
+Optional tiny (0.5-2B) task-specialized local model for the no-API-budget,
+no-GPU user, embedded in-process via llama-cpp-python. Full plan (ladder:
+constrained decoding -> external baseline -> QLoRA; data engine with
+PDF-noise synthetic reports and contract-normalized silver data;
+contamination rule; promotion gate; decided repository split - training in
+a dedicated repo, the tool ships only the published GGUF artifact):
+`docs/superpowers/plans/2026-07-21-embedded-model-plan.md`.
+
+**State:** PLANNED. No implementation started; F0 (constrained decoding)
+is the cheap first step and needs no training.
