@@ -107,10 +107,11 @@ def render_markdown(result: EvalResult) -> str:
         lines += [f"- {n}" for n in cov["spurious"]] + [""]
 
     notes = []
-    if result.meta.get("instances_from"):
+    if result.meta.get("reannotated_from"):
+        cols = ", ".join(f"`{c}`" for c in result.meta.get("reannotated_columns", []))
         notes.append(
-            f"instances ground truth taken from `{result.meta['instances_from']}` "
-            "(deterministic re-annotation)."
+            f"{cols} ground truth taken from `{result.meta['reannotated_from']}` "
+            "(deterministic re-annotation from the PDF)."
         )
     for name, hint in result.meta.get("unavailable_metrics", {}).items():
         notes.append(f"metric `{name}` not run — {hint}.")

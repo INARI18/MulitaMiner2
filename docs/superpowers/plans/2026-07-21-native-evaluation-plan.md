@@ -168,9 +168,22 @@ exporters/__init__.py noted, untouched (not this diff).
   remainder is real extraction divergence); ScannerProfile exposes
   severity_map. (2) the MD report notes fields the baseline never fills
   (plugin_details etc.), where scores only measure presence agreement.
-- OPEN QUESTION for the user (GT annotation conventions, not code):
-  references set_f1 0.445 — the GT keeps junk entries ('CVE -', 'BID -')
-  that the pipeline's junk-coercion drops; cvss set_f1 0.413 — the GT
-  strips the 'CVSSV3 BASE SCORE'/'CVSS VECTOR' label prefixes that the PDF
-  (and extraction) carry. Either fix the GT files or add normalization; do
-  not tune the extractor toward the current GT idiom without deciding.
+- GT-convention question RESOLVED (user choice: deterministic re-annotation,
+  like instances): `archive/annotate_cvss_refs.py` regenerates the `cvss`
+  and `references` columns from the PDF (Risk/Reference Information line
+  grammar) into the `*_instances_generated.xlsx` copies; the evaluator now
+  merges all three re-annotated columns (instances, cvss, references) from
+  that file, with provenance in the report. Conventions anchored to the
+  prompt's own contract: cvss verbatim lines, references ONE PER ELEMENT
+  (comma-joined label lines exploded; label not duplicated when the value
+  carries it). Results: cvss 0.413→0.981 (JuiceShop) / 0.984 (bWAAP);
+  references 0.445→0.663 / 0.808. The references residual is a REAL
+  extraction-quality signal — the LLM keeps multi-value lines whole about a
+  third of the time, violating the prompt's "one per element"; a prompt
+  tightening + rerun is the candidate fix (future work, costs a paid run).
+  The old hand-annotated cvss cells were also malformed in places
+  ('CVSCVSS2#...', 'None, None, 3.1, ...') — regeneration replaced them.
+- PENDING USER DECISION: the *_instances_generated.xlsx files and the
+  archive/ annotators are gitignored (annotate_instances precedent). If
+  they are now official GT, committing both would make evaluation
+  reproducible from a clean clone (paper methods).

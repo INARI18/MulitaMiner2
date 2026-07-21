@@ -319,7 +319,8 @@ def test_orchestration_instances_generated_provenance(tmp_path):
     gen.to_excel(tmp_path / "T_instances_generated.xlsx", index=False)
 
     rows, provenance = load_baseline(tmp_path / "T.xlsx")
-    assert provenance["instances_from"].endswith("T_instances_generated.xlsx")
+    assert provenance["reannotated_from"].endswith("T_instances_generated.xlsx")
+    assert provenance["reannotated_columns"] == ["instances"]
     assert rows[0]["instances"] == [{"instance": "http://x", "proof": "p"}]
 
 

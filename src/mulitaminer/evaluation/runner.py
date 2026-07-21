@@ -64,21 +64,30 @@ def _parse_cell(value: Any) -> Any:
     return value
 
 
+# Columns the archive/annotate_* scripts regenerate deterministically from
+# the PDF into the <stem>_instances_generated.xlsx copy.
+_REANNOTATED_COLUMNS = ("instances", "cvss", "references")
+
+
 def load_baseline(path: Path) -> tuple[list[dict], dict]:
     """Baseline XLSX -> (rows, provenance).
 
     When ``<stem>_instances_generated.xlsx`` exists alongside (deterministic
-    re-annotation of the instances column), its instances column replaces the
-    original one — the original files mostly left it unfilled.
+    re-annotation from the PDF), its re-annotated columns replace the
+    original ones — the hand-annotated versions were unreliable there.
     """
     df = pd.read_excel(path)
-    provenance = {"baseline": str(path), "instances_from": None}
+    provenance = {"baseline": str(path), "reannotated_from": None,
+                  "reannotated_columns": []}
     generated = path.with_name(f"{path.stem}_instances_generated{path.suffix}")
     if generated.is_file():
         gdf = pd.read_excel(generated)
-        if "instances" in gdf.columns and len(gdf) == len(df):
-            df["instances"] = gdf["instances"]
-            provenance["instances_from"] = str(generated)
+        if len(gdf) == len(df):
+            taken = [c for c in _REANNOTATED_COLUMNS if c in gdf.columns]
+            for column in taken:
+                df[column] = gdf[column]
+            provenance["reannotated_from"] = str(generated)
+            provenance["reannotated_columns"] = taken
     rows = [
         {k: _parse_cell(v) for k, v in row.items()}
         for row in df.to_dict("records")
