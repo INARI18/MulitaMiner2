@@ -77,37 +77,51 @@ Medium -> medium, everything else -> low).
 
 ## Decision tree
 
-`unknown` (no CVE) follows the same path as `likely`: no CVE is absence of
-evidence, not evidence of safety, so it is never discounted as safe.
-
-Three inputs are read in order, mapping to one category:
+Branch on exploitation, then exposure, then severity. `unknown` (no CVE)
+follows the same branch as `likely`: no CVE is absence of evidence, not
+evidence of safety, so it is never discounted as safe. Leaf color is the
+category.
 
 ```mermaid
 flowchart LR
-    S([Finding]) --> E["1 · Exploitation<br>active / likely / unknown / none"]
-    E --> X["2 · Exposure<br>exposed / internal"]
-    X --> V["3 · Severity<br>high / medium / low"]
-    V --> ACT["Act"]:::act
-    V --> ATT["Attend"]:::att
-    V --> TRS["Track*"]:::trs
-    V --> TRK["Track"]:::trk
+    F([Finding]):::root --> E{{Exploitation}}
 
+    E -->|active| A{{Exposure}}
+    E -->|likely / unknown| L{{Exposure}}
+    E -->|none| N{{Exposure}}
+
+    A -->|exposed| Ae{{Severity}}
+    A -->|internal| Ai{{Severity}}
+    L -->|exposed| Le{{Severity}}
+    L -->|internal| Li{{Severity}}
+    N -->|exposed| Ne{{Severity}}
+    N -->|internal| Ni{{Severity}}
+
+    Ae -->|high| r1((Act)):::act
+    Ae -->|med| r2((Act)):::act
+    Ae -->|low| r3((Attend)):::att
+    Ai -->|high| r4((Act)):::act
+    Ai -->|med| r5((Attend)):::att
+    Ai -->|low| r6(("Track*")):::trs
+    Le -->|high| r7((Act)):::act
+    Le -->|med| r8((Attend)):::att
+    Le -->|low| r9(("Track*")):::trs
+    Li -->|high| r10((Attend)):::att
+    Li -->|med| r11(("Track*")):::trs
+    Li -->|low| r12((Track)):::trk
+    Ne -->|high| r13((Attend)):::att
+    Ne -->|med| r14(("Track*")):::trs
+    Ne -->|low| r15((Track)):::trk
+    Ni -->|high| r16(("Track*")):::trs
+    Ni -->|med| r17((Track)):::trk
+    Ni -->|low| r18((Track)):::trk
+
+    classDef root fill:#2b2b2b,color:#fff,stroke:#555;
     classDef act fill:#d13438,color:#fff,stroke:#a4262c;
-    classDef att fill:#f7a600,color:#000,stroke:#c77700;
+    classDef att fill:#f7a600,color:#111,stroke:#c77700;
     classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
     classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
 ```
-
-The exact mapping (`unknown` follows the same row as `likely`):
-
-| Exploitation | Exposure | high | medium | low |
-| --- | --- | :---: | :---: | :---: |
-| active | exposed | Act | Act | Attend |
-| active | internal | Act | Attend | Track\* |
-| likely / unknown | exposed | Act | Attend | Track\* |
-| likely / unknown | internal | Attend | Track\* | Track |
-| none | exposed | Attend | Track\* | Track |
-| none | internal | Track\* | Track | Track |
 
 ## Categories
 
