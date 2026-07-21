@@ -77,18 +77,59 @@ Medium -> medium, everything else -> low).
 
 ## Decision tree
 
-`(exploitation, exposure, severity)` maps to a category. `unknown` sits on the
-same row as `likely`: no CVE is absence of evidence, not evidence of safety, so
-it is never discounted as safe.
+Read it top down: exploitation, then exposure, then severity, to a category.
+`unknown` (no CVE) follows the same path as `likely`: no CVE is absence of
+evidence, not evidence of safety, so it is never discounted as safe.
 
-| exploitation | exposure | high | medium | low |
-| --- | --- | --- | --- | --- |
-| active | exposed | Act | Act | Attend |
-| active | internal | Act | Attend | Track\* |
-| likely / unknown | exposed | Act | Attend | Track\* |
-| likely / unknown | internal | Attend | Track\* | Track |
-| none | exposed | Attend | Track\* | Track |
-| none | internal | Track\* | Track | Track |
+```mermaid
+flowchart TD
+    S([Finding]) --> E{Exploitation?}
+    E -->|active KEV| Ae{Exposed?}
+    E -->|likely / unknown| Le{Exposed?}
+    E -->|none| Ne{Exposed?}
+
+    Ae -->|yes| Aey{Severity?}
+    Ae -->|no| Aen{Severity?}
+    Le -->|yes| Ley{Severity?}
+    Le -->|no| Len{Severity?}
+    Ne -->|yes| Ney{Severity?}
+    Ne -->|no| Nen{Severity?}
+
+    Aey -->|high| ACT
+    Aey -->|medium| ACT
+    Aey -->|low| ATT
+    Aen -->|high| ACT
+    Aen -->|medium| ATT
+    Aen -->|low| TRS
+    Ley -->|high| ACT
+    Ley -->|medium| ATT
+    Ley -->|low| TRS
+    Len -->|high| ATT
+    Len -->|medium| TRS
+    Len -->|low| TRK
+    Ney -->|high| ATT
+    Ney -->|medium| TRS
+    Ney -->|low| TRK
+    Nen -->|high| TRS
+    Nen -->|medium| TRK
+    Nen -->|low| TRK
+
+    ACT[Act]
+    ATT[Attend]
+    TRS["Track*"]
+    TRK[Track]
+
+    classDef act fill:#d13438,color:#fff,stroke:#a4262c;
+    classDef att fill:#f7a600,color:#000,stroke:#c77700;
+    classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
+    classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
+    class ACT act;
+    class ATT att;
+    class TRS trs;
+    class TRK trk;
+```
+
+Urgency: **Act** > **Attend** > **Track\*** > **Track**.
 
 ## Ordering
 
