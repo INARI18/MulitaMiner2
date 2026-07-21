@@ -92,4 +92,6 @@ Design history and the phased plan live in `docs/superpowers/`.
 
 ## License
 
-MIT.
+[MIT](LICENSE). Free to use, modify and distribute, including commercially.
+Provided "as is", without warranties; you are responsible for the secure
+handling of your data and API keys.
