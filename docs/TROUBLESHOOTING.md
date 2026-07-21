@@ -11,6 +11,8 @@
 | Connection error with `ollama`/`lmstudio` | Local server not running | Start Ollama / LM Studio and confirm the port in `mulitaminer models` |
 | Merged records you did not expect | Consolidation found fully identical repeats | Compare `results.raw.json` with `results.json` using `run.json`'s merge log |
 | Slow extraction | Many retry rounds (see log) | Normal for payload-heavy reports; consider a model with a larger output cap |
+| `KEV/EPSS feeds not found` on `prioritize` | Feeds never synced | Run `mulitaminer sync-feeds` first (needs internet once) |
+| `prioritize` fails validating an old results.json | The file predates a schema fix | Re-run the extraction; the current pipeline produces valid output |
 
 Still stuck? Run with `--debug` and inspect `blocks.txt` (is the information
 inside the block?) and `llm_traffic.jsonl` (what did the model actually

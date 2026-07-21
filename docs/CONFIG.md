@@ -32,3 +32,8 @@ Plug external scanners with the `MULITAMINER_SCANNERS_DIR` env var.
 | `CHUNK_CHAR_CEILING_MIN` | 30000 | Floor of the per-chunk character ceiling |
 | `RETRY_ROUNDS` | 2 | Targeted re-send rounds for unresolved blocks |
 | `OUTPUTS_DIR` | `outputs/runs` | Default run artifacts root |
+| `FEEDS_DIR` | `outputs/feeds` | Local KEV/EPSS snapshot for prioritization |
+
+The prioritization EPSS threshold (`EPSS_LIKELY_THRESHOLD`, default 0.10) and
+the SSVC decision tree are constants in `src/mulitaminer/prioritization.py`.
+See [PRIORITIZATION.md](PRIORITIZATION.md).

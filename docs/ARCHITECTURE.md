@@ -28,6 +28,7 @@ touched only for final run artifacts and optional `--debug` dumps.
 | `consolidate.py` | Pairing, severity normalization, merge of fully identical records |
 | `models.py` | VulnRecord and subclasses; the LLM contract is derived from them |
 | `writers.py` / `exporters/` | results.json plus the `--export` formats |
+| `prioritization.py` | KEV/EPSS/SSVC remediation queue over a run's results.json |
 | `pipeline.py` | Composes the stages into one run and writes the artifacts |
 | `cli.py` | Typer commands; thin consumer of the library |
 | `settings.py` | Calibrated tunables |
