@@ -1,7 +1,9 @@
 """Evaluation subsystem: scorers, field mapping, alignment, orchestration."""
 import pytest
 
+from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
+from mulitaminer.models import Instance, OpenVASRecord, PluginDetails, TenableRecord
 
 
 # --- scorers -----------------------------------------------------------------
@@ -71,3 +73,69 @@ def test_scorers_kinds_split():
     assert {s.name for s in text_scorers()} == {"token_f1", "rouge_l", "bertscore"}
     assert SCORERS["exact"].kind == "structural"
     assert SCORERS["set_f1"].kind == "structural"
+
+
+# --- fields ------------------------------------------------------------------
+
+
+def _plan(plans: list[FieldPlan], name: str) -> FieldPlan:
+    return next(p for p in plans if p.name == name)
+
+
+def test_fields_openvas_inference_matches_spec_table():
+    plans = field_plans(OpenVASRecord)
+    by_name = {p.name: p.metric for p in plans}
+    assert by_name["severity"] == "exact"       # Literal
+    assert by_name["protocol"] == "exact"       # Literal | None
+    assert by_name["cvss"] == "exact"           # float | int | None
+    assert by_name["plugin"] == "exact"         # int | None
+    assert by_name["port"] == "exact"           # int | str | None
+    assert by_name["name"] == "text"            # str
+    assert by_name["description"] == "text"     # list[str]
+    assert by_name["plugin_details"] == "structural"  # dict
+    assert by_name["instances"] == "text"       # bare list, safe default
+    # Pipeline-stamped fields are never evaluated.
+    assert "host" not in by_name and "source" not in by_name
+
+
+def test_fields_tenable_nested_models_are_structural():
+    plans = field_plans(TenableRecord)
+    pd_plan = _plan(plans, "plugin_details")
+    assert pd_plan.metric == "structural" and pd_plan.sub_model is PluginDetails
+    inst = _plan(plans, "instances")
+    assert inst.metric == "structural" and inst.sub_model is Instance and inst.is_list
+    assert _plan(plans, "cvss").metric == "text"  # list[str]; JSON override makes it set_f1
+
+
+def test_fields_new_field_gets_default_by_type():
+    class ExtendedRecord(OpenVASRecord):
+        cwe_ids: list[str] = []
+        exploitability: float | None = None
+
+    by_name = {p.name: p.metric for p in field_plans(ExtendedRecord)}
+    assert by_name["cwe_ids"] == "text"
+    assert by_name["exploitability"] == "exact"
+
+
+def test_fields_overrides_beat_inference_and_skip_removes():
+    plans = field_plans(
+        OpenVASRecord, overrides={"references": "set_f1", "insight": "skip"}
+    )
+    by_name = {p.name: p.metric for p in plans}
+    assert by_name["references"] == "set_f1"
+    assert "insight" not in by_name
+
+
+def test_fields_unknown_override_rejected():
+    with pytest.raises(ValueError, match="valid values"):
+        field_plans(OpenVASRecord, overrides={"references": "bogus_metric"})
+
+
+def test_fields_builtin_configs_carry_overrides():
+    from mulitaminer.scanner_engine import get_scanner
+
+    assert dict(get_scanner("openvas").field_metric_overrides) == {"references": "set_f1"}
+    assert dict(get_scanner("tenable").field_metric_overrides) == {
+        "references": "set_f1",
+        "cvss": "set_f1",
+    }

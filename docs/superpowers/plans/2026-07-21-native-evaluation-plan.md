@@ -61,7 +61,10 @@ carries kind + availability + hint; pair_score returns (score, vacuous).
 **Verify:** `pytest -k fields` — inference for every field of both record
 types matches the spec table; a dynamically added field gets the right
 default; overrides (incl. skip) beat inference.
-**State:** TODO.
+**State:** DONE (6 tests). ScannerProfile gained `field_metric_overrides`
+(tuple of pairs — frozen dataclass) read from the config's
+evaluation.field_metrics; both builtin JSONs ship their overrides. FieldPlan
+carries sub_model/is_list for structural recursion in E4.
 
 ## Phase E3 — Alignment
 

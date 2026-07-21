@@ -43,6 +43,9 @@ class ScannerProfile:
     # records -> (consolidated records, merge-log lines). Always runs:
     # structural pairing + severity normalization + identical-identity dedup.
     consolidate: Callable[[list[VulnRecord]], tuple[list[VulnRecord], list[str]]]
+    # Per-field metric overrides for evaluation (config "evaluation.field_metrics");
+    # frozen dataclass needs a hashable default, hence tuple of pairs.
+    field_metric_overrides: tuple[tuple[str, str], ...] = ()
 
     def prompt(self) -> str:
         return self.prompt_path.read_text(encoding="utf-8")
@@ -181,6 +184,9 @@ def load_profile(config_path: Path) -> ScannerProfile:
             max_vulns_per_chunk=int(cfg["max_vulns_per_chunk"]),
             segment=_build_segmenter(cfg),
             consolidate=_build_consolidator(cfg),
+            field_metric_overrides=tuple(
+                (cfg.get("evaluation") or {}).get("field_metrics", {}).items()
+            ),
         )
     except KeyError as exc:
         raise ValueError(f"Scanner config {config_path} is missing field {exc}") from exc

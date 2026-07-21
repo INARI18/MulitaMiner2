@@ -10,5 +10,8 @@
     "by": ["plugin"],
     "merge_instances": true
   },
-  "severity_map": { "INFO": "LOG" }
+  "severity_map": { "INFO": "LOG" },
+  "evaluation": {
+    "field_metrics": { "references": "set_f1", "cvss": "set_f1" }
+  }
 }
