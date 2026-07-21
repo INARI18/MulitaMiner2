@@ -114,10 +114,10 @@ flowchart TD
     Nen -->|medium| TRK
     Nen -->|low| TRK
 
-    ACT[Act]
-    ATT[Attend]
-    TRS["Track*"]
-    TRK[Track]
+    ACT((Act))
+    ATT((Attend))
+    TRS(("Track*"))
+    TRK((Track))
 
     classDef act fill:#d13438,color:#fff,stroke:#a4262c;
     classDef att fill:#f7a600,color:#000,stroke:#c77700;
