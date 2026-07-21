@@ -32,7 +32,7 @@ vulnerabilities, so the output count always matches the report.
 2. **Extract text**: pull clean text out of the PDF.
 3. **Split blocks**: cut the text into one block per finding, deterministically, so the finding count is known before any LLM call.
 4. **Pack chunks**: group whole blocks into token-budgeted chunks (blocks are never split).
-5. **LLM extract**: the model fills the fields of each block; block ids keep one record per finding. Blocks that fail loop back to step 4 in smaller chunks.
+5. **LLM extract**: each chunk is sent to the model with the scanner's prompt (from `configs/prompts/`), which fills the fields of every block; block ids keep one record per finding. Blocks that fail loop back to step 4 in smaller chunks.
 6. **Consolidate**: pair base and instances, normalize severity, merge identical records.
 7. **results.json**: the structured records, the primary artifact.
 8. **Exports**: optional SARIF, CSAF, DefectDojo Generic, CSV, XLSX.

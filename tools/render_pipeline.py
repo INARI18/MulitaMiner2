@@ -129,8 +129,9 @@ def build():
     p.append(f"<path d='M {xl} {cb} V {loop_y} H {xp} V {cb}' fill='none' "
              f"stroke='{ORANGE}' stroke-width='2' stroke-dasharray='4 4'/>")
     p.append(f"<path d='M {xp-5} {cb+8} L {xp} {cb} L {xp+5} {cb+8} Z' fill='{ORANGE}'/>")
-    p.append(text((xp + xl) / 2, loop_y + 12, "retry: fewer blocks per chunk",
-                  10.5, ORANGE, "bold", MONO))
+    p.append(text((xp + xl) / 2, loop_y + 13,
+                  "on failure, the missing blocks are re-packed into smaller chunks",
+                  11, ORANGE, "bold", MONO))
 
     for i, (title, sub, ic) in enumerate(STAGES):
         x = xs[i]
