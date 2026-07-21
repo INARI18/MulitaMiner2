@@ -1,5 +1,7 @@
 """One OpenAI-compatible client for every provider, cloud or local.
 Provider differences reduce to a ModelProfile; local profiles are keyless.
+Profiles are loaded from JSON configs (built-ins in configs/llms/, user
+profiles via MULITAMINER2_LLMS_DIR) — adding a model needs no Python.
 Structured output via JSON-Schema where supported, else json_object +
 Pydantic validation."""
 from __future__ import annotations
@@ -8,7 +10,9 @@ import json
 import logging
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
+from functools import lru_cache
+from pathlib import Path
 
 from openai import APIStatusError, AuthenticationError, OpenAI, PermissionDeniedError
 from pydantic import BaseModel, ValidationError
@@ -27,13 +31,15 @@ class FatalLLMError(Exception):
 class ModelProfile:
     key: str                      # CLI name
     model: str                    # provider model id
-    base_url: str | None          # None = api.openai.com
-    api_key_env: str | None    # None = local/keyless
     context_window: int
     max_output_tokens: int
-    supports_json_schema: bool
-    price_in: float               # USD per 1M input tokens (0 for local)
-    price_out: float
+    base_url: str | None = None   # None = api.openai.com
+    # Absent in local/keyless configs (ollama, lmstudio) — a local model has
+    # no API key, so the JSON simply omits the field.
+    api_key_env: str | None = None
+    supports_json_schema: bool = False
+    price_in: float = 0.0         # USD per 1M input tokens (0 for local)
+    price_out: float = 0.0
     reasoning_tags: bool = False  # strip <think>…</think> from responses
     temperature: float = 0.0      # deterministic extraction
     encoding: str = "cl100k_base"
@@ -43,83 +49,49 @@ class ModelProfile:
         return self.api_key_env is None
 
 
-MODELS: dict[str, ModelProfile] = {
-    "deepseek": ModelProfile(
-        key="deepseek",
-        model="deepseek-v4-flash",
-        base_url="https://api.deepseek.com/v1",
-        api_key_env="DEEPSEEK_API_KEY",
-        context_window=64_000,
-        max_output_tokens=8_000,
-        supports_json_schema=False,  # json_object mode + validation
-        price_in=0.14,
-        price_out=0.28,
-    ),
-    "gpt-4o-mini": ModelProfile(
-        key="gpt-4o-mini",
-        model="gpt-4o-mini",
-        base_url=None,
-        api_key_env="OPENAI_API_KEY",
-        context_window=128_000,
-        max_output_tokens=16_000,
-        supports_json_schema=True,
-        price_in=0.15,
-        price_out=0.60,
-    ),
-    "gpt-4o": ModelProfile(
-        key="gpt-4o",
-        model="gpt-4o",
-        base_url=None,
-        api_key_env="OPENAI_API_KEY",
-        context_window=128_000,
-        max_output_tokens=16_000,
-        supports_json_schema=True,
-        price_in=2.50,
-        price_out=10.00,
-    ),
-    "llama-3.3-70b": ModelProfile(
-        key="llama-3.3-70b",
-        model="llama-3.3-70b-versatile",
-        base_url="https://api.groq.com/openai/v1",
-        api_key_env="GROQ_API_KEY",
-        context_window=128_000,
-        max_output_tokens=8_000,
-        supports_json_schema=False,
-        price_in=0.59,
-        price_out=0.79,
-    ),
-    "ollama": ModelProfile(
-        key="ollama",
-        model="llama3",  # override with --model-name
-        base_url="http://localhost:11434/v1",
-        api_key_env=None,
-        context_window=32_000,
-        max_output_tokens=8_000,
-        supports_json_schema=False,
-        price_in=0.0,
-        price_out=0.0,
-        reasoning_tags=True,
-    ),
-    "lmstudio": ModelProfile(
-        key="lmstudio",
-        model="local-model",  # override with --model-name
-        base_url="http://localhost:1234/v1",
-        api_key_env=None,
-        context_window=32_000,
-        max_output_tokens=8_000,
-        supports_json_schema=True,  # LM Studio supports json_schema natively
-        price_in=0.0,
-        price_out=0.0,
-        reasoning_tags=True,
-    ),
-}
+_BUILTIN_LLM_DIR = Path(__file__).parent / "configs" / "llms"
+_PROFILE_FIELDS = {f.name for f in fields(ModelProfile)}
+
+
+def load_llm_profile(config_path: Path) -> ModelProfile:
+    cfg = json.loads(config_path.read_text(encoding="utf-8"))
+    unknown = set(cfg) - _PROFILE_FIELDS
+    if unknown:
+        raise ValueError(
+            f"LLM config {config_path} has unknown field(s) {sorted(unknown)}; "
+            f"valid fields: {sorted(_PROFILE_FIELDS)}"
+        )
+    try:
+        return ModelProfile(**cfg)
+    except TypeError as exc:
+        raise ValueError(f"LLM config {config_path} is invalid: {exc}") from exc
+
+
+@lru_cache
+def _registry(extra_dir: str | None) -> dict[str, ModelProfile]:
+    profiles: dict[str, ModelProfile] = {}
+    dirs = [_BUILTIN_LLM_DIR]
+    if extra_dir:
+        user_dir = Path(extra_dir)
+        # Accept both a flat user dir and one mirroring the llms/ split.
+        dirs += [user_dir, user_dir / "llms"]
+    for directory in dirs:
+        for config in sorted(directory.glob("*.json")):
+            profile = load_llm_profile(config)
+            profiles[profile.key] = profile
+    return profiles
+
+
+def all_models() -> dict[str, ModelProfile]:
+    return _registry(os.getenv("MULITAMINER2_LLMS_DIR"))
 
 
 def get_model(key: str) -> ModelProfile:
+    models = all_models()
     try:
-        return MODELS[key.lower()]
+        return models[key.lower()]
     except KeyError:
-        raise ValueError(f"Unknown model '{key}'. Available: {sorted(MODELS)}")
+        raise ValueError(f"Unknown model '{key}'. Available: {sorted(models)}")
 
 
 def _resolve_api_key(profile: ModelProfile) -> str:

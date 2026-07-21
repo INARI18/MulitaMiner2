@@ -1,0 +1,10 @@
+{
+  "key": "claude-haiku",
+  "model": "claude-haiku-4-5",
+  "base_url": "https://api.anthropic.com/v1/",
+  "api_key_env": "ANTHROPIC_API_KEY",
+  "context_window": 200000,
+  "max_output_tokens": 64000,
+  "price_in": 1.0,
+  "price_out": 5.0
+}

@@ -1,0 +1,10 @@
+{
+  "key": "llama-3.3-70b",
+  "model": "llama-3.3-70b-versatile",
+  "base_url": "https://api.groq.com/openai/v1",
+  "api_key_env": "GROQ_API_KEY",
+  "context_window": 128000,
+  "max_output_tokens": 8000,
+  "price_in": 0.59,
+  "price_out": 0.79
+}

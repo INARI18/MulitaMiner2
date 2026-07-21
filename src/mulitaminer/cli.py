@@ -7,7 +7,7 @@ from pathlib import Path
 import typer
 from dotenv import load_dotenv
 
-from mulitaminer.llm import MODELS, FatalLLMError
+from mulitaminer.llm import FatalLLMError, all_models
 from mulitaminer.pdf_reader import BACKENDS, DEFAULT_BACKEND
 from mulitaminer.scanner_engine import all_scanners
 
@@ -31,7 +31,7 @@ def _setup_logging(debug: bool) -> None:
 def extract(
     report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
     scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer scanners`"),
-    model: str = typer.Option("deepseek", "--model", "-m", help=f"One of: {sorted(MODELS)}"),
+    model: str = typer.Option("deepseek", "--model", "-m", help="See `mulitaminer models`"),
     model_name: str | None = typer.Option(
         None, "--model-name", help="Provider model id override (for ollama/lmstudio)"
     ),
@@ -85,8 +85,8 @@ def extract(
 
 @app.command()
 def models() -> None:
-    """List available model profiles."""
-    for key, p in MODELS.items():
+    """List available model profiles (built-in + MULITAMINER2_LLMS_DIR)."""
+    for key, p in all_models().items():
         kind = "local " if p.is_local else "cloud "
         keys = p.api_key_env or "no key needed"
         typer.echo(f"{key:<16} {kind} {p.model:<28} {keys}")

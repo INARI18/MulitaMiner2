@@ -6,13 +6,17 @@ import pytest
 from pydantic import BaseModel
 
 from mulitaminer.llm import (
-    MODELS,
     FatalLLMError,
     LLMClient,
+    all_models,
     clean_response,
     get_model,
+    load_llm_profile,
     _resolve_api_key,
 )
+
+# Profiles now come from configs/llms/*.json; the dict shape is unchanged.
+MODELS = all_models()
 
 
 class Items(BaseModel):
@@ -103,3 +107,50 @@ def test_envelope_slips_are_rewrapped():
 def test_unknown_model_key_raises():
     with pytest.raises(ValueError, match="Unknown model"):
         get_model("gpt4")
+
+
+# --- JSON registry -----------------------------------------------------------
+
+
+def test_registry_loads_builtin_profiles():
+    models = all_models()
+    for key in ("deepseek", "gpt-4o-mini", "gpt-4o", "llama-3.3-70b",
+                "ollama", "lmstudio", "claude-haiku"):
+        assert key in models
+    assert models["claude-haiku"].api_key_env == "ANTHROPIC_API_KEY"
+    assert models["claude-haiku"].base_url.startswith("https://api.anthropic.com")
+
+
+def test_registry_local_profile_omits_api_key_field():
+    # ollama.json has no api_key_env at all -> keyless local profile
+    assert all_models()["ollama"].is_local
+    assert all_models()["ollama"].price_in == 0.0
+
+
+def test_registry_user_dir_plugs_new_model(tmp_path, monkeypatch):
+    from mulitaminer.llm import _registry
+
+    (tmp_path / "mymodel.json").write_text(json.dumps({
+        "key": "mymodel", "model": "my-model-v1",
+        "base_url": "http://localhost:9999/v1",
+        "context_window": 16000, "max_output_tokens": 4000,
+    }), encoding="utf-8")
+    monkeypatch.setenv("MULITAMINER2_LLMS_DIR", str(tmp_path))
+    _registry.cache_clear()
+    try:
+        models = all_models()
+        assert "mymodel" in models and models["mymodel"].is_local
+    finally:
+        _registry.cache_clear()
+
+
+def test_registry_rejects_unknown_and_missing_fields(tmp_path):
+    bad = tmp_path / "bad.json"
+    bad.write_text('{"key": "x", "model": "y", "context_window": 1, '
+                   '"max_output_tokens": 1, "api_key": "oops"}', encoding="utf-8")
+    with pytest.raises(ValueError, match="unknown field"):
+        load_llm_profile(bad)
+    incomplete = tmp_path / "incomplete.json"
+    incomplete.write_text('{"key": "x"}', encoding="utf-8")
+    with pytest.raises(ValueError, match="invalid"):
+        load_llm_profile(incomplete)
