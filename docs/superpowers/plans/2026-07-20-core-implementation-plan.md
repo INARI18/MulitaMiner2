@@ -454,3 +454,18 @@ a dedicated repo, the tool ships only the published GGUF artifact):
 
 **State:** PLANNED. No implementation started; F0 (constrained decoding)
 is the cheap first step and needs no training.
+
+## Phase 18 - Batch extraction, experiment harness, HTML report (planned)
+
+User-requested (2026-07-21), serves the TCC 2 timeline directly. Three
+increments, detailed in
+`docs/superpowers/plans/2026-07-21-batch-experiments-plan.md`:
+B0 directory extraction with fail-safe deterministic scanner
+auto-detection (--scanner as override; ambiguous/unmatched files skipped,
+never guessed); B1 `mulitaminer experiment` (X runs x reports x models,
+output_experiments/<scanner>/<model>/run_<n>/, auto-evaluation per run,
+parallelism by capacity bucket = api_key_env ?? base_url, resumable);
+B2 self-contained HTML report with pure-SVG charts styled after the TCC
+defense deck.
+
+**State:** PLANNED.
