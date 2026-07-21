@@ -29,12 +29,16 @@ def _metric_columns(result: EvalResult) -> list[str]:
     for metrics in result.fields.values():
         cols.update(metrics)
     # Stable, readable order: structural first, then text alphabetically.
-    order = ["exact", "set_f1", "structural"]
+    order = ["exact", "set_f1", "set_f1_ids", "structural"]
     return [c for c in order if c in cols] + sorted(c for c in cols if c not in order)
 
 
 def summary_table(result: EvalResult) -> str:
-    """Plain-text field x metric mean table (also embedded in the MD)."""
+    """Plain-text field x metric table of MEASURED means (vacuous excluded).
+
+    Vacuous (empty x empty) pairs score 1.0 and inflate an inclusive mean;
+    all-vacuous cells print n/a instead of a fake 1.000 (audit finding).
+    """
     cols = _metric_columns(result)
     header = ["field", *cols]
     rows = [header, ["-" * len(h) for h in header]]
@@ -42,8 +46,13 @@ def summary_table(result: EvalResult) -> str:
         row = [field_name]
         for c in cols:
             stats = metrics.get(c)
-            # ASCII placeholder: Windows consoles often decode cp1252.
-            row.append(f"{stats['mean']:.3f}" if stats else "-")
+            # ASCII placeholders: Windows consoles often decode cp1252.
+            if stats is None:
+                row.append("-")
+            elif stats["n_measured"] == 0:
+                row.append("n/a")
+            else:
+                row.append(f"{stats['measured_mean']:.3f}")
         rows.append(row)
     widths = [max(len(r[i]) for r in rows) for i in range(len(header))]
     return "\n".join(
@@ -80,11 +89,15 @@ def render_markdown(result: EvalResult) -> str:
         f"- matched: {cov['matched']}  (recall {cov['recall']:.3f},"
         f" precision {cov['precision']:.3f})",
         "",
-        "## Field scores (mean)",
+        "## Field scores (measured mean — vacuous empty×empty pairs excluded)",
         "",
         "```",
         summary_table(result),
         "```",
+        "",
+        "`n/a` = every matched pair was empty on both sides for that field "
+        "(nothing to measure). Inclusive means and per-pair detail live in "
+        "`evaluation.json`.",
         "",
     ]
 

@@ -141,7 +141,7 @@ def _profile_for_source(source: str | None):
 def resolve_metrics(spec: str | None) -> list[Scorer]:
     """--metrics value -> text scorers to run ("all" = every installed one)."""
     if spec in (None, "", "all"):
-        return [s for s in text_scorers() if s.available]
+        return [s for s in text_scorers() if s.available and s.in_all]
     chosen: list[Scorer] = []
     for raw in spec.split(","):
         name = _METRIC_ALIASES.get(raw.strip().lower(), raw.strip().lower())
@@ -179,6 +179,40 @@ def _dict_score(sub_model, ext_val: Any, base_val: Any) -> float:
     return sum(scores) / len(scores) if scores else 1.0
 
 
+def _key_similarity(a: str, b: str) -> float:
+    """Similarity of two item keys, URL-structure-aware.
+
+    Instances of one finding share scheme+host, so whole-string fuzz is
+    dominated by that common prefix and two different endpoints
+    (`/#/login` vs `/#/admin`) still clear the threshold — the mispairing
+    class the audit flagged. When both keys parse as URLs, the path+query+
+    fragment (what actually distinguishes instances) weighs 0.8 and the
+    host 0.2; equal empty paths fall back to host similarity.
+    """
+    from urllib.parse import urlsplit
+
+    def _parts(text: str) -> tuple[str, str] | None:
+        s = text.strip().lower()
+        if "://" not in s:
+            return None
+        u = urlsplit(s)
+        path = u.path.rstrip("/")
+        if u.query:
+            path += f"?{u.query}"
+        if u.fragment:
+            path += f"#{u.fragment.rstrip('/')}"
+        return u.netloc, path
+
+    pa, pb = _parts(a), _parts(b)
+    if pa is None or pb is None:
+        return fuzz.ratio(a, b) / 100.0
+    host_sim = fuzz.ratio(pa[0], pb[0]) / 100.0
+    if not pa[1] and not pb[1]:
+        return host_sim
+    path_sim = fuzz.ratio(pa[1], pb[1]) / 100.0
+    return 0.8 * path_sim + 0.2 * host_sim
+
+
 def _list_score(sub_model, ext_val: Any, base_val: Any) -> float:
     """Sub-align list items by their key field, recurse, and normalize by the
     larger side so missing/spurious items cost score.
@@ -202,7 +236,7 @@ def _list_score(sub_model, ext_val: Any, base_val: Any) -> float:
         for j, b_item in enumerate(base_items):
             if j in used:
                 continue
-            sim = fuzz.ratio(_key_text(e_item), _key_text(b_item)) / 100.0
+            sim = _key_similarity(_key_text(e_item), _key_text(b_item))
             if sim > best_sim:
                 best_j, best_sim = j, sim
         if best_j is not None and best_sim >= _ITEM_MATCH_THRESHOLD:
@@ -254,6 +288,13 @@ def _score_pair(
             out[plan.name] = {
                 plan.metric: pair_score(SCORERS[plan.metric], ext_val, base_val)
             }
+            if plan.metric == "set_f1":
+                # Companion content-only view: strict set_f1 measures prompt
+                # formatting adherence; the canonicalized variant answers
+                # "were the right references captured?" regardless of format.
+                out[plan.name]["set_f1_ids"] = pair_score(
+                    SCORERS["set_f1_ids"], ext_val, base_val
+                )
     return out
 
 
@@ -281,8 +322,14 @@ def _summarize(
                     filled_ext += 1
                 if render_text(_row_value(base_rows[j], plan.name)):
                     filled_base += 1
+            measured = [v for v, vac in zip(values, vacuous) if not vac]
             metrics[metric] = {
                 "mean": round(statistics.fmean(values), 4),
+                # Vacuous (empty x empty) pairs score 1.0 and inflate the
+                # inclusive mean; the measured mean is the honest headline
+                # (audit finding, 2026-07-21). None when nothing was measured.
+                "measured_mean": round(statistics.fmean(measured), 4) if measured else None,
+                "n_measured": len(measured),
                 "min": round(min(values), 4),
                 "std": round(statistics.pstdev(values), 4) if len(values) > 1 else 0.0,
                 "n": len(values),

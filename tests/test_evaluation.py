@@ -71,9 +71,10 @@ def test_scorers_bertscore_unavailable_is_safe():
 
 
 def test_scorers_kinds_split():
-    assert {s.name for s in text_scorers()} == {"token_f1", "rouge_l", "bertscore"}
+    assert {s.name for s in text_scorers()} == {"token_f1", "rouge_l", "bertscore", "nli"}
     assert SCORERS["exact"].kind == "structural"
     assert SCORERS["set_f1"].kind == "structural"
+    assert SCORERS["set_f1_ids"].kind == "structural"
 
 
 # --- fields ------------------------------------------------------------------
@@ -433,3 +434,80 @@ def test_orchestration_severity_map_applied_to_baseline(tmp_path):
     res = evaluate_run(tmp_path / "results.json", baseline=tmp_path / "base.xlsx")
     # INFO->LOG is the scanner's by-design normalization, not a mismatch.
     assert res.fields["severity"]["exact"]["mean"] == 1.0
+
+
+# --- audit follow-ups: set_f1_ids, measured means, path-aware pairing, nli ---
+
+
+def test_scorers_set_f1_ids_canonicalizes_format_jitter():
+    ids = SCORERS["set_f1_ids"].fn
+    # Label prefix jitter: content identical -> 1.0 (strict set_f1 gives 0)
+    assert ids(["CVE CVE-2022-22719"], ["CVE-2022-22719"]) == 1.0
+    # Granularity jitter: one comma-joined item vs atomic items -> 1.0
+    assert ids(["CVE: CVE-2008-5304, CVE-2008-5305"],
+               ["CVE-2008-5304", "CVE-2008-5305"]) == 1.0
+    assert ids(["BID:32668, 32669"], ["BID:32668", "BID:32669"]) == 1.0
+    assert ids(["CWE 125, 20"], ["CWE 125", "CWE 20"]) == 1.0
+    # No-id items (WASC names) fall back to exploded normalized text
+    assert ids(["WASC Buffer Overflow, Improper Input Handling"],
+               ["WASC Buffer Overflow", "WASC Improper Input Handling"]) == 1.0
+    # Genuinely different references still mismatch
+    assert ids(["CVE-2022-1111"], ["CVE-2022-2222"]) == 0.0
+
+
+def test_scorers_nli_unavailable_is_safe():
+    nli = SCORERS["nli"]
+    assert nli.in_all is False  # never runs implicitly via --metrics all
+    if nli.available:
+        pytest.skip("transformers installed in this environment")
+    with pytest.raises(RuntimeError, match="eval"):
+        nli.fn("a", "b")
+
+
+def test_orchestration_measured_mean_excludes_vacuous(mini_run):
+    from mulitaminer.evaluation import evaluate_run
+
+    res = evaluate_run(mini_run)
+    ref = res.fields["references"]["set_f1"]
+    # pair 1 measured (1.0), pair 2 vacuous -> inclusive 1.0, measured n=1
+    assert ref["n"] == 2 and ref["vacuous_n"] == 1
+    assert ref["n_measured"] == 1 and ref["measured_mean"] == 1.0
+    # companion canonical metric present on set_f1 fields
+    assert "set_f1_ids" in res.fields["references"]
+
+
+def test_report_table_shows_na_for_all_vacuous(tmp_path):
+    import json as _json
+
+    import pandas as pd
+
+    from mulitaminer.evaluation import evaluate_run
+    from mulitaminer.evaluation.report import summary_table
+
+    records = [OpenVASRecord(name="Empty Impact", severity="LOW", cvss=1.0).model_dump(
+        mode="json", by_alias=True)]
+    (tmp_path / "results.json").write_text(_json.dumps(records), encoding="utf-8")
+    pd.DataFrame([{"Name": "Empty Impact", "severity": "LOW", "cvss": 1.0,
+                   "impact": None}]).to_excel(tmp_path / "b.xlsx", index=False)
+    res = evaluate_run(tmp_path / "results.json", baseline=tmp_path / "b.xlsx")
+    table = summary_table(res)
+    impact_row = next(line for line in table.splitlines() if line.startswith("impact"))
+    assert "n/a" in impact_row
+
+
+def test_orchestration_instance_pairing_prefers_matching_path():
+    from mulitaminer.evaluation.runner import _key_similarity, _structural_score
+
+    host = "https://juice-shop-388277804329.us-west1.run.app"
+    # Same host, different endpoints: must NOT clear the 0.7 threshold
+    assert _key_similarity(f"{host}/#/login", f"{host}/#/administration") < 0.7
+    # Same endpoint, formatting noise (trailing slash, case): high similarity
+    assert _key_similarity(f"{host}/#/login/", f"{host.upper()}/#/login") > 0.9
+
+    plan = next(p for p in field_plans(TenableRecord) if p.name == "instances")
+    ext = [{"instance": f"{host}/#/login", "proof": "login proof"},
+           {"instance": f"{host}/#/administration", "proof": "admin proof"}]
+    base = [{"instance": f"{host}/#/administration", "proof": "admin proof"},
+            {"instance": f"{host}/#/login", "proof": "login proof"}]
+    score, _ = _structural_score(plan, ext, base)
+    assert score == pytest.approx(1.0)  # crossed order still pairs correctly

@@ -32,6 +32,9 @@ dev = [
 # Heavy optional metrics (torch + transformers): uv sync --group eval
 eval = [
     "bert-score>=0.3.13",
+    # DeBERTa-v3 NLI tokenizer requirements (nli scorer)
+    "sentencepiece>=0.2",
+    "protobuf>=4",
 ]
 
 [build-system]
