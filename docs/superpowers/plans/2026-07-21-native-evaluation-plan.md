@@ -78,7 +78,12 @@ carries sub_model/is_list for structural recursion in E4.
 **Verify:** `pytest -k align` — known pairs found; paraphrase above/below
 threshold; duplicate names split by composite; surplus rows spurious; float
 port and services cases.
-**State:** TODO.
+**State:** DONE (7 tests). Design addition found by test: identical names on
+different ports tie at fuzzy 1.0 and make the assignment arbitrary —
+conflicting composite keys now scale name similarity by
+KEY_CONFLICT_PENALTY=0.9 so composite-compatible pairings win. scipy +
+rapidfuzz added to main deps here (E3 needs them; planned for E6).
+Composite-key layouts keyed by record source (key_parts_for_source).
 
 ## Phase E4 — Loaders and orchestration
 

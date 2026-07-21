@@ -1,6 +1,7 @@
 """Evaluation subsystem: scorers, field mapping, alignment, orchestration."""
 import pytest
 
+from mulitaminer.evaluation.align import align, composite_key, key_parts_for_source
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
 from mulitaminer.models import Instance, OpenVASRecord, PluginDetails, TenableRecord
@@ -139,3 +140,66 @@ def test_fields_builtin_configs_carry_overrides():
         "references": "set_f1",
         "cvss": "set_f1",
     }
+
+
+# --- align -------------------------------------------------------------------
+
+OV_PARTS = key_parts_for_source("OPENVAS")
+
+
+def test_align_known_pairs_all_found():
+    ext = [{"Name": "SQL Injection", "port": 80, "protocol": "tcp"},
+           {"Name": "Weak Cipher", "port": 443, "protocol": "tcp"}]
+    base = [{"Name": "Weak Cipher", "port": 443, "protocol": "tcp"},
+            {"Name": "SQL Injection", "port": 80, "protocol": "tcp"}]
+    res = align(ext, base, OV_PARTS)
+    assert sorted(res.pairs) == [(0, 1), (1, 0)]
+    assert not res.unmatched_extraction and not res.unmatched_baseline
+
+
+def test_align_paraphrased_name_threshold():
+    base = [{"Name": "Cleartext Transmission of Sensitive Information via HTTP"}]
+    close = [{"Name": "Cleartext Transmission of Sensitive Info via HTTP"}]
+    far = [{"Name": "Completely Different Finding"}]
+    assert align(close, base).pairs == [(0, 0)]
+    res = align(far, base)
+    assert res.pairs == [] and res.unmatched_extraction == [0]
+    assert res.unmatched_baseline == [0]
+
+
+def test_align_duplicate_names_resolved_by_composite():
+    ext = [{"Name": "FTP Unencrypted", "port": 21, "protocol": "tcp"},
+           {"Name": "FTP Unencrypted", "port": 2121, "protocol": "tcp"}]
+    base = [{"Name": "FTP Unencrypted", "port": 2121, "protocol": "tcp"},
+            {"Name": "FTP Unencrypted", "port": 21, "protocol": "tcp"}]
+    res = align(ext, base, OV_PARTS)
+    assert sorted(res.pairs) == [(0, 1), (1, 0)]
+
+
+def test_align_surplus_extraction_is_spurious():
+    ext = [{"Name": "A thing here"}, {"Name": "Ghost finding xyz"}]
+    base = [{"Name": "A thing here"}]
+    res = align(ext, base)
+    assert res.pairs == [(0, 0)]
+    assert res.unmatched_extraction == [1]
+    statuses = {d["extraction_index"]: d["status"] for d in res.debug_rows}
+    assert statuses[1] == "UNMATCHED"
+
+
+def test_align_float_port_guard():
+    # pandas float64 coercion: 8019.0 must key as "8019", never "80190".
+    key = composite_key({"Name": "X", "port": 8019.0, "protocol": "tcp"}, OV_PARTS)
+    assert key == "x|8019|tcp"
+
+
+def test_align_services_sentinel_keeps_rows_apart():
+    a = composite_key({"Name": "Services", "detail": "one"}, OV_PARTS)
+    b = composite_key({"Name": "Services", "detail": "two"}, OV_PARTS)
+    assert a != b and a.startswith("services_exact|")
+
+
+def test_align_empty_sides():
+    res = align([], [{"Name": "A"}])
+    assert res.unmatched_baseline == [0] and not res.pairs
+    res = align([{"Name": "A"}], [])
+    assert res.unmatched_extraction == [0] and not res.pairs
