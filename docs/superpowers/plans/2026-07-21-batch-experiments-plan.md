@@ -62,9 +62,20 @@ through to evaluation).
   keys could parallelize, and local servers serialize per `base_url`
   (Ollama processes one request at a time). The bucket key is derived
   entirely from the model config — no hardcoded provider list.
-- **Resumability:** a run dir with a complete `results.json` + `run.json`
-  is skipped on re-invocation (long batches survive interruption; the
-  manifest records skipped-as-cached).
+- **Checkpointing (v1 parity, user requirement):** the run dir IS the
+  checkpoint — a run with complete `results.json` + `run.json` is skipped
+  on re-invocation, so an interrupted experiment resumes exactly where it
+  stopped (`mulitaminer experiment` with the same args). The manifest is
+  updated incrementally after every finished run (not only at the end), so
+  a hard kill loses at most the in-flight run. Skipped-as-cached runs are
+  recorded as such.
+- **Per-run duration accounting (user requirement):** every run's own
+  `duration_s` (already measured by the pipeline, active time only) is
+  copied into the manifest, and the experiment total is the **sum of run
+  durations** — never `end_timestamp - start_timestamp`, which would count
+  idle hours when someone stops and resumes from checkpoint later. The
+  manifest keeps both numbers explicitly labeled: `active_seconds` (sum)
+  and `wall_clock_seconds` (informational, per session segment).
 - Determinism note: temperature is 0 but sampling is not bitwise-stable —
   X runs exist precisely to measure run-to-run variance.
 
