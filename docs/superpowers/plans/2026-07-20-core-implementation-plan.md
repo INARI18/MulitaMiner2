@@ -258,4 +258,14 @@ instances; user wants a closer look at this later.
 - [ ] Next exporters when wanted: CAIS (v1 OUTPUT_STANDARDS §6 — deterministic
   V3→CAIS mapper; golden available from old CAIS-prompt outputs), CSAF 2.0.
 
+## Phase 13 — Cleanups queued for after the validation runs finish
+
+- [ ] (user request) Drop the `_prompt` suffix from prompt filenames:
+  `configs/prompts/openvas_prompt.txt` → `openvas.txt`, same for tenable.
+  While at it, make the config's `prompt` key optional, defaulting to
+  `<name>.txt` (same inference pattern as the record class) — both built-in
+  JSONs then lose the key. Update engine docstring, SCANNER_CONFIGS.md and
+  tests. DO NOT apply while extraction runs are in flight (mid-run code
+  changes lesson).
+
 **State:** seam + generic + sarif DONE (62 tests passing).
