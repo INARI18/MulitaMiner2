@@ -1,6 +1,6 @@
 """CAIS export: dotted-key institutional schema, emitted as CSV + JSON.
 
-Deterministic mapping from validated records — no LLM involved. Fields the
+Deterministic mapping from validated records; no LLM involved. Fields the
 records cannot provide (EPSS, dates, CPE) are emitted as null/empty so the
 column set is always complete.
 """

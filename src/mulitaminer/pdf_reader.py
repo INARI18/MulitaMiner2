@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 _CID_MAP = {16: '"', 17: '"', 27: "ff", 28: "fi", 29: "fl", 30: "ffi", 31: "ffl"}
 # pypdfium2 emits the SAME broken glyphs as raw control characters instead of
 # "(cid:N)" markers ("a\x1bected" = "affected"). Same map, then
-# any leftover C0 control char (except \t \n) is stripped — a control char
+# any leftover C0 control char (except \t \n) is stripped; a control char
 # reaching an LLM response makes the JSON invalid by definition.
 _CTRL_LIGATURES = str.maketrans({chr(cid): glyph for cid, glyph in _CID_MAP.items()})
 _CTRL_STRIP_RE = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
@@ -50,7 +50,7 @@ class PdfBackend(Protocol):
 
 
 class PdfplumberBackend:
-    """Reference backend — the layout regexes were calibrated on its output."""
+    """Pure-Python fallback backend."""
 
     name = "pdfplumber"
 
@@ -97,7 +97,7 @@ BACKENDS: dict[str, PdfBackend] = {
     Pdfium2Backend.name: Pdfium2Backend(),
 }
 
-DEFAULT_BACKEND = "pypdfium2"  # native C++ engine; same marker counts as pdfplumber, far faster
+DEFAULT_BACKEND = "pypdfium2"
 
 
 def _clean_page(text: str) -> str:
@@ -146,6 +146,6 @@ def extract_pdf(path: Path, backend: str = DEFAULT_BACKEND) -> ExtractedDoc:
     text = _TENABLE_EXPORT_FOOTER_RE.sub("", text)
     if not text.strip():
         raise ValueError(
-            f"No text extracted from {path} — the file may be corrupted or image-only."
+            f"No text extracted from {path}; the file may be corrupted or image-only."
         )
     return ExtractedDoc(text=text, page_count=len(raw_pages), backend=backend)

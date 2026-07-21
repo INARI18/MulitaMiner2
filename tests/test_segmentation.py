@@ -85,7 +85,7 @@ def test_tenable_name_walkback_pulls_name_into_block():
 
 def test_tenable_wrapped_instances_title_is_fully_captured():
     """Long '<name> Instances (N)' titles wrap; the line
-    above the marker is then only '(1)' — the walk-back must climb one more
+    above the marker is then only '(1)'; the walk-back must climb one more
     line, or pairing breaks."""
     fixture = """\
 Apache 2.4.x < 2.4.25 Multiple Vulnerabilities (httpoxy)

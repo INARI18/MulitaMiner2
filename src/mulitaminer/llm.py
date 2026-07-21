@@ -20,7 +20,7 @@ _FENCE_RE = re.compile(r"^\s*```(?:json)?\s*|\s*```\s*$", re.IGNORECASE)
 
 
 class FatalLLMError(Exception):
-    """Unrecoverable provider error (auth, quota, unknown model) — abort the run."""
+    """Unrecoverable provider error (auth, quota, unknown model); abort the run."""
 
 
 @dataclass(frozen=True)

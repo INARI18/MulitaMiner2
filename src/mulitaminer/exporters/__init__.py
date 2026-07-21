@@ -35,4 +35,4 @@ def get_exporter(name: str) -> Exporter:
         raise ValueError(f"Unknown export format '{name}'. Available: {sorted(EXPORTERS)}")
 
 
-from mulitaminer.exporters import cais, csaf, generic, sarif, tabular  # noqa: E402,F401 — populate registry
+from mulitaminer.exporters import cais, csaf, generic, sarif, tabular  # noqa: E402,F401; populate registry

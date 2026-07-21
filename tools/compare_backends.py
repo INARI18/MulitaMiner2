@@ -1,6 +1,6 @@
 """Compare PDF backends on the baseline reports: marker counts per backend.
 
-The scanner marker count is the ground truth proxy — each marker line is one
+The scanner marker count is the ground truth proxy; each marker line is one
 finding occurrence. The backend whose text yields marker counts matching the
 known baseline counts (and does it faster) wins the default slot.
 

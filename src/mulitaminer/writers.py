@@ -1,6 +1,6 @@
 """Output writers: JSON (primary), XLSX, CSV.
 
-Columns are derived from the record model — never hardcoded.
+Columns are derived from the record model; never hardcoded.
 """
 from __future__ import annotations
 

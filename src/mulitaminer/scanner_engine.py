@@ -25,7 +25,7 @@ RECORD_TYPES: dict[str, type[VulnRecord]] = {
 _BUILTIN_DIR = Path(__file__).parent / "configs" / "scanners"
 
 # A wrapped block-title tail, e.g. "(1)" or "Instances" / "Instances (25)"
-# alone on the line above a marker — the real name sits one line further up.
+# alone on the line above a marker; the real name sits one line further up.
 _SUFFIX_FRAGMENT = re.compile(r"^(\(\d+\)|Instances(\s*\(\d+\))?)\s*$", re.IGNORECASE)
 
 
@@ -129,7 +129,7 @@ def _build_consolidator(cfg: dict):
 
     def _identity_key(record: VulnRecord):
         # A duplicate is a FULLY identical record (name compared normalized):
-        # same key with different content means two real findings — merging
+        # same key with different content means two real findings; merging
         # them would silently lose one. Only exact repeats collapse.
         data = record.model_dump(mode="json", by_alias=True)
         data["Name"] = normalize_name(record.name)

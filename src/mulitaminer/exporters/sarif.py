@@ -1,4 +1,4 @@
-"""SARIF 2.1.0 export — the de facto findings format tools actually ingest
+"""SARIF 2.1.0 export; the de facto findings format tools actually ingest
 (GitHub code scanning, DefectDojo, SonarQube, Azure DevOps).
 
 Network findings carry no file location, so results use logicalLocations

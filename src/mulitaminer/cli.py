@@ -72,7 +72,7 @@ def extract(
 
     typer.echo(
         f"\n{len(result.records)} records ({result.block_count} blocks) in "
-        f"{result.duration_s}s — ${result.usage.cost_usd:.4f} "
+        f"{result.duration_s}s; ${result.usage.cost_usd:.4f} "
         f"({result.usage.prompt_tokens}+{result.usage.completion_tokens} tokens, "
         f"{result.usage.calls} calls)"
     )

@@ -3,7 +3,7 @@
 DefectDojo
 is the aggregator closest to MulitaMiner's role (it ingests scanner findings
 and does cross-scanner dedup/tracking), and its Generic parser takes plain
-JSON — the cheapest bridge from "PDF report" to "managed findings".
+JSON; the cheapest bridge from "PDF report" to "managed findings".
 Format: https://docs.defectdojo.com/supported_tools/parsers/file/generic/
 """
 from __future__ import annotations

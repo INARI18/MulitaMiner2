@@ -81,7 +81,7 @@ def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, 
         if not blocks:
             raise ValueError(
                 f"No finding blocks found in {config.input_path.name} with the "
-                f"'{profile.name}' scanner profile — wrong --scanner?"
+                f"'{profile.name}' scanner profile; wrong --scanner?"
             )
         log.info("Segmented %d finding blocks", len(blocks))
 

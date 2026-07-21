@@ -1,7 +1,7 @@
 """Pack whole blocks into token-budgeted chunks.
 
 Invariants: blocks are never split, chunks never overlap, every block lands in
-exactly one chunk. Pass a token budget derived from the model's OUTPUT cap —
+exactly one chunk. Pass a token budget derived from the model's OUTPUT cap -
 extraction output mirrors the input, so output is the binding constraint.
 """
 from __future__ import annotations
@@ -31,7 +31,7 @@ def count_tokens(text: str, encoding_name: str = "cl100k_base") -> int:
     unavailable (offline first run, exotic local models)."""
     try:
         return len(_encoding(encoding_name).encode(text))
-    except Exception:  # noqa: BLE001 — any tiktoken failure degrades to the estimate
+    except Exception:  # noqa: BLE001; any tiktoken failure degrades to the estimate
         return int(len(text) / settings.FALLBACK_CHARS_PER_TOKEN)
 
 

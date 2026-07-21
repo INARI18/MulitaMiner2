@@ -1,89 +1,123 @@
-# Scanner Configs — Reference and Rationale
+# Scanner Configs
 
-A scanner is defined by ONE JSON file in `src/mulitaminer/configs/scanners/`
-plus ONE prompt file in `configs/prompts/`. Users can plug additional scanners
-with no Python: drop `<name>.json` + `<name>.txt` into a directory and point
-the `MULITAMINER_SCANNERS_DIR` env var at it. The field reference lives in
-`scanner_engine.py`; this document records **why** each built-in value is what
-it is — all of it verified empirically against the baseline reports.
+A scanner is defined by one JSON file in `src/mulitaminer/configs/scanners/`
+plus one prompt file in `configs/prompts/`. Users can plug additional scanners
+with no Python: drop `<name>.json` and `<name>.txt` into a folder and point
+the `MULITAMINER_SCANNERS_DIR` env var at it. This document is the config
+reference and records why each built-in value is what it is. All of it was
+verified empirically against the baseline reports.
 
-## Adding a scanner in short
+## Adding a scanner
 
-Start minimal — `name`, `source`, `max_vulns_per_chunk`, and the
-`marker_pattern` (the line that opens every finding; one match = one block).
+Start minimal:
+
+```json
+{
+  "name": "acmescan",
+  "source": "ACMESCAN",
+  "max_vulns_per_chunk": 4,
+  "marker_pattern": "^FINDING\\s+(CRITICAL|HIGH|MEDIUM|LOW)\\b"
+}
+```
+
 The prompt file defaults to `<name>.txt` next to the JSON (or in a sibling
-`prompts/` folder); an explicit `prompt` key overrides.
-Then look at YOUR report and answer three questions; each "yes" adds one key:
+`prompts/` folder). An explicit `prompt` key overrides.
 
-1. Is the finding's NAME on the line above the marker? → `name_above_marker`
-   (+ `name_stop_pattern` if that line is sometimes previous-block content).
-2. Is there information valid for SEVERAL findings printed above them
-   (port headers, a single host line)? → `context`.
-3. Is one finding printed as TWO OR MORE blocks to re-join? → `pair`.
+Then look at your report and answer three questions. Each "yes" adds one key:
 
-Verify offline, free, no LLM: `mulitaminer segment report.pdf --scanner
-<name>` — the block count must equal the report's finding count; iterate on
-the config until it does. For the prompt, copy the closest built-in from
-`configs/prompts/` and adapt the INPUT FORMAT and field rules, keeping the
-`### BLOCK` / `block_id` contract and one worked example.
+1. Is the finding's name on the line above the marker? Add `name_above_marker`
+   (plus `name_stop_pattern` if that line is sometimes previous-block content).
+2. Is there information valid for several findings printed above them, like
+   port headers or a single host line? Add `context`.
+3. Is one finding printed as two or more blocks that must be re-joined? Add
+   `pair`.
+
+Verify offline, free, no LLM:
+
+```bash
+uv run mulitaminer segment report.pdf --scanner acmescan
+```
+
+The block count must equal the report's finding count. Too many blocks means
+the marker also matches summary/TOC lines; too few means the marker line
+varies. Iterate on the config until it matches.
+
+For the prompt, copy the closest built-in from `configs/prompts/` and adapt
+the INPUT FORMAT and field rules. Keep the `### BLOCK` / `block_id` contract
+untouched and keep one worked example.
+
+## Field reference
+
+| Key | Meaning |
+| --- | --- |
+| `name` | CLI name. Also selects the typed record class when one matches; `record` overrides |
+| `source` | Stamped into every record's `source` field |
+| `prompt` | Optional prompt filename, defaults to `<name>.txt` |
+| `max_vulns_per_chunk` | Max blocks per LLM call |
+| `marker_pattern` | Regex; one match line = one block. Capture group 1 becomes the severity hint. Prefix `(?i)` for case-insensitive |
+| `name_above_marker` | The finding name is the single line above the marker and is pulled into the block |
+| `name_stop_pattern` | A line matching it is never taken as the name |
+| `context.header_patterns` | Regexes with named groups `sev`/`port`/`proto`; the latest match above a marker becomes that block's context |
+| `context.host_anchor` / `host_line` | Host recovery: `host_line` group 1, matched on the nearest non-blank line above the anchor |
+| `pair` | Structural pairing: `strip_name_suffix`, `by` (fields), `merge_instances`. Always runs |
+| `severity_map` | Post-pairing normalization, e.g. `{"INFO": "LOG"}` |
 
 ## OpenVAS (`openvas.json`)
 
-**Marker `^\s*(Critical|High|Medium|Low|Log)\s+\(CVSS:`** — one match line is
-one finding. The marker is the `Severity (CVSS: X.Y)` line that sits
-immediately ABOVE each `NVT:` line, so the severity header travels with its
-NVT. Marking at `NVT:` instead leaves the header in the previous block and
-the LLM guesses severity (usually LOG).
+Marker `^\s*(Critical|High|Medium|Low|Log)\s+\(CVSS:`. One match line is one
+finding. The marker is the `Severity (CVSS: X.Y)` line that sits immediately
+above each `NVT:` line, so the severity header travels with its NVT. Marking
+at `NVT:` instead leaves the header in the previous block and the LLM guesses
+severity (usually LOG).
 
-**`context.header_patterns`** — port/protocol headers (`High 443/tcp`) appear
-in three layouts: plain, reversed order (`443/tcp High`, markdown extractor),
-and with a `2.1.1 ` section-number prefix. The latest header above a marker
-becomes that block's port/protocol context, rendered into its `### BLOCK`
-prompt line. OpenVAS also emits pseudo-protocols in headers
-(`general/CPE-T`) — those stay LLM context but never enter the typed
+`context.header_patterns`: port/protocol headers like `High 443/tcp` appear
+in three layouts (plain, reversed order, section-numbered prefix). The latest
+header above a marker becomes that block's port/protocol context, rendered
+into its `### BLOCK` prompt line. OpenVAS also emits pseudo-protocols in
+headers (`general/CPE-T`); those stay LLM context but never enter the typed
 `protocol` field.
 
-**`context.host_anchor` / `host_line`** — the scanned IP sits on the nearest
-non-blank line above `Host scan start`, in the report preamble (before any
-marker); context tracking is the only way to recover it.
+`context.host_anchor` / `host_line`: the scanned IP sits on the nearest
+non-blank line above `Host scan start`, in the report preamble before any
+marker. Context tracking is the only way to recover it.
 
-**`max_vulns_per_chunk: 4`** — empirical calibration.
+`max_vulns_per_chunk: 4`, empirical calibration.
 
 ## Tenable WAS (`tenable.json`)
 
-**Marker `VULNERABILITY <SEV> PLUGIN ID <n>`** (case-insensitive via `(?i)`)
-— one match line is one block; a finding appears as TWO consecutive blocks,
-Base (Description/Solution/Risk/Plugin Details) and `Name Instances (N)`
-(per-URL evidence).
+Marker `VULNERABILITY <SEV> PLUGIN ID <n>`, case-insensitive via `(?i)`. One
+match line is one block; a finding appears as two consecutive blocks, Base
+(Description/Solution/Risk/Plugin Details) and `Name Instances (N)` (per-URL
+evidence).
 
-**`name_above_marker: true` + `name_stop_pattern`** — the vulnerability NAME
-is the ONE line immediately before the VULNERABILITY header. Names never wrap
+`name_above_marker: true` plus `name_stop_pattern`: the vulnerability name is
+the one line immediately before the VULNERABILITY header. Names never wrap
 (max 56 chars in the ground truth); a multi-line walk-back pollutes names
 with the previous block's reference tail (`BID -`, `CVE -`), breaking
 pairing. The stop pattern rejects section headers and reference-content lines
-as a second guard. Long `<name> Instances (N)` titles DO wrap — the engine
-climbs past a lone `(1)`/`Instances` fragment to the real name.
+as a second guard. Long `<name> Instances (N)` titles DO wrap, so the engine
+climbs past a lone `(1)` or `Instances` fragment to the real name.
 
-**`pair`** — base + instances blocks are merged by normalized name (with the
+`pair`: base and instances blocks are merged by normalized name (with the
 `Instances (N)` suffix stripped) and the fields in `by` (`plugin`, Tenable's
-stable numeric ID). Pairing is structure, not deduplication: it always runs;
-without it every finding is two broken halves.
+stable numeric ID). Pairing is structure, not deduplication; it always runs.
+Without it every finding is two broken halves.
 
-**`severity_map INFO→LOG`** — both scanners share one informational tier:
-a Tenable record is INFO before pairing, LOG after.
+`severity_map INFO to LOG`: both scanners share one informational tier. A
+Tenable record is INFO before pairing, LOG after.
 
-**`max_vulns_per_chunk: 3`** — empirical calibration.
+`max_vulns_per_chunk: 3`, empirical calibration.
 
 ## Engine-wide rules (not configurable)
 
-- **Duplicate = fully identical record** (name compared normalized). Same key
-  with different content is two real findings and never merges (e.g. OpenVAS
+- Duplicate = fully identical record, name compared normalized. Same key with
+  different content is two real findings and never merges. Examples: OpenVAS
   `Services` legitimately repeats on the same host/port, one record per
-  detected service; two distinct plugins can even share a display name).
-  Legitimate OpenVAS repeats live on different hosts/ports and are therefore
-  never merged; Tenable should have no true duplicates at all — a dedup merge
-  in a Tenable run's `merge_log` is an anomaly worth investigating.
-- **Oversized single blocks** (e.g. Tenable `Instances (25)` — input alone
-  exceeding the model's output budget) are truncated at the input tail with an
-  explicit `[TRUNCATED: ...]` marker and a per-block warning: partial data
+  detected service; two distinct plugins can share a display name. Legitimate
+  OpenVAS repeats live on different hosts/ports and are therefore never
+  merged. Tenable should have no true duplicates at all, so a dedup merge in
+  a Tenable run's `merge_log` is an anomaly worth investigating.
+- Oversized single blocks (input alone exceeding the model's output budget,
+  e.g. a block with 25 instances) are truncated at the input tail with an
+  explicit `[TRUNCATED: ...]` marker and a per-block warning. Partial data
   beats a dropped finding, and the truncation is declared, never silent.

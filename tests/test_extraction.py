@@ -77,7 +77,7 @@ def test_unknown_and_duplicate_ids_dropped_with_warning():
 
 
 def test_retry_rounds_shrink_chunks():
-    """A chunk that hit the output cap fails identically at the same size —
+    """A chunk that hit the output cap fails identically at the same size -
     retry rounds must re-send progressively smaller groups (4 -> 2 -> 1)."""
     blocks = _blocks(4)
     bad = json.JSONDecodeError("bad", "doc", 0)

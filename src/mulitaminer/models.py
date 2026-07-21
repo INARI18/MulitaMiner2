@@ -1,4 +1,4 @@
-"""Typed data models — single source of truth for the vulnerability record.
+"""Typed data models; single source of truth for the vulnerability record.
 The LLM contract (`extraction_model_for`) is derived from the record model."""
 from __future__ import annotations
 

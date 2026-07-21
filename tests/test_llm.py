@@ -1,4 +1,4 @@
-"""LLM client tests with a stubbed transport — no network."""
+"""LLM client tests with a stubbed transport; no network."""
 import json
 from types import SimpleNamespace
 
