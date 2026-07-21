@@ -133,7 +133,10 @@ tool_version in meta; MD embeds the same summary table the console prints.
 
 **Verify:** `pytest tests/test_evaluation.py tests/test_cli.py`; `uv run
 mulitaminer evaluate --list-metrics` shows availability truthfully.
-**State:** TODO.
+**State:** DONE (3 CLI tests; 110 total). scipy/rapidfuzz had landed in E3;
+this phase added the `eval` group (bert-score). `--list-metrics` lives on
+the evaluate command (target optional). Pre-existing ruff E402 in
+exporters/__init__.py noted, untouched (not this diff).
 
 ## Phase E7 — Live validation and bookkeeping
 

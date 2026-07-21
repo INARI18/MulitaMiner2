@@ -364,3 +364,49 @@ def test_report_writes_json_and_md(mini_run):
 
     table = summary_table(res)
     assert "severity" in table and "exact" in table
+
+
+# --- CLI ---------------------------------------------------------------------
+
+
+def test_cli_evaluate_run_dir(mini_run):
+    from typer.testing import CliRunner
+
+    from mulitaminer.cli import app
+
+    result = CliRunner().invoke(app, ["evaluate", str(mini_run)])
+    assert result.exit_code == 0, result.output
+    assert "Coverage: 2/3 matched" in result.output
+    assert (mini_run / "evaluation.json").exists()
+    assert (mini_run / "evaluation.md").exists()
+
+
+def test_cli_evaluate_metrics_subset_and_errors(mini_run):
+    from typer.testing import CliRunner
+
+    from mulitaminer.cli import app
+
+    runner = CliRunner()
+    ok = runner.invoke(app, ["evaluate", str(mini_run), "--metrics", "token_f1"])
+    assert ok.exit_code == 0, ok.output
+
+    bad = runner.invoke(app, ["evaluate", str(mini_run), "--metrics", "nope"])
+    assert bad.exit_code == 1 and "valid" in bad.output
+
+    bare = runner.invoke(app, ["evaluate", str(mini_run / "results.json")])
+    assert bare.exit_code == 1 and "baseline" in bare.output.lower()
+
+    if not SCORERS["bertscore"].available:
+        unavailable = runner.invoke(app, ["evaluate", str(mini_run), "--metrics", "bert"])
+        assert unavailable.exit_code == 1 and "eval" in unavailable.output
+
+
+def test_cli_evaluate_list_metrics():
+    from typer.testing import CliRunner
+
+    from mulitaminer.cli import app
+
+    result = CliRunner().invoke(app, ["evaluate", "--list-metrics"])
+    assert result.exit_code == 0
+    for name in ("exact", "set_f1", "token_f1", "rouge_l", "bertscore"):
+        assert name in result.output

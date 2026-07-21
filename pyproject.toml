@@ -29,6 +29,10 @@ dev = [
     "ruff>=0.5",
     "mypy>=1.10",
 ]
+# Heavy optional metrics (torch + transformers): uv sync --group eval
+eval = [
+    "bert-score>=0.3.13",
+]
 
 [build-system]
 requires = ["hatchling"]

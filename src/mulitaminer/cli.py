@@ -154,6 +154,60 @@ def export(
         typer.echo(f"{fmt}: {out}")
 
 
+@app.command()
+def evaluate(
+    target: Path | None = typer.Argument(
+        None, help="A run directory (results.json + run.json) or a results.json file"
+    ),
+    baseline: Path | None = typer.Option(
+        None, "--baseline", "-b",
+        help="Baseline XLSX (required for a bare results.json; otherwise auto-discovered)",
+    ),
+    metrics: str = typer.Option(
+        "all", "--metrics",
+        help="Text metrics to run: 'all' or comma-separated (token_f1,rouge_l,bertscore)",
+    ),
+    threshold: float = typer.Option(0.7, "--threshold", help="Alignment similarity cutoff"),
+    list_metrics: bool = typer.Option(
+        False, "--list-metrics", help="List the metric registry and exit"
+    ),
+) -> None:
+    """Score an existing extraction against a baseline. Never runs extraction."""
+    from mulitaminer.evaluation import evaluate_run
+    from mulitaminer.evaluation.report import summary_table, write_reports
+    from mulitaminer.evaluation.scorers import SCORERS
+
+    if list_metrics:
+        for s in SCORERS.values():
+            status = "available" if s.available else f"UNAVAILABLE — {s.hint}"
+            typer.echo(f"{s.name:<10} {s.kind:<11} {status}")
+        return
+    if target is None:
+        typer.secho("Error: provide a run directory or results.json (or --list-metrics).",
+                    fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    try:
+        result = evaluate_run(target, baseline=baseline, metrics=metrics,
+                              threshold=threshold)
+    except (ValueError, RuntimeError, FileNotFoundError) as exc:
+        typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    results_path = Path(result.meta["results"])
+    paths = write_reports(result, results_path.parent)
+    cov = result.coverage
+    typer.secho(
+        f"\nCoverage: {cov['matched']}/{cov['baseline_count']} matched "
+        f"(recall {cov['recall']:.3f}, precision {cov['precision']:.3f}); "
+        f"{len(cov['missed'])} missed, {len(cov['spurious'])} spurious",
+        bold=True,
+    )
+    typer.echo(f"\n{summary_table(result)}\n")
+    for kind, path in paths.items():
+        typer.echo(f"{kind}: {path}")
+
+
 @app.command("sync-feeds")
 def sync_feeds_cmd() -> None:
     """Download the KEV and EPSS feeds for prioritization (~5 MB, daily data)."""
