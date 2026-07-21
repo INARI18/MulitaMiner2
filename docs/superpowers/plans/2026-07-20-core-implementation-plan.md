@@ -342,6 +342,16 @@ Candidate options:
 - **Nikto** (plain text): cheapest "non-PDF" experiment — marker segmentation
   already operates on text, so only a trivial text reader is needed.
 
+More open-source candidates (all free):
+- **Wapiti** (web scan; JSON/XML/TXT/HTML) — lightweight ZAP alternative.
+- **Semgrep** (SAST; SARIF/JSON) — interesting symmetry: the tool would
+  ingest the same SARIF it exports.
+- **Grype** (container/dependency vulns; JSON) and **OSV-Scanner** (Google,
+  JSON) — supply-chain domain.
+- **Trivy** (containers/IaC; JSON/SARIF).
+- **Lynis** (host audit; plain-text report).
+- **Vuls** (Linux vuln scanner; JSON).
+
 Decision to make at design time: one scanner on the PDF path (ZAP) vs. one on
 the structured path (Nuclei) vs. both.
 

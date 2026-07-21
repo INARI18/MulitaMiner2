@@ -97,9 +97,7 @@ BACKENDS: dict[str, PdfBackend] = {
     Pdfium2Backend.name: Pdfium2Backend(),
 }
 
-# pypdfium2 won the bake-off (tools/compare_backends.py, 2026-07-20): marker
-# counts identical to pdfplumber on all 5 baseline PDFs, 10-40x faster.
-DEFAULT_BACKEND = "pypdfium2"
+DEFAULT_BACKEND = "pypdfium2"  # native C++ engine; same marker counts as pdfplumber, far faster
 
 
 def _clean_page(text: str) -> str:
