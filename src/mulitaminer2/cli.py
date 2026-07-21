@@ -93,6 +93,44 @@ def models() -> None:
 
 
 @app.command()
+def segment(
+    report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
+    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer2 scanners`"),
+    pdf_backend: str = typer.Option(
+        DEFAULT_BACKEND, "--pdf-backend", help=f"One of: {sorted(BACKENDS)}"
+    ),
+    show: int = typer.Option(3, "--show", help="How many blocks to preview"),
+    lines: int = typer.Option(6, "--lines", help="Preview lines per block"),
+) -> None:
+    """Segment REPORT into blocks WITHOUT calling any LLM (free, offline).
+
+    The config-writing feedback loop (docs/ADDING_A_SCANNER.md): the block
+    count must equal the report's finding count.
+    """
+    _setup_logging(debug=False)
+    from mulitaminer2.reader import extract_pdf
+    from mulitaminer2.scanners import get_scanner
+
+    profile = get_scanner(scanner)
+    doc = extract_pdf(report, backend=pdf_backend)
+    blocks = profile.segment(doc.text)
+    typer.secho(f"\n{len(blocks)} blocks found in {report.name}", bold=True)
+    for block in blocks[:show]:
+        context = ", ".join(
+            f"{k}={v}" for k, v in
+            (("host", block.host), ("port", block.port),
+             ("protocol", block.protocol), ("severity", block.severity_hint))
+            if v is not None
+        )
+        typer.secho(f"\n--- BLOCK {block.id} ({context or 'no context'}) ---",
+                    fg=typer.colors.CYAN)
+        for line in block.text.splitlines()[:lines]:
+            typer.echo(f"  {line}")
+    if len(blocks) > show:
+        typer.echo(f"\n... {len(blocks) - show} more blocks (use --show to see more)")
+
+
+@app.command()
 def formats() -> None:
     """List available export formats for --export."""
     from mulitaminer2.exporters import EXPORTERS
