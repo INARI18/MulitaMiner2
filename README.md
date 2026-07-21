@@ -15,7 +15,7 @@ output count matches the report, with or without deduplication.
 | Scanners | OpenVAS/Greenbone, Tenable WAS |
 | Cloud models | DeepSeek, OpenAI (gpt-4o / gpt-4o-mini), Groq (Llama 3.3 70B) |
 | Local models | Ollama, LM Studio — and any OpenAI-compatible server (vLLM, llama.cpp); **no API key needed** |
-| Outputs | JSON (primary), XLSX, CSV + `run.json` metadata per run |
+| Outputs | JSON (primary) + `run.json` metadata; exports: XLSX, CSV, SARIF 2.1.0, DefectDojo Generic JSON, CAIS, CSAF 2.0 |
 
 ## Install
 

@@ -22,7 +22,7 @@ RECORDS = [
 
 
 def test_registry_has_all_formats():
-    assert {"xlsx", "csv", "generic", "sarif"} <= set(EXPORTERS)
+    assert {"xlsx", "csv", "generic", "sarif", "cais", "csaf"} <= set(EXPORTERS)
     with pytest.raises(ValueError, match="Unknown export format"):
         get_exporter("pdf")
 
@@ -61,6 +61,51 @@ def test_sarif_structure_levels_and_rule_dedup(tmp_path):
     assert first["ruleId"] == repeat["ruleId"]
     assert first["locations"][0]["logicalLocations"][0]["fullyQualifiedName"] == "10.0.0.5:1524"
     assert first["properties"]["cvss"] == 7.5
+
+
+def test_cais_mapping(tmp_path):
+    from mulitaminer2.models import Instance, TenableRecord
+
+    tenable = TenableRecord(
+        name="HSTS Missing", severity="HIGH", plugin=98056, host="example.com",
+        description=["No HSTS."], solution=["Enable HSTS."],
+        references=["CWE 693", "CVE-2020-0001"],
+        cvss=["CVSSV3 BASE SCORE 6.5", "CVSSV3 VECTOR CVSS:3.0/AV:N/AC:L"],
+        instances=[Instance(instance="https://a")],
+    )
+    path = get_exporter("cais")(RECORDS + [tenable], OpenVASRecord, tmp_path)
+    assert path.name == "results.cais.csv"
+    rows = json.loads((tmp_path / "results.cais.json").read_text(encoding="utf-8"))
+    openvas_row, _, tenable_row = rows
+    assert openvas_row["definition.name"] == "Ingreslock Backdoor"
+    assert openvas_row["asset.display_ipv4_address"] == "10.0.0.5"
+    assert openvas_row["asset.system_type"] == "Network Service"
+    assert openvas_row["definition.cve"] == "CVE-2011-0001, CVE-2011-0002"
+    assert openvas_row["definition.cvss3.base_score"] == 7.5
+    assert openvas_row["state"] == "open"
+    assert tenable_row["asset.display_fqdn"] == "example.com"
+    assert tenable_row["asset.system_type"] == "Web Application"
+    assert tenable_row["definition.id"] == "98056"
+    assert tenable_row["definition.cwe"] == "CWE-693"
+    assert tenable_row["definition.cvss3.base_vector"] == "CVSS:3.0/AV:N/AC:L"
+
+
+def test_csaf_document_structure(tmp_path):
+    path = get_exporter("csaf")(RECORDS, OpenVASRecord, tmp_path)
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    assert doc["document"]["csaf_version"] == "2.0"
+    assert doc["document"]["category"] == "csaf_security_advisory"
+    tracking = doc["document"]["tracking"]
+    assert tracking["id"].startswith("MULITAMINER2-")
+    assert tracking["initial_release_date"]
+    assert len(doc["vulnerabilities"]) == 2
+    high, log = doc["vulnerabilities"]
+    assert high["cve"] == "CVE-2011-0001"
+    assert high["remediations"][0]["details"] == "Clean the host."
+    assert "cve" not in log  # no references -> no cve key
+    products = {p["product_id"]: p["name"] for p in doc["product_tree"]["full_product_names"]}
+    assert products == {"HOST-1": "10.0.0.5"}
+    assert high["product_status"]["known_affected"] == ["HOST-1"]
 
 
 def test_sarif_rule_help_carries_solution(tmp_path):

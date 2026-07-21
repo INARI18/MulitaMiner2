@@ -277,8 +277,13 @@ instances; user wants a closer look at this later.
 - [x] `sarif`: SARIF 2.1.0 (rules deduped by plugin/name slug, logicalLocations
   host:port, property bag with cvss/port/protocol/source, solution as rule
   help).
-- [ ] Next exporters when wanted: CAIS (v1 OUTPUT_STANDARDS §6 — deterministic
-  V3→CAIS mapper; golden available from old CAIS-prompt outputs), CSAF 2.0.
+- [x] `cais`: dotted-key institutional schema (CSV + JSON), field list taken
+  from v1's cais_validator; CVE/CWE parsed from references, CVSS3/2
+  score+vector parsed from the Tenable cvss strings, system_type derived from
+  source, state="open".
+- [x] `csaf`: CSAF 2.0 security advisory — hosts as product_tree, one
+  vulnerabilities[] entry per record, scores only when a v3 vector exists.
+  Smoke on real JuiceShop run: 78 vulns, 43 with cvss_v3, 25 with cve.
 
 ## Phase 13 — Cleanups queued for after the validation runs finish
 
