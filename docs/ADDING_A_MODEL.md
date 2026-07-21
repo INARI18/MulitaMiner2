@@ -52,9 +52,25 @@ uv run mulitaminer extract report.pdf -s openvas -m ollama --model-name qwen3
 uv run mulitaminer extract report.pdf -s openvas -m lmstudio --model-name my-model
 ```
 
-To pin a specific local model as its own profile, copy `ollama.json`, change
-`key` and `model`, and leave `api_key_env` out. Any other OpenAI-compatible
-server works by setting `base_url` to its address.
+**The generic profiles are for quick experiments.** They carry one-size
+metadata (32k context, 8k output), and `max_output_tokens` drives chunk
+sizing — so for serious use of a specific local model, give it its own
+profile with that model's honest numbers. `qwen3.json`:
+
+```json
+{
+  "key": "qwen3",
+  "model": "qwen3",
+  "base_url": "http://localhost:11434/v1",
+  "context_window": 40000,
+  "max_output_tokens": 16000,
+  "reasoning_tags": true
+}
+```
+
+The registry is per-model by design — `ollama`/`lmstudio` are deliberate
+catch-alls, not the pattern to follow. Any other OpenAI-compatible server
+works by setting `base_url` to its address.
 
 ## Structured output: the one field that matters
 
