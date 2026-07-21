@@ -26,7 +26,9 @@ Conventions (same as the core plan):
 **Verify:** `uv run pytest`; `uv run mulitaminer sync-feeds` writes to
 `feeds/` and prints the path; `uv run mulitaminer prioritize <run>` still
 works against the new location.
-**State:** TODO.
+**State:** DONE (commit dd8ab3d). Existing outputs/feeds cache migrated by
+moving the files; load_kev/load_epss verified against the new path; 80 tests
+green. README needed no change (it never named the path).
 
 ## Phase E1 — Scorers
 
@@ -41,7 +43,8 @@ works against the new location.
 **Verify:** `pytest tests/test_evaluation.py -k scorers` — hand-computed
 values per scorer; vacuous and presence-mismatch rules; missing bert-score
 does not crash.
-**State:** TODO.
+**State:** DONE (8 tests). BERTScorer model cached per process; registry
+carries kind + availability + hint; pair_score returns (score, vacuous).
 
 ## Phase E2 — Schema-driven field mapping
 
