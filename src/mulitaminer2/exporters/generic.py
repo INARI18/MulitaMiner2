@@ -68,7 +68,7 @@ def _finding(record: VulnRecord) -> dict:
     return finding
 
 
-@register("generic")
+@register("generic", "DefectDojo Generic Findings JSON (import into DefectDojo)")
 def to_generic(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: Path) -> Path:
     path = out_dir / "results.generic.json"
     payload = {"findings": [_finding(r) for r in records]}

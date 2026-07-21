@@ -68,7 +68,7 @@ def _vulnerability(record: VulnRecord, product_index: dict[str, str]) -> dict:
     return entry
 
 
-@register("csaf")
+@register("csaf", "CSAF 2.0 security advisory JSON (CISA/CSIRT ecosystem)")
 def to_csaf(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: Path) -> Path:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     product_index: dict[str, str] = {}

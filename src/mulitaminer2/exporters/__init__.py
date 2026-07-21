@@ -21,11 +21,13 @@ class Exporter(Protocol):
 
 
 EXPORTERS: dict[str, Exporter] = {}
+DESCRIPTIONS: dict[str, str] = {}
 
 
-def register(name: str) -> Callable[[Exporter], Exporter]:
+def register(name: str, description: str = "") -> Callable[[Exporter], Exporter]:
     def wrap(fn: Exporter) -> Exporter:
         EXPORTERS[name] = fn
+        DESCRIPTIONS[name] = description
         return fn
 
     return wrap

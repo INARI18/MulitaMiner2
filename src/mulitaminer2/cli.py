@@ -133,10 +133,10 @@ def segment(
 @app.command()
 def formats() -> None:
     """List available export formats for --export."""
-    from mulitaminer2.exporters import EXPORTERS
+    from mulitaminer2.exporters import DESCRIPTIONS, EXPORTERS
 
     for name in sorted(EXPORTERS):
-        typer.echo(name)
+        typer.echo(f"{name:<9} {DESCRIPTIONS.get(name, '')}")
 
 
 @app.command()

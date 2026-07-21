@@ -101,7 +101,7 @@ def to_cais_row(record: VulnRecord, row_id: int) -> dict:
     }
 
 
-@register("cais")
+@register("cais", "CAIS institutional schema (CSV + JSON)")
 def to_cais(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: Path) -> Path:
     import pandas as pd
 

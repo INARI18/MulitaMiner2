@@ -49,7 +49,7 @@ def _result(record: VulnRecord, rule_index: int) -> dict:
     return result
 
 
-@register("sarif")
+@register("sarif", "SARIF 2.1.0 JSON (GitHub code scanning, DefectDojo, SonarQube)")
 def to_sarif(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: Path) -> Path:
     rules: dict[str, dict] = {}
     rule_index: dict[str, int] = {}
