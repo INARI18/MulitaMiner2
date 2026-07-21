@@ -79,6 +79,7 @@ one file per requested export.
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline stages, modules and design rules |
 | [docs/SCANNER_CONFIGS.md](docs/SCANNER_CONFIGS.md) | Adding a scanner and the built-in config rationale |
 | [docs/EXPORTS.md](docs/EXPORTS.md) | Export formats, who consumes each, field mapping |
+| [docs/PRIORITIZATION.md](docs/PRIORITIZATION.md) | KEV/EPSS/SSVC remediation queue for a run |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Symptoms, causes and fixes |
 
 ## Development
