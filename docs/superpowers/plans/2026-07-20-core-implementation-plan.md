@@ -260,6 +260,18 @@ instances; user wants a closer look at this later.
 
 ## Phase 13 — Cleanups queued for after the validation runs finish
 
+- [ ] (user request, CONDITIONAL) Instance-fields prompt experiment: after the
+  Tenable reruns, re-measure instance field fill rates against the RAW PDF
+  line counts (JuiceShop PDF has exactly 35 INPUT TYPE / 26 INPUT NAME /
+  19 PAYLOAD / 62 PROOF lines for ~300 instances — most instances genuinely
+  lack these fields; empty is correct). Pre-rerun v2 matched payload 19/19 and
+  input_name 26/26; input_type was 26/35 (gap likely in that run's dropped
+  blocks). ONLY if the gap persists: one run on the faster Tenable PDF with
+  v1's verbose INSTANCES EXTRACTION spec (descriptive placeholders per field)
+  restored into the prompt, then compare. Note: the baseline XLSX is NOT the
+  referee here — it has 73 input_type filled (more than the PDF contains;
+  annotated from outside the PDF) and 0 payloads (which the PDF does have).
+
 - [ ] (user request) Drop the `_prompt` suffix from prompt filenames:
   `configs/prompts/openvas_prompt.txt` → `openvas.txt`, same for tenable.
   While at it, make the config's `prompt` key optional, defaulting to
