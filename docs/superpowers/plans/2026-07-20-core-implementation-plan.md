@@ -361,3 +361,42 @@ the structured path (Nuclei) vs. both.
   after the queue finished, as required.
 
 **State:** seam + generic + sarif DONE (62 tests passing).
+
+## Phase 16 - Native prioritization + improvements (proposed, user to approve)
+
+Port the KEV/EPSS/SSVC remediation queue from the previous version into this
+package (it already consumes this tool's results.json unchanged), and while
+doing so consider the improvements below. Source: the enrichment/prioritization
+design note (../MulitaMiner/archive/notes/priorizacao_enrichment.md). Keep the
+ranking fully deterministic and auditable; no LLM in the ranking (the note is
+firm on this, and it is correct).
+
+Improvements to weigh at design time:
+
+1. Asset context input (the missing SSVC dimension). SSVC asks "is the asset
+   exposed / mission-critical?"; no scanner carries this reliably. Add an
+   optional local file the user declares (e.g. hosts.yaml: host, exposed,
+   critical) that the decision tree reads. Deterministic, no CMDB, no LLM.
+   Resolves an open item in the note (section 4 and 8).
+2. Per-row rationale. Each ranked finding carries a human-readable reason
+   ("Act: present in CISA KEV" / "Attend: EPSS 0.87" / "Track: no CVE, CVSS
+   5.3"). Cheap; turns the queue from trust-me into check-it-yourself, which
+   is the whole point of a deterministic ranker.
+3. Derive the SSVC "Automatable" dimension from the CVSS vector already
+   extracted (AV:N + AC:L + UI:N implies likely automatable), declared as a
+   proxy. Adds an SSVC dimension with no new source.
+4. Explicit handling of CVE-less findings. Most Tenable findings have no CVE,
+   so EPSS/KEV cannot speak; today they fall through to a silent CVSS
+   fallback. The queue should declare two sections ("ranked by exploitation
+   signal" vs "no CVE, ordered by severity") so nothing looks evaluated by a
+   signal that never applied.
+5. Point-in-time feed snapshots (the note flags this as the backtesting
+   bottleneck, section 7). Record the EPSS/KEV state as of the run date in
+   run.json. Cheap now, and it unlocks honest backtesting later (using today's
+   feed to score a past report is future leakage).
+
+Not in scope here: the enrichment layer from the same note is far larger (NLI
+faithfulness measurement, source-attributed field rewriting) and is a separate
+effort, not to be bundled with these ranking tweaks.
+
+**State:** not started (proposed; awaiting user decision on whether/when).
