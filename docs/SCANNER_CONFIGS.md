@@ -1,9 +1,9 @@
 # Scanner Configs — Reference and Rationale
 
-A scanner is defined by ONE JSON file in `src/mulitaminer2/configs/scanners/`
+A scanner is defined by ONE JSON file in `src/mulitaminer/configs/scanners/`
 plus ONE prompt file in `configs/prompts/`. Users can plug additional scanners
 with no Python: drop `<name>.json` + `<name>.txt` into a directory and point
-the `MULITAMINER2_SCANNERS_DIR` env var at it. The field reference lives in
+the `MULITAMINER_SCANNERS_DIR` env var at it. The field reference lives in
 `scanner_engine.py`; this document records **why** each built-in value is what
 it is — all of it verified empirically against the baseline reports.
 
@@ -21,7 +21,7 @@ Then look at YOUR report and answer three questions; each "yes" adds one key:
    (port headers, a single host line)? → `context`.
 3. Is one finding printed as TWO OR MORE blocks to re-join? → `pair`.
 
-Verify offline, free, no LLM: `mulitaminer2 segment report.pdf --scanner
+Verify offline, free, no LLM: `mulitaminer segment report.pdf --scanner
 <name>` — the block count must equal the report's finding count; iterate on
 the config until it does. For the prompt, copy the closest built-in from
 `configs/prompts/` and adapt the INPUT FORMAT and field rules, keeping the

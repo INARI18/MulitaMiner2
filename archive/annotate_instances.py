@@ -23,8 +23,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from mulitaminer2.reader import extract_pdf
-from mulitaminer2.scanners import get_scanner
+from mulitaminer.reader import extract_pdf
+from mulitaminer.scanners import get_scanner
 
 PLUGIN_RE = re.compile(r"VULNERABILITY\s+\w+\s+PLUGIN\s+ID\s+(\d+)", re.IGNORECASE)
 REQUEST_RE = re.compile(r"^([A-Z]+)\s+\S+\s+(HTTP/[\d.]+)\s*$")

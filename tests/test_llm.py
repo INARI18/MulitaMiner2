@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 from pydantic import BaseModel
 
-from mulitaminer2.llm import (
+from mulitaminer.llm import (
     MODELS,
     FatalLLMError,
     LLMClient,

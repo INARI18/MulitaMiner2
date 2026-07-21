@@ -1,11 +1,7 @@
 """PDF text extraction with competing backends.
 
-Scanner marker patterns are inherent to each report format and survive any
-reasonable extractor. Both backends share one cleanup pipeline: footer
-removal, mojibake/CID glyph restoration, soft-hyphen rejoining,
-page-continuation marker removal, NFKC. Blocks span whole marker-to-marker
-ranges, so page boundaries fall inside a block and the LLM reads across them.
-
+Both backends share one cleanup pipeline: footer removal, mojibake/CID glyph
+restoration, soft-hyphen rejoining, page-continuation marker removal, NFKC.
 Everything stays in memory.
 """
 from __future__ import annotations

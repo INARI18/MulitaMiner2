@@ -10,9 +10,9 @@ import json
 import re
 from pathlib import Path
 
-from mulitaminer2.exporters import register
-from mulitaminer2.exporters.generic import cves_from
-from mulitaminer2.models import TenableRecord, VulnRecord
+from mulitaminer.exporters import register
+from mulitaminer.exporters.generic import cves_from
+from mulitaminer.models import TenableRecord, VulnRecord
 
 CWE_RE = re.compile(r"CWE[-\s](\d+)", re.IGNORECASE)
 IPV4_RE = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")

@@ -1,4 +1,4 @@
-"""Command-line interface. Thin consumer of the mulitaminer2 library."""
+"""Command-line interface. Thin consumer of the mulitaminer library."""
 from __future__ import annotations
 
 import logging
@@ -7,12 +7,12 @@ from pathlib import Path
 import typer
 from dotenv import load_dotenv
 
-from mulitaminer2.llm import MODELS, FatalLLMError
-from mulitaminer2.reader import BACKENDS, DEFAULT_BACKEND
-from mulitaminer2.scanner_engine import all_scanners
+from mulitaminer.llm import MODELS, FatalLLMError
+from mulitaminer.reader import BACKENDS, DEFAULT_BACKEND
+from mulitaminer.scanner_engine import all_scanners
 
 app = typer.Typer(
-    name="mulitaminer2",
+    name="mulitaminer",
     help="Extract structured vulnerability records from security-scanner PDF reports using LLMs.",
     no_args_is_help=True,
 )
@@ -30,7 +30,7 @@ def _setup_logging(debug: bool) -> None:
 @app.command()
 def extract(
     report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
-    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer2 scanners`"),
+    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer scanners`"),
     model: str = typer.Option("deepseek", "--model", "-m", help=f"One of: {sorted(MODELS)}"),
     model_name: str | None = typer.Option(
         None, "--model-name", help="Provider model id override (for ollama/lmstudio)"
@@ -40,7 +40,7 @@ def extract(
     ),
     export: list[str] = typer.Option(
         [], "--export", "-e",
-        help="Extra output formats (repeatable). See `mulitaminer2 formats`.",
+        help="Extra output formats (repeatable). See `mulitaminer formats`.",
     ),
     xlsx: bool = typer.Option(False, "--xlsx", help="Shorthand for --export xlsx"),
     csv: bool = typer.Option(False, "--csv", help="Shorthand for --export csv"),
@@ -50,7 +50,7 @@ def extract(
     """Extract vulnerabilities from REPORT into a fresh run directory."""
     _setup_logging(debug)
     load_dotenv()
-    from mulitaminer2.pipeline import RunConfig, run
+    from mulitaminer.pipeline import RunConfig, run
 
     config = RunConfig(
         input_path=report,
@@ -95,7 +95,7 @@ def models() -> None:
 @app.command()
 def segment(
     report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
-    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer2 scanners`"),
+    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer scanners`"),
     pdf_backend: str = typer.Option(
         DEFAULT_BACKEND, "--pdf-backend", help=f"One of: {sorted(BACKENDS)}"
     ),
@@ -108,8 +108,8 @@ def segment(
     count must equal the report's finding count.
     """
     _setup_logging(debug=False)
-    from mulitaminer2.reader import extract_pdf
-    from mulitaminer2.scanner_engine import get_scanner
+    from mulitaminer.reader import extract_pdf
+    from mulitaminer.scanner_engine import get_scanner
 
     profile = get_scanner(scanner)
     doc = extract_pdf(report, backend=pdf_backend)
@@ -133,7 +133,7 @@ def segment(
 @app.command()
 def formats() -> None:
     """List available export formats for --export."""
-    from mulitaminer2.exporters import DESCRIPTIONS, EXPORTERS
+    from mulitaminer.exporters import DESCRIPTIONS, EXPORTERS
 
     for name in sorted(EXPORTERS):
         typer.echo(f"{name:<9} {DESCRIPTIONS.get(name, '')}")
@@ -141,7 +141,7 @@ def formats() -> None:
 
 @app.command()
 def scanners() -> None:
-    """List available scanner profiles (built-in + MULITAMINER2_SCANNERS_DIR)."""
+    """List available scanner profiles (built-in + MULITAMINER_SCANNERS_DIR)."""
     for key, p in all_scanners().items():
         typer.echo(f"{key:<10} source={p.source:<11} max_vulns_per_chunk={p.max_vulns_per_chunk}")
 

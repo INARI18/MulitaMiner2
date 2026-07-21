@@ -1,6 +1,6 @@
 """Chunk-packing invariants."""
-from mulitaminer2.chunking import count_tokens, pack
-from mulitaminer2.models import Block
+from mulitaminer.chunking import count_tokens, pack
+from mulitaminer.models import Block
 
 
 def _blocks(n: int, size: int = 200) -> list[Block]:

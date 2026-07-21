@@ -1,9 +1,9 @@
 """Block-anchored extraction loop tests with a scripted fake client."""
 import json
 
-from mulitaminer2.extraction import extract_blocks, render_chunk
-from mulitaminer2.models import Block, TokenUsage
-from mulitaminer2.scanner_engine import get_scanner
+from mulitaminer.extraction import extract_blocks, render_chunk
+from mulitaminer.models import Block, TokenUsage
+from mulitaminer.scanner_engine import get_scanner
 
 PROFILE = get_scanner("openvas")
 

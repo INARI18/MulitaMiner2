@@ -1,4 +1,4 @@
-# MulitaMiner2
+# MulitaMiner
 
 Vulnerability extraction from security-scanner PDF reports using LLMs.
 
@@ -28,20 +28,20 @@ cp .env.example .env    # cloud API keys only; legacy MulitaMiner v1 names also 
 
 ```bash
 # Cloud (DeepSeek)
-uv run mulitaminer2 extract report.pdf --scanner openvas --model deepseek --export xlsx
+uv run mulitaminer extract report.pdf --scanner openvas --model deepseek --export xlsx
 
 # Interoperability exports: SARIF (GitHub/DefectDojo/SonarQube) and
 # DefectDojo Generic Findings JSON
-uv run mulitaminer2 extract report.pdf --scanner openvas --model deepseek -e sarif -e generic
+uv run mulitaminer extract report.pdf --scanner openvas --model deepseek -e sarif -e generic
 
 # Local (Ollama), keyless
-uv run mulitaminer2 extract report.pdf --scanner tenable --model ollama --model-name qwen3
+uv run mulitaminer extract report.pdf --scanner tenable --model ollama --model-name qwen3
 
 # Inspection artifacts (layout, blocks, raw LLM traffic) in the run dir
-uv run mulitaminer2 extract report.pdf --scanner openvas --model deepseek --debug
+uv run mulitaminer extract report.pdf --scanner openvas --model deepseek --debug
 
-uv run mulitaminer2 models    # list model profiles
-uv run mulitaminer2 scanners  # list scanner profiles
+uv run mulitaminer models    # list model profiles
+uv run mulitaminer scanners  # list scanner profiles
 ```
 
 Each run writes to `outputs/runs/<timestamp>_<input>_<model>/`:

@@ -1,13 +1,7 @@
 """One OpenAI-compatible client for every provider, cloud or local.
-
-Provider differences reduce to a ModelProfile. Local profiles are keyless (a
-dummy key satisfies the SDK). Cloud profiles resolve their key from the first
-set env var in `api_key_envs`.
-
-Structured output: JSON-Schema response_format where the provider supports it,
-otherwise `json_object` + Pydantic validation. Pre-parse cleanup strips only
-markdown fences and `<think>` reasoning blocks; anything else must validate.
-"""
+Provider differences reduce to a ModelProfile; local profiles are keyless.
+Structured output via JSON-Schema where supported, else json_object +
+Pydantic validation."""
 from __future__ import annotations
 
 import json
@@ -223,11 +217,8 @@ class LLMClient:
 
     @staticmethod
     def _validate_envelope(data, response_model: type[BaseModel]) -> BaseModel:
-        """Validate the response, tolerating ONE known shape slip: models
-        sometimes return the item(s) without the {"items": [...]} envelope
-        (especially on single-block calls). Re-wrapping is a deterministic
-        envelope adaptation — item content is never repaired, and block-id
-        reconciliation still guards the result."""
+        """Validate, tolerating one shape slip: items returned without the
+        {"items": [...]} envelope get re-wrapped. Content is never repaired."""
         try:
             return response_model.model_validate(data)
         except ValidationError:

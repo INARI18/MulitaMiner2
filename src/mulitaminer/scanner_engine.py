@@ -1,44 +1,7 @@
-"""Config-driven scanner engine: a scanner is ONE JSON file + ONE prompt file.
+"""Builds a ScannerProfile (segmenter + consolidator) from a JSON config.
 
-The JSON is the WHOLE definition. Adding a scanner requires no Python: drop
-`<name>.json` + `<name>.txt` into `configs/scanners/` + `configs/prompts/`
-(or into the directory named by MULITAMINER2_SCANNERS_DIR) and it registers.
-
-JSON fields:
-- name:                CLI name. Also selects the typed record class when one
-                       matches (openvas/tenable); otherwise the base VulnRecord
-                       is used. An explicit "record" key overrides.
-- source:              stamped into every record's `source` field.
-- prompt:              optional prompt filename; defaults to `<name>.txt`.
-- max_vulns_per_chunk: chunk-size cap for this scanner.
-- marker_pattern:      regex; ONE match line == ONE finding block. If it has a
-                       capture group 1, that group is the severity hint. Use
-                       an inline "(?i)" prefix for case-insensitive matching.
-- name_above_marker:   bool; the finding NAME is the single line directly
-                       ABOVE the marker and is pulled into the block (Tenable;
-                       the name precedes the header).
-- name_stop_pattern:   optional regex; a line matching it is never taken as
-                       the name (section headers / reference tails / URLs of
-                       the previous block).
-- context:             optional tracking of state that lives OUTSIDE blocks:
-    header_patterns:   regexes with named groups (?P<sev>/(?P<port>/(?P<proto>;
-                       the latest match above a marker becomes that block's
-                       port/protocol context (case-insensitive).
-    host_anchor:       regex for the per-host boundary line.
-    host_line:         regex whose group 1 is the host, matched on the nearest
-                       non-blank line above the anchor.
-- pair:                optional structural pairing (ALWAYS runs — structure,
-                       not dedup): {strip_name_suffix, by: [fields],
-                       merge_instances}. Tenable pairs Base + "Instances (N)"
-                       records by (name, plugin).
-- severity_map:        optional post-pairing normalization, e.g. {"INFO": "LOG"}.
-
-Duplicate merging is not configurable: a duplicate is a FULLY identical
-record (name compared normalized) — same key with different content is two
-real findings and never collapses.
-
-The rationale behind each built-in config value (marker choices, name
-placement, pairing) is documented in docs/SCANNER_CONFIGS.md.
+A scanner is one JSON + one prompt file; no Python needed to add one.
+Config field reference and rationale: docs/SCANNER_CONFIGS.md.
 """
 from __future__ import annotations
 
@@ -50,8 +13,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Callable
 
-from mulitaminer2.consolidate import dedupe, normalize_name
-from mulitaminer2.models import Block, OpenVASRecord, TenableRecord, VulnRecord
+from mulitaminer.consolidate import dedupe, normalize_name
+from mulitaminer.models import Block, OpenVASRecord, TenableRecord, VulnRecord
 
 RECORD_TYPES: dict[str, type[VulnRecord]] = {
     "openvas": OpenVASRecord,
@@ -239,7 +202,7 @@ def _registry(extra_dir: str | None) -> dict[str, ScannerProfile]:
 
 
 def all_scanners() -> dict[str, ScannerProfile]:
-    return _registry(os.getenv("MULITAMINER2_SCANNERS_DIR"))
+    return _registry(os.getenv("MULITAMINER_SCANNERS_DIR"))
 
 
 def get_scanner(name: str) -> ScannerProfile:

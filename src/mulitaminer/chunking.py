@@ -1,23 +1,16 @@
 """Pack whole blocks into token-budgeted chunks.
 
-Invariants (guarded by tests):
-- blocks are never split — a block travels whole or alone;
-- chunks never overlap and preserve block order;
-- every block ends up in exactly one chunk.
-
-Budgets combine three limits: token budget x safety margin,
-character ceiling, and the scanner's max blocks per chunk. Because extraction
-output largely mirrors the block text (fields quote it verbatim), the caller
-should pass a token budget derived from the model's OUTPUT cap, which is the
-binding constraint in practice.
+Invariants: blocks are never split, chunks never overlap, every block lands in
+exactly one chunk. Pass a token budget derived from the model's OUTPUT cap —
+extraction output mirrors the input, so output is the binding constraint.
 """
 from __future__ import annotations
 
 import logging
 from functools import lru_cache
 
-from mulitaminer2 import settings
-from mulitaminer2.models import Block, Chunk
+from mulitaminer import settings
+from mulitaminer.models import Block, Chunk
 
 log = logging.getLogger(__name__)
 

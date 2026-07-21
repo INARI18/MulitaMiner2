@@ -14,14 +14,14 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-from mulitaminer2 import settings
-from mulitaminer2.extraction import extract_blocks
-from mulitaminer2.llm import LLMClient, get_model
-from mulitaminer2.models import RunResult, TokenUsage
-from mulitaminer2.reader import DEFAULT_BACKEND, extract_pdf
-from mulitaminer2.scanner_engine import get_scanner
-from mulitaminer2.exporters import get_exporter
-from mulitaminer2.writers import write_json
+from mulitaminer import settings
+from mulitaminer.extraction import extract_blocks
+from mulitaminer.llm import LLMClient, get_model
+from mulitaminer.models import RunResult, TokenUsage
+from mulitaminer.reader import DEFAULT_BACKEND, extract_pdf
+from mulitaminer.scanner_engine import get_scanner
+from mulitaminer.exporters import get_exporter
+from mulitaminer.writers import write_json
 
 log = logging.getLogger(__name__)
 

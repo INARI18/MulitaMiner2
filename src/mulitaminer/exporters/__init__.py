@@ -1,17 +1,12 @@
-"""Export seam: `--export <name>` resolves an exporter from this registry.
-
-An exporter is a deterministic mapping from validated VulnRecords to a target
-format — never an LLM concern; extraction and serialization must not mix.
-
-Adding a format: write `to_<fmt>` in a module here, decorate with
-@register("<fmt>"), import the module below.
-"""
+"""Export seam: `--export <name>` resolves a deterministic exporter from this
+registry. Adding a format: write `to_<fmt>` in a module here, decorate with
+@register("<fmt>"), import the module below."""
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Callable, Protocol
 
-from mulitaminer2.models import VulnRecord
+from mulitaminer.models import VulnRecord
 
 
 class Exporter(Protocol):
@@ -40,4 +35,4 @@ def get_exporter(name: str) -> Exporter:
         raise ValueError(f"Unknown export format '{name}'. Available: {sorted(EXPORTERS)}")
 
 
-from mulitaminer2.exporters import cais, csaf, generic, sarif, tabular  # noqa: E402,F401 — populate registry
+from mulitaminer.exporters import cais, csaf, generic, sarif, tabular  # noqa: E402,F401 — populate registry

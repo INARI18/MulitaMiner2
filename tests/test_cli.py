@@ -1,7 +1,7 @@
 """CLI smoke tests (offline commands only)."""
 from typer.testing import CliRunner
 
-from mulitaminer2.cli import app
+from mulitaminer.cli import app
 
 runner = CliRunner()
 

@@ -2,8 +2,8 @@
 import json
 from pathlib import Path
 
-from mulitaminer2.models import TokenUsage
-from mulitaminer2.pipeline import RunConfig, run
+from mulitaminer.models import TokenUsage
+from mulitaminer.pipeline import RunConfig, run
 
 BASELINE_PDF = Path("resources/openvas/OpenVAS_JuiceShop.pdf")
 

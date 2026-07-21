@@ -590,7 +590,7 @@ wheels = [
 ]
 
 [[package]]
-name = "mulitaminer2"
+name = "mulitaminer"
 version = "2.0.0a1"
 source = { editable = "." }
 dependencies = [

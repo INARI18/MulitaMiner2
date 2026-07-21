@@ -10,9 +10,9 @@ import json
 import re
 from pathlib import Path
 
-from mulitaminer2 import __version__
-from mulitaminer2.exporters import register
-from mulitaminer2.models import VulnRecord
+from mulitaminer import __version__
+from mulitaminer.exporters import register
+from mulitaminer.models import VulnRecord
 
 # MulitaMiner severity -> SARIF result level.
 _LEVEL = {"CRITICAL": "error", "HIGH": "error", "MEDIUM": "warning",
@@ -71,7 +71,7 @@ def to_sarif(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: 
             {
                 "tool": {
                     "driver": {
-                        "name": "MulitaMiner2",
+                        "name": "MulitaMiner",
                         "version": __version__,
                         "informationUri": "https://github.com/INARI18/MulitaMiner2",
                         "rules": list(rules.values()),

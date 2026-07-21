@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from mulitaminer2.reader import extract_pdf
-from mulitaminer2.scanner_engine import get_scanner
+from mulitaminer.reader import extract_pdf
+from mulitaminer.scanner_engine import get_scanner
 
 OPENVAS_FIXTURE = """\
 Scan Report

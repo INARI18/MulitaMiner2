@@ -1,13 +1,6 @@
 """Block-anchored extraction: the LLM fills fields per block, never discovers.
-
-Segmentation already knows the exact candidate count, so validation is exact:
-- every input block ID must come back exactly once;
-- missing IDs are re-sent alone (targeted retry, RETRY_ROUNDS rounds);
-- unknown or duplicate IDs are dropped with a warning.
-
-This is what makes the raw output count equal the marker count regardless of
-deduplication.
-"""
+Every block ID must come back exactly once; missing IDs are re-sent in smaller
+groups, unknown/duplicate IDs are dropped with a warning."""
 from __future__ import annotations
 
 import json
@@ -16,11 +9,11 @@ from functools import lru_cache
 
 from pydantic import BaseModel, ConfigDict, ValidationError, create_model
 
-from mulitaminer2 import settings
-from mulitaminer2.chunking import pack
-from mulitaminer2.llm import LLMClient
-from mulitaminer2.models import Block, Chunk, TokenUsage, VulnRecord, extraction_model_for
-from mulitaminer2.scanner_engine import ScannerProfile
+from mulitaminer import settings
+from mulitaminer.chunking import pack
+from mulitaminer.llm import LLMClient
+from mulitaminer.models import Block, Chunk, TokenUsage, VulnRecord, extraction_model_for
+from mulitaminer.scanner_engine import ScannerProfile
 
 log = logging.getLogger(__name__)
 
@@ -118,10 +111,8 @@ def extract_blocks(
 
 
 def _truncate_oversized(chunk: Chunk, client: LLMClient, warnings: list[str]) -> list[Block]:
-    """Truncate a single block whose expected output cannot fit the model's
-    output cap: cut the input tail (the repetitive instances section) with an
-    explicit marker. Core fields live at the top and survive; the truncation
-    is declared, never silent."""
+    """Cut the input tail of a block too big for the model's output cap,
+    with an explicit marker and a warning. Core fields at the top survive."""
     if len(chunk.blocks) != 1:
         return chunk.blocks
     budget = int(client.profile.max_output_tokens * settings.CHUNK_SAFETY_MARGIN)

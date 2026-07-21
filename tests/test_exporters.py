@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from mulitaminer2.exporters import EXPORTERS, get_exporter
-from mulitaminer2.exporters.generic import cves_from
-from mulitaminer2.models import OpenVASRecord
+from mulitaminer.exporters import EXPORTERS, get_exporter
+from mulitaminer.exporters.generic import cves_from
+from mulitaminer.models import OpenVASRecord
 
 RECORDS = [
     OpenVASRecord(
@@ -51,7 +51,7 @@ def test_sarif_structure_levels_and_rule_dedup(tmp_path):
     sarif = json.loads(path.read_text(encoding="utf-8"))
     assert sarif["version"] == "2.1.0"
     run = sarif["runs"][0]
-    assert run["tool"]["driver"]["name"] == "MulitaMiner2"
+    assert run["tool"]["driver"]["name"] == "MulitaMiner"
     # 3 results but only 2 distinct rules (repeat reuses its rule).
     assert len(run["results"]) == 3
     assert len(run["tool"]["driver"]["rules"]) == 2
@@ -64,7 +64,7 @@ def test_sarif_structure_levels_and_rule_dedup(tmp_path):
 
 
 def test_cais_mapping(tmp_path):
-    from mulitaminer2.models import Instance, TenableRecord
+    from mulitaminer.models import Instance, TenableRecord
 
     tenable = TenableRecord(
         name="HSTS Missing", severity="HIGH", plugin=98056, host="example.com",
@@ -96,7 +96,7 @@ def test_csaf_document_structure(tmp_path):
     assert doc["document"]["csaf_version"] == "2.0"
     assert doc["document"]["category"] == "csaf_security_advisory"
     tracking = doc["document"]["tracking"]
-    assert tracking["id"].startswith("MULITAMINER2-")
+    assert tracking["id"].startswith("MULITAMINER-")
     assert tracking["initial_release_date"]
     assert len(doc["vulnerabilities"]) == 2
     high, log = doc["vulnerabilities"]

@@ -1,10 +1,5 @@
-"""Typed data models — the single source of truth for the vulnerability record.
-
-`source` is never produced by the LLM: it is pinned per scanner record type
-and stamped by the pipeline. The LLM response contract
-(`extraction_model_for`) is derived from the record model, so the two can
-never drift. Everything between pipeline stages travels as these objects.
-"""
+"""Typed data models — single source of truth for the vulnerability record.
+The LLM contract (`extraction_model_for`) is derived from the record model."""
 from __future__ import annotations
 
 from functools import lru_cache
@@ -12,10 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
-# Severity spans both scanners' vocabularies: OpenVAS uses LOG for the
-# informational tier, Tenable WAS uses INFO. One shared Literal on purpose —
-# consolidation normalizes INFO -> LOG post-extraction, so a Tenable record is
-# INFO before that step and LOG after; a single field must accept both.
+# Informational tier: OpenVAS emits LOG, Tenable INFO; consolidation maps INFO->LOG.
 Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO"]
 
 # Marks fields the LLM is NOT responsible for producing; the pipeline fills
@@ -26,17 +18,11 @@ _PIPELINE_FILLED = {"json_schema_extra": {"llm_produced": False}}
 class VulnRecord(BaseModel):
     """Core contract shared by every scanner. Validated, stable.
 
-    Scanner-specific extras never live here — they go in `scanner_specific`
-    or in a subclass (see OpenVASRecord / TenableRecord).
+    Scanner-specific extras live in subclasses (OpenVASRecord / TenableRecord).
     """
 
-    # extra="allow": tolerate keys a scanner emits that we didn't declare,
-    # rather than hard-failing. Safety net, not the organizing mechanism.
-    # populate_by_name: accept BOTH the JSON key `Name` (baseline-compatible
-    # output format) and the pythonic attribute `name`.
-    # validate_assignment: post-validation writes (context backfill, merge
-    # backfill, severity normalization) must obey the schema too — a bad
-    # value can never enter a record after the fact.
+    # allow undeclared keys; accept `Name` and `name`; keep post-validation
+    # writes schema-checked.
     model_config = ConfigDict(extra="allow", populate_by_name=True, validate_assignment=True)
 
     name: str = Field(alias="Name")
@@ -46,10 +32,8 @@ class VulnRecord(BaseModel):
     insight: list[str] = []
     references: list[str] = []
 
-    # Both scanners' prompts emit all of these: OpenVAS fills detection_*/
-    # log_method with real content and plugin/plugin_details/instances as
-    # null/empty; Tenable does the reverse. The base declares them all;
-    # subclasses refine the types of the ones a scanner really populates.
+    # Shared wide schema: every scanner emits all fields (null/empty where
+    # N/A) so output columns stay stable across scanners.
     detection_result: list[str] = []
     detection_method: list[str] = []
     product_detection_result: list[str] = []
@@ -58,31 +42,21 @@ class VulnRecord(BaseModel):
     plugin_details: dict = {}
     instances: list = []
 
-    # cvss on the base is the OpenVAS shape: one numeric score (int or float,
-    # so 7 vs 7.0 isn't a type error) or null. Tenable overrides it to a list
-    # of raw CVSS strings — genuinely a different type per scanner.
-    cvss: float | int | None = None
+    cvss: float | int | None = None  # numeric score; Tenable overrides with raw CVSS strings
     severity: Severity
 
-    # host is not extracted by the LLM — the pipeline assigns it from the
-    # report's per-host section (OpenVAS `Host scan start` recovery).
+    # Filled by the pipeline from report context, never by the LLM.
     host: str | None = Field(default=None, **_PIPELINE_FILLED)
     port: int | str | None = None
     protocol: Literal["tcp", "udp"] | None = None
 
-    # v2: stamped from the scanner profile, never prompted (removes a
-    # hallucination surface). Subclasses pin it with a Literal default.
+    # Stamped from the scanner profile, never prompted.
     source: str = Field(default="", **_PIPELINE_FILLED)
-
-    # Scanner-specific fields live in typed subclasses; a config-only scanner
-    # needing extras should declare them in its JSON (dynamic subclass).
 
     @field_validator("plugin_details", "instances", mode="before")
     @classmethod
     def _junk_empty_to_container(cls, value, info):
-        """LLMs occasionally emit "-" / "" / null for empty structured fields
-        (the report's own empty-idiom leaking into JSON). Coerce to the empty
-        container instead of failing the whole record."""
+        """Coerce "-"/""/null (the report's empty idiom) to the empty container."""
         if value in ("", "-", None):
             return {} if info.field_name == "plugin_details" else []
         return value
@@ -140,14 +114,8 @@ def _is_llm_produced(field) -> bool:
 
 @lru_cache
 def extraction_model_for(record_type: type[VulnRecord]) -> type[BaseModel]:
-    """Derive the LLM response-item model for a scanner's record type.
-
-    The extraction model is `block_id` plus every LLM-produced field of the
-    record (pipeline-filled fields — host, source, scanner_specific — are
-    excluded). Derived, not hand-copied: change the record, the LLM contract
-    follows. `extra="forbid"` so the generated JSON Schema closes the object
-    (`additionalProperties: false`), which structured-output modes require.
-    """
+    """LLM response-item model: `block_id` + the record's LLM-produced fields.
+    extra="forbid" closes the JSON Schema, as structured-output modes require."""
     fields: dict = {"block_id": (int, Field(description="ID of the source block (### BLOCK n)"))}
     for name, f in record_type.model_fields.items():
         if not _is_llm_produced(f):
@@ -165,12 +133,8 @@ def extraction_model_for(record_type: type[VulnRecord]) -> type[BaseModel]:
 
 class Block(BaseModel):
     """One marker-delimited report segment: exactly one candidate finding.
-
-    host/port/protocol/severity_hint are context recovered by the scanner's
-    segmentation from headers *around* the block (they may not appear inside
-    its text). They are rendered into the block's prompt header and used to
-    backfill fields the LLM could not see.
-    """
+    host/port/protocol/severity_hint are context recovered from headers around
+    the block; they feed the prompt header and field backfill."""
 
     id: int
     text: str

@@ -12,8 +12,8 @@ import json
 import re
 from pathlib import Path
 
-from mulitaminer2.exporters import register
-from mulitaminer2.models import VulnRecord
+from mulitaminer.exporters import register
+from mulitaminer.models import VulnRecord
 
 CVE_RE = re.compile(r"CVE-\d{4}-\d{4,}", re.IGNORECASE)
 

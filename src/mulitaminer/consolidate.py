@@ -1,17 +1,12 @@
-"""Consolidation primitives: ONE definition of vulnerability identity.
-
-Consolidation always runs, no toggle: structural pairing (e.g. Tenable
-base+instances — structure, not dedup), severity normalization, then merging
-of fully identical records. The surviving record of a merge is the most
-complete one; cvss=0.0 COUNTS as filled (a Log finding's legitimate score).
-Pairing policy is declared per scanner in its JSON config (scanner_engine).
-"""
+"""Consolidation primitives. Always runs: structural pairing, severity
+normalization, then merging of fully identical records. The survivor of a
+merge is the most complete record; cvss=0.0 counts as filled."""
 from __future__ import annotations
 
 import logging
 import re
 
-from mulitaminer2.models import TenableRecord, VulnRecord
+from mulitaminer.models import TenableRecord, VulnRecord
 
 log = logging.getLogger(__name__)
 

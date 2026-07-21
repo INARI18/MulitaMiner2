@@ -8,7 +8,7 @@ import json
 import logging
 from pathlib import Path
 
-from mulitaminer2.models import VulnRecord
+from mulitaminer.models import VulnRecord
 
 log = logging.getLogger(__name__)
 

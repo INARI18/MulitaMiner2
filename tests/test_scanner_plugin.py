@@ -2,7 +2,7 @@
 registers a working scanner with zero Python."""
 import json
 
-from mulitaminer2.scanner_engine import _registry
+from mulitaminer.scanner_engine import _registry
 
 
 CUSTOM_CONFIG = {

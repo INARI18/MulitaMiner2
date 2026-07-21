@@ -1,8 +1,8 @@
 """Writers: schema-derived columns, round-trippable JSON."""
 import json
 
-from mulitaminer2.models import OpenVASRecord
-from mulitaminer2.writers import columns_for, write_csv, write_json, write_xlsx
+from mulitaminer.models import OpenVASRecord
+from mulitaminer.writers import columns_for, write_csv, write_json, write_xlsx
 
 RECORDS = [
     OpenVASRecord(name="A", severity="HIGH", cvss=7.5, port=443, protocol="tcp",

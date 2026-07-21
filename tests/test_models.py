@@ -2,7 +2,7 @@
 import pytest
 from pydantic import ValidationError
 
-from mulitaminer2.models import (
+from mulitaminer.models import (
     OpenVASRecord,
     TenableRecord,
     VulnRecord,

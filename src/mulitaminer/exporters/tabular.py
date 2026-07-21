@@ -3,9 +3,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from mulitaminer2.exporters import register
-from mulitaminer2.models import VulnRecord
-from mulitaminer2.writers import write_csv, write_xlsx
+from mulitaminer.exporters import register
+from mulitaminer.models import VulnRecord
+from mulitaminer.writers import write_csv, write_xlsx
 
 
 @register("xlsx", "MulitaMiner records as a spreadsheet")

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from mulitaminer2.reader import BACKENDS, extract_pdf
+from mulitaminer.reader import BACKENDS, extract_pdf
 
 BASELINE_PDF = Path("resources/openvas/OpenVAS_JuiceShop.pdf")
 OPENVAS_MARKER = re.compile(r"^\s*(?:Critical|High|Medium|Low|Log)\s+\(CVSS:", re.MULTILINE)

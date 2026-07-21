@@ -11,10 +11,10 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from mulitaminer2 import __version__
-from mulitaminer2.exporters import register
-from mulitaminer2.exporters.generic import cves_from
-from mulitaminer2.models import VulnRecord
+from mulitaminer import __version__
+from mulitaminer.exporters import register
+from mulitaminer.exporters.generic import cves_from
+from mulitaminer.models import VulnRecord
 
 _CVSS3_SCORE_RE = re.compile(r"CVSSV3\s+BASE\s+SCORE\s+([\d.]+)", re.IGNORECASE)
 _CVSS3_VECTOR_RE = re.compile(r"CVSSV3\s+VECTOR\s+(CVSS:3[^\s]+)", re.IGNORECASE)
@@ -81,15 +81,15 @@ def to_csaf(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: P
             "lang": "en",
             "publisher": {
                 "category": "other",
-                "name": "MulitaMiner2",
+                "name": "MulitaMiner",
                 "namespace": "https://github.com/INARI18/MulitaMiner2",
             },
-            "title": "MulitaMiner2 scan findings",
+            "title": "MulitaMiner scan findings",
             "tracking": {
-                "id": f"MULITAMINER2-{now.replace(':', '').replace('-', '')}",
+                "id": f"MULITAMINER-{now.replace(':', '').replace('-', '')}",
                 "status": "final",
                 "version": "1",
-                "generator": {"engine": {"name": "MulitaMiner2", "version": __version__}},
+                "generator": {"engine": {"name": "MulitaMiner", "version": __version__}},
                 "initial_release_date": now,
                 "current_release_date": now,
                 "revision_history": [
