@@ -20,7 +20,10 @@ FIELD EXTRACTION RULES:
    detection_method: from "Vulnerability Detection Method" (each line as an element).
    product_detection_result: from "Product Detection Result".
    impact: from "Impact". solution: from "Solution". insight: from "Vulnerability Insight".
-   log_method: from "Log Method". references: from "References" (one reference per element).
+   log_method: from "Log Method". references: from "References", ONE reference per element:
+   split comma-separated lists ("CVE: CVE-2008-5304, CVE-2008-5305" -> "CVE-2008-5304","CVE-2008-5305";
+   "BID:32668, 32669" -> "BID:32668","BID:32669"); strip category labels ("CVE:", "Other:", "URL:")
+   keeping only the reference itself; NEVER emit a label-only element such as "Other:".
 
 3. cvss: the numeric score from the `<Severity> (CVSS: X.Y)` line at the top of the block.
    "Critical (CVSS: 9.8)" -> 9.8; "Log (CVSS: 0.0)" -> 0.0 (zero is a valid value, not null).
@@ -58,11 +61,13 @@ Vulnerability Detection Method:
 Check the expiration date of the SSL/TLS certificate.
 OID: 1.3.6.1.4.1.25623.1.0.103955
 References:
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-0001
+CVE: CVE-2024-0001, CVE-2024-0002
+BID:11111, 11112
+Other: URL:https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-0001
 ---
 
 Expected extraction object for this block:
-{"block_id":12,"Name":"SSL/TLS: Certificate Expired","description":["The SSL/TLS certificate of the remote service has expired."],"detection_result":["The certificate expired on 2024-01-15T00:00:00+00:00"],"detection_method":["Check the expiration date of the SSL/TLS certificate.","OID: 1.3.6.1.4.1.25623.1.0.103955"],"product_detection_result":[],"impact":["Users will receive warnings when accessing the service, potentially leading to loss of trust."],"solution":["Replace the SSL/TLS certificate with a valid one."],"insight":[],"log_method":[],"cvss":7.5,"port":443,"protocol":"tcp","severity":"HIGH","references":["https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-0001"],"plugin":null,"plugin_details":{},"instances":[]}
+{"block_id":12,"Name":"SSL/TLS: Certificate Expired","description":["The SSL/TLS certificate of the remote service has expired."],"detection_result":["The certificate expired on 2024-01-15T00:00:00+00:00"],"detection_method":["Check the expiration date of the SSL/TLS certificate.","OID: 1.3.6.1.4.1.25623.1.0.103955"],"product_detection_result":[],"impact":["Users will receive warnings when accessing the service, potentially leading to loss of trust."],"solution":["Replace the SSL/TLS certificate with a valid one."],"insight":[],"log_method":[],"cvss":7.5,"port":443,"protocol":"tcp","severity":"HIGH","references":["CVE-2024-0001","CVE-2024-0002","BID:11111","BID:11112","https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-0001"],"plugin":null,"plugin_details":{},"instances":[]}
 
 SECOND EXAMPLE (multi-line NVT name; the name continues until the next section header; port comes from the block BODY, which beats the header context):
 

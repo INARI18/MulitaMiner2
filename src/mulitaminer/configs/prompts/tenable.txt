@@ -16,7 +16,11 @@ FIELD EXTRACTION RULES:
 
 2. description: from "Description" (each paragraph as an array element; [] if absent).
    solution: from "Solution"; remediation steps only; ignore any "See Also" content entirely.
-   references: from "Reference Information" (CWE, WASC, OWASP, CVE, BID, URLs; one per element).
+   references: from "Reference Information" (CWE, WASC, OWASP, CVE, BID, URLs), ONE reference per
+   element: split comma-joined label lines, repeating the label ("CWE 125, 20" -> "CWE 125","CWE 20";
+   "OWASP 2021-A5, 2017-A6" -> "OWASP 2021-A5","OWASP 2017-A6"); do NOT repeat the label when the
+   value already carries it ("CVE CVE-2022-22719, CVE-2022-22720" -> "CVE-2022-22719","CVE-2022-22720");
+   skip "-" empty entries ("CVE -", "BID -").
 
 3. cvss: from "Risk Information" as a list of strings, verbatim (formats: "CVSSV4 BASE SCORE X.X", "CVSSV4 VECTOR CVSS:4.0/...", "CVSSV3 BASE SCORE X.X", "CVSSV3 VECTOR CVSS:3.0/...", "CVSS BASE SCORE X.X", "CVSS VECTOR CVSS2#..."). [] if absent.
 
@@ -59,9 +63,11 @@ Severity: High
 Plugin ID: 98056
 Reference Information:
 CWE 693
+OWASP 2021-A5, 2017-A6
+CVE -
 ---
 
 Expected extraction object for this block:
-{"block_id":4,"Name":"Missing HTTP Strict Transport Security Policy","description":["The remote web server does not send the HTTP Strict-Transport-Security header."],"detection_result":[],"detection_method":[],"product_detection_result":[],"impact":[],"solution":["Enable HSTS by adding the Strict-Transport-Security header to HTTPS responses."],"insight":[],"log_method":[],"cvss":["CVSSV3 BASE SCORE 6.5","CVSSV3 VECTOR CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"],"port":null,"protocol":null,"severity":"HIGH","references":["CWE 693"],"plugin":98056,"plugin_details":{"publication_date":"2019-03-20T00:00:00+00:00","modification_date":"2024-06-01T00:00:00+00:00","family":"Web Servers","severity":"High","plugin_id":98056},"instances":[]}
+{"block_id":4,"Name":"Missing HTTP Strict Transport Security Policy","description":["The remote web server does not send the HTTP Strict-Transport-Security header."],"detection_result":[],"detection_method":[],"product_detection_result":[],"impact":[],"solution":["Enable HSTS by adding the Strict-Transport-Security header to HTTPS responses."],"insight":[],"log_method":[],"cvss":["CVSSV3 BASE SCORE 6.5","CVSSV3 VECTOR CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"],"port":null,"protocol":null,"severity":"HIGH","references":["CWE 693","OWASP 2021-A5","OWASP 2017-A6"],"plugin":98056,"plugin_details":{"publication_date":"2019-03-20T00:00:00+00:00","modification_date":"2024-06-01T00:00:00+00:00","family":"Web Servers","severity":"High","plugin_id":98056},"instances":[]}
 
 Respond with a JSON object: {"items": [<one extraction object per block>]}.
