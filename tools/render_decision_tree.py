@@ -123,17 +123,21 @@ def build() -> str:
         p.append(text(X["sev"] + 20, y, SEV_SHORT[s], size=12, fill="#fff", weight="bold"))
         p.append(text(X["sev"] + 40, y, s, size=12, fill=MUTED, anchor="start", font=MONO))
 
-    # Action nodes (solid colored, centered over their leaves).
-    for cat in ("Act", "Attend", "Track*", "Track"):
-        members = [c for c in combos if _TREE[c] == cat]
-        ys = [leaf_y[c] for c in members]
-        cy = sum(ys) / len(ys)
-        for c in members:
-            p.append(elbow(X["sev"] + W["small"], leaf_y[c], X["act"], cy, COL[cat], 2))
-        top, bot = min(ys) - 21, max(ys) + 21
-        p.append(rrect(X["act"], top, W["leaf"], bot - top, COL[cat], COL[cat], rx=14))
-        p.append(text(X["act"] + W["leaf"] / 2, (top + bot) / 2, cat, size=18,
-                      fill="#fff", weight="bold"))
+    # Action nodes: four fixed-size chips, evenly spaced. Categories are not
+    # contiguous in the leaf order, so each chip sits at its own slot and the
+    # leaf edges converge to it.
+    cats = ("Act", "Attend", "Track*", "Track")
+    span = (len(combos) - 1) * ROW_H
+    chip_h = 56
+    act_y = {cat: TOP + span * (i + 0.5) / len(cats) for i, cat in enumerate(cats)}
+    for cat in cats:
+        cy = act_y[cat]
+        for c in [c for c in combos if _TREE[c] == cat]:
+            p.append(elbow(X["sev"] + W["small"], leaf_y[c], X["act"], cy, COL[cat], 1.6))
+    for cat in cats:  # draw chips last so edges tuck under them
+        cy = act_y[cat]
+        p.append(rrect(X["act"], cy - chip_h / 2, W["leaf"], chip_h, COL[cat], COL[cat], rx=14))
+        p.append(text(X["act"] + W["leaf"] / 2, cy, cat, size=18, fill="#fff", weight="bold"))
 
     p.append(text(X["finding"], height - 22,
                   "unknown (no CVE) follows the same branch as likely — absence of a "

@@ -129,31 +129,31 @@
 <circle cx='846' cy='900' r='9' fill='#b09a80'/>
 <text x='846' y='900' font-size='12' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>L</text>
 <text x='866' y='900' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>low</text>
-<path d='M 922 118 H 1021.0 V 233.0 H 1120' fill='none' stroke='#cf4a34' stroke-width='2'/>
-<path d='M 922 164 H 1021.0 V 233.0 H 1120' fill='none' stroke='#cf4a34' stroke-width='2'/>
-<path d='M 922 256 H 1021.0 V 233.0 H 1120' fill='none' stroke='#cf4a34' stroke-width='2'/>
-<path d='M 922 394 H 1021.0 V 233.0 H 1120' fill='none' stroke='#cf4a34' stroke-width='2'/>
-<rect x='1120' y='97' width='150' height='318' rx='14' fill='#cf4a34' stroke='#cf4a34' stroke-width='1.5'/>
-<text x='1195.0' y='256.0' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Act</text>
-<path d='M 922 210 H 1021.0 V 430.8 H 1120' fill='none' stroke='#e08a2b' stroke-width='2'/>
-<path d='M 922 302 H 1021.0 V 430.8 H 1120' fill='none' stroke='#e08a2b' stroke-width='2'/>
-<path d='M 922 440 H 1021.0 V 430.8 H 1120' fill='none' stroke='#e08a2b' stroke-width='2'/>
-<path d='M 922 532 H 1021.0 V 430.8 H 1120' fill='none' stroke='#e08a2b' stroke-width='2'/>
-<path d='M 922 670 H 1021.0 V 430.8 H 1120' fill='none' stroke='#e08a2b' stroke-width='2'/>
-<rect x='1120' y='189' width='150' height='502' rx='14' fill='#e08a2b' stroke='#e08a2b' stroke-width='1.5'/>
-<text x='1195.0' y='440.0' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Attend</text>
-<path d='M 922 348 H 1021.0 V 587.2 H 1120' fill='none' stroke='#4c86a6' stroke-width='2'/>
-<path d='M 922 486 H 1021.0 V 587.2 H 1120' fill='none' stroke='#4c86a6' stroke-width='2'/>
-<path d='M 922 578 H 1021.0 V 587.2 H 1120' fill='none' stroke='#4c86a6' stroke-width='2'/>
-<path d='M 922 716 H 1021.0 V 587.2 H 1120' fill='none' stroke='#4c86a6' stroke-width='2'/>
-<path d='M 922 808 H 1021.0 V 587.2 H 1120' fill='none' stroke='#4c86a6' stroke-width='2'/>
-<rect x='1120' y='327' width='150' height='502' rx='14' fill='#4c86a6' stroke='#4c86a6' stroke-width='1.5'/>
-<text x='1195.0' y='578.0' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Track*</text>
-<path d='M 922 624 H 1021.0 V 785.0 H 1120' fill='none' stroke='#a3917c' stroke-width='2'/>
-<path d='M 922 762 H 1021.0 V 785.0 H 1120' fill='none' stroke='#a3917c' stroke-width='2'/>
-<path d='M 922 854 H 1021.0 V 785.0 H 1120' fill='none' stroke='#a3917c' stroke-width='2'/>
-<path d='M 922 900 H 1021.0 V 785.0 H 1120' fill='none' stroke='#a3917c' stroke-width='2'/>
-<rect x='1120' y='603' width='150' height='318' rx='14' fill='#a3917c' stroke='#a3917c' stroke-width='1.5'/>
-<text x='1195.0' y='762.0' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Track</text>
+<path d='M 922 118 H 1021.0 V 215.75 H 1120' fill='none' stroke='#cf4a34' stroke-width='1.6'/>
+<path d='M 922 164 H 1021.0 V 215.75 H 1120' fill='none' stroke='#cf4a34' stroke-width='1.6'/>
+<path d='M 922 256 H 1021.0 V 215.75 H 1120' fill='none' stroke='#cf4a34' stroke-width='1.6'/>
+<path d='M 922 394 H 1021.0 V 215.75 H 1120' fill='none' stroke='#cf4a34' stroke-width='1.6'/>
+<path d='M 922 210 H 1021.0 V 411.25 H 1120' fill='none' stroke='#e08a2b' stroke-width='1.6'/>
+<path d='M 922 302 H 1021.0 V 411.25 H 1120' fill='none' stroke='#e08a2b' stroke-width='1.6'/>
+<path d='M 922 440 H 1021.0 V 411.25 H 1120' fill='none' stroke='#e08a2b' stroke-width='1.6'/>
+<path d='M 922 532 H 1021.0 V 411.25 H 1120' fill='none' stroke='#e08a2b' stroke-width='1.6'/>
+<path d='M 922 670 H 1021.0 V 411.25 H 1120' fill='none' stroke='#e08a2b' stroke-width='1.6'/>
+<path d='M 922 348 H 1021.0 V 606.75 H 1120' fill='none' stroke='#4c86a6' stroke-width='1.6'/>
+<path d='M 922 486 H 1021.0 V 606.75 H 1120' fill='none' stroke='#4c86a6' stroke-width='1.6'/>
+<path d='M 922 578 H 1021.0 V 606.75 H 1120' fill='none' stroke='#4c86a6' stroke-width='1.6'/>
+<path d='M 922 716 H 1021.0 V 606.75 H 1120' fill='none' stroke='#4c86a6' stroke-width='1.6'/>
+<path d='M 922 808 H 1021.0 V 606.75 H 1120' fill='none' stroke='#4c86a6' stroke-width='1.6'/>
+<path d='M 922 624 H 1021.0 V 802.25 H 1120' fill='none' stroke='#a3917c' stroke-width='1.6'/>
+<path d='M 922 762 H 1021.0 V 802.25 H 1120' fill='none' stroke='#a3917c' stroke-width='1.6'/>
+<path d='M 922 854 H 1021.0 V 802.25 H 1120' fill='none' stroke='#a3917c' stroke-width='1.6'/>
+<path d='M 922 900 H 1021.0 V 802.25 H 1120' fill='none' stroke='#a3917c' stroke-width='1.6'/>
+<rect x='1120' y='187.75' width='150' height='56' rx='14' fill='#cf4a34' stroke='#cf4a34' stroke-width='1.5'/>
+<text x='1195.0' y='215.75' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Act</text>
+<rect x='1120' y='383.25' width='150' height='56' rx='14' fill='#e08a2b' stroke='#e08a2b' stroke-width='1.5'/>
+<text x='1195.0' y='411.25' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Attend</text>
+<rect x='1120' y='578.75' width='150' height='56' rx='14' fill='#4c86a6' stroke='#4c86a6' stroke-width='1.5'/>
+<text x='1195.0' y='606.75' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Track*</text>
+<rect x='1120' y='774.25' width='150' height='56' rx='14' fill='#a3917c' stroke='#a3917c' stroke-width='1.5'/>
+<text x='1195.0' y='802.25' font-size='18' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Track</text>
 <text x='44' y='968' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>unknown (no CVE) follows the same branch as likely — absence of a CVE is not evidence of safety.</text>
 </svg>
