@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from mulitaminer.reader import extract_pdf
+from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanner_engine import get_scanner
 
 OPENVAS_FIXTURE = """\

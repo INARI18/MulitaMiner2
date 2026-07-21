@@ -10,7 +10,7 @@ import re
 import time
 from pathlib import Path
 
-from mulitaminer.reader import BACKENDS, extract_pdf
+from mulitaminer.pdf_reader import BACKENDS, extract_pdf
 
 MARKERS = {
     "openvas": re.compile(r"^\s*(?:Critical|High|Medium|Low|Log)\s+\(CVSS:", re.MULTILINE),

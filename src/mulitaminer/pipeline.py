@@ -18,7 +18,7 @@ from mulitaminer import settings
 from mulitaminer.extraction import extract_blocks
 from mulitaminer.llm import LLMClient, get_model
 from mulitaminer.models import RunResult, TokenUsage
-from mulitaminer.reader import DEFAULT_BACKEND, extract_pdf
+from mulitaminer.pdf_reader import DEFAULT_BACKEND, extract_pdf
 from mulitaminer.scanner_engine import get_scanner
 from mulitaminer.exporters import get_exporter
 from mulitaminer.writers import write_json

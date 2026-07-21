@@ -21,7 +21,7 @@ output count matches the report, with or without deduplication.
 
 ```bash
 uv sync
-cp .env.example .env    # cloud API keys only; legacy MulitaMiner v1 names also work
+cp .env.example .env    # cloud API keys only; local models need none
 ```
 
 ## Usage

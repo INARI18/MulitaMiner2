@@ -23,7 +23,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mulitaminer.reader import extract_pdf
+from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanners import get_scanner
 
 PLUGIN_RE = re.compile(r"VULNERABILITY\s+\w+\s+PLUGIN\s+ID\s+(\d+)", re.IGNORECASE)

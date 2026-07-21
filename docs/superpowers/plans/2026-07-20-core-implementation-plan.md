@@ -312,6 +312,39 @@ instances; user wants a closer look at this later.
   21/21 input_type. Writes `*_instances_generated.xlsx` copies (gitignored)
   for the user to review and adopt — originals untouched.
 
+## Phase 14 — Native metrics (user-chosen next step, to be designed)
+
+- [ ] Lean evaluation subsystem in this repo (BERTScore, ROUGE-L, token/field
+  F1, coverage) against the baseline XLSX files, replacing the v1 harness
+  bridge. Design first (alignment strategy, report format), then implement.
+  Caveats already recorded: Tenable `instances` ground truth is unreliable
+  (see Phase 11 note); exclude or use the regenerated
+  `*_instances_generated.xlsx` after user review.
+
+## Phase 15 — New scanner (user request, after metrics)
+
+Add a third scanner end to end. Not all scanners export PDF, so either pick a
+PDF-capable one or extend the input layer beyond PDF (the `pdf_reader` seam is
+the only PDF-specific stage; a plain-text or JSON reader slots beside it).
+
+Candidate options:
+- **OWASP ZAP** (web scan): free, PDF reports via the reports add-on, easy to
+  generate real data against JuiceShop — closest to the Tenable WAS shape.
+  Recommended for staying on the PDF path with reproducible test data.
+- **Nessus** (network scan): native PDF export, close cousin of the OpenVAS
+  report shape; needs access to a Nessus instance for sample reports.
+- **Qualys / Rapid7 InsightVM**: PDF report templates exist; enterprise
+  licensing makes sample data harder.
+- **Nuclei** (JSON/JSONL) or **Trivy** (JSON/SARIF): the "other formats"
+  path — free and trivially reproducible. Note: structured input may need no
+  LLM at all (deterministic mapping to the record schema), which changes the
+  scanner-engine role for that input type.
+- **Nikto** (plain text): cheapest "non-PDF" experiment — marker segmentation
+  already operates on text, so only a trivial text reader is needed.
+
+Decision to make at design time: one scanner on the PDF path (ZAP) vs. one on
+the structured path (Nuclei) vs. both.
+
 - [x] (user request) Drop the `_prompt` suffix from prompt filenames:
   `configs/prompts/openvas.txt` / `tenable.txt`; `prompt` key now optional,
   defaulting to `<name>.txt` — both built-in JSONs lost the key. Applied

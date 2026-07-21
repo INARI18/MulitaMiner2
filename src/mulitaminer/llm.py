@@ -28,7 +28,7 @@ class ModelProfile:
     key: str                      # CLI name
     model: str                    # provider model id
     base_url: str | None          # None = api.openai.com
-    api_key_envs: tuple[str, ...]  # empty = local/keyless
+    api_key_env: str | None    # None = local/keyless
     context_window: int
     max_output_tokens: int
     supports_json_schema: bool
@@ -40,7 +40,7 @@ class ModelProfile:
 
     @property
     def is_local(self) -> bool:
-        return not self.api_key_envs
+        return self.api_key_env is None
 
 
 MODELS: dict[str, ModelProfile] = {
@@ -48,7 +48,7 @@ MODELS: dict[str, ModelProfile] = {
         key="deepseek",
         model="deepseek-v4-flash",
         base_url="https://api.deepseek.com/v1",
-        api_key_envs=("DEEPSEEK_API_KEY", "API_KEY_DEEPSEEK"),
+        api_key_env="DEEPSEEK_API_KEY",
         context_window=64_000,
         max_output_tokens=8_000,
         supports_json_schema=False,  # json_object mode + validation
@@ -59,7 +59,7 @@ MODELS: dict[str, ModelProfile] = {
         key="gpt-4o-mini",
         model="gpt-4o-mini",
         base_url=None,
-        api_key_envs=("OPENAI_API_KEY", "API_KEY_GPT4"),
+        api_key_env="OPENAI_API_KEY",
         context_window=128_000,
         max_output_tokens=16_000,
         supports_json_schema=True,
@@ -70,7 +70,7 @@ MODELS: dict[str, ModelProfile] = {
         key="gpt-4o",
         model="gpt-4o",
         base_url=None,
-        api_key_envs=("OPENAI_API_KEY", "API_KEY_GPT4"),
+        api_key_env="OPENAI_API_KEY",
         context_window=128_000,
         max_output_tokens=16_000,
         supports_json_schema=True,
@@ -81,7 +81,7 @@ MODELS: dict[str, ModelProfile] = {
         key="llama-3.3-70b",
         model="llama-3.3-70b-versatile",
         base_url="https://api.groq.com/openai/v1",
-        api_key_envs=("GROQ_API_KEY", "API_KEY_LLAMA3"),
+        api_key_env="GROQ_API_KEY",
         context_window=128_000,
         max_output_tokens=8_000,
         supports_json_schema=False,
@@ -92,7 +92,7 @@ MODELS: dict[str, ModelProfile] = {
         key="ollama",
         model="llama3",  # override with --model-name
         base_url="http://localhost:11434/v1",
-        api_key_envs=(),
+        api_key_env=None,
         context_window=32_000,
         max_output_tokens=8_000,
         supports_json_schema=False,
@@ -104,7 +104,7 @@ MODELS: dict[str, ModelProfile] = {
         key="lmstudio",
         model="local-model",  # override with --model-name
         base_url="http://localhost:1234/v1",
-        api_key_envs=(),
+        api_key_env=None,
         context_window=32_000,
         max_output_tokens=8_000,
         supports_json_schema=True,  # LM Studio supports json_schema natively
@@ -125,13 +125,11 @@ def get_model(key: str) -> ModelProfile:
 def _resolve_api_key(profile: ModelProfile) -> str:
     if profile.is_local:
         return "local"  # dummy; keyless servers ignore it
-    for var in profile.api_key_envs:
-        value = os.getenv(var)
-        if value:
-            return value
+    if value := os.getenv(profile.api_key_env):
+        return value
     raise FatalLLMError(
-        f"No API key for model '{profile.key}'. Set one of "
-        f"{' / '.join(profile.api_key_envs)} in your .env (see .env.example)."
+        f"No API key for model '{profile.key}'. "
+        f"Set {profile.api_key_env} in your .env (see .env.example)."
     )
 
 

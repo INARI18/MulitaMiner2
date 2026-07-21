@@ -8,7 +8,7 @@ import typer
 from dotenv import load_dotenv
 
 from mulitaminer.llm import MODELS, FatalLLMError
-from mulitaminer.reader import BACKENDS, DEFAULT_BACKEND
+from mulitaminer.pdf_reader import BACKENDS, DEFAULT_BACKEND
 from mulitaminer.scanner_engine import all_scanners
 
 app = typer.Typer(
@@ -88,7 +88,7 @@ def models() -> None:
     """List available model profiles."""
     for key, p in MODELS.items():
         kind = "local " if p.is_local else "cloud "
-        keys = " / ".join(p.api_key_envs) or "no key needed"
+        keys = p.api_key_env or "no key needed"
         typer.echo(f"{key:<16} {kind} {p.model:<28} {keys}")
 
 
@@ -108,7 +108,7 @@ def segment(
     count must equal the report's finding count.
     """
     _setup_logging(debug=False)
-    from mulitaminer.reader import extract_pdf
+    from mulitaminer.pdf_reader import extract_pdf
     from mulitaminer.scanner_engine import get_scanner
 
     profile = get_scanner(scanner)

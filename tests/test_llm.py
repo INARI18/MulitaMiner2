@@ -39,17 +39,9 @@ def test_local_profiles_are_keyless():
 
 
 def test_cloud_profile_without_env_raises_actionable_error(monkeypatch):
-    for var in MODELS["deepseek"].api_key_envs:
-        monkeypatch.delenv(var, raising=False)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
     with pytest.raises(FatalLLMError, match="DEEPSEEK_API_KEY"):
         _resolve_api_key(MODELS["deepseek"])
-
-
-def test_legacy_env_name_accepted(monkeypatch):
-    for var in MODELS["deepseek"].api_key_envs:
-        monkeypatch.delenv(var, raising=False)
-    monkeypatch.setenv("API_KEY_DEEPSEEK", "legacy-key")
-    assert _resolve_api_key(MODELS["deepseek"]) == "legacy-key"
 
 
 def test_clean_response_strips_think_and_fences():
