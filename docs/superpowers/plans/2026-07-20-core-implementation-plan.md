@@ -399,4 +399,12 @@ Not in scope here: the enrichment layer from the same note is far larger (NLI
 faithfulness measurement, source-attributed field rewriting) and is a separate
 effort, not to be bundled with these ranking tweaks.
 
-**State:** not started (proposed; awaiting user decision on whether/when).
+**State:** BASE PORTED (2026-07-21). Single module `prioritization.py` (feeds
+sync, per-record signals, SSVC tree, queue) + CLI `sync-feeds` and
+`prioritize`. Consumes the run's results.json, writes results.prioritization
+.csv/.xlsx. Improvements 2 (per-row justification) and 4 (CVE-less handled as
+"unknown", not "none") landed with the base. Live-verified on the bBWA run
+(59 findings: 1 Act, 15 Attend, 30 Track*, 13 Track). Still open from the list:
+1 (asset-context input file), 3 (Automatable from CVSS vector), 5 (point-in-time
+snapshot stored in run.json; the snapshot_date column is a partial step). 80
+tests passing.

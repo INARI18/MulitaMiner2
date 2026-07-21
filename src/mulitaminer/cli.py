@@ -154,6 +154,35 @@ def export(
         typer.echo(f"{fmt}: {out}")
 
 
+@app.command("sync-feeds")
+def sync_feeds_cmd() -> None:
+    """Download the KEV and EPSS feeds for prioritization (~5 MB, daily data)."""
+    from mulitaminer.prioritization import sync_feeds
+    from mulitaminer.settings import FEEDS_DIR
+
+    meta = sync_feeds()
+    typer.echo(f"Synced to {FEEDS_DIR}/: {meta['kev_count']} KEV entries, "
+               f"{meta['epss_count']} EPSS scores (score date {meta['epss_score_date']})")
+
+
+@app.command()
+def prioritize(
+    results: Path = typer.Argument(
+        ..., exists=True, help="A results.json or a run directory containing one"
+    ),
+) -> None:
+    """Rank a run's findings into a remediation queue (KEV/EPSS/SSVC, offline)."""
+    from mulitaminer.prioritization import prioritize_run
+
+    try:
+        paths = prioritize_run(results)
+    except ValueError as exc:
+        typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+    for kind, path in paths.items():
+        typer.echo(f"{kind}: {path}")
+
+
 @app.command()
 def formats() -> None:
     """List available export formats for --export."""

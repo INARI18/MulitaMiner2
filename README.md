@@ -61,6 +61,10 @@ uv run mulitaminer extract report.pdf --scanner openvas --model deepseek --expor
 # Generate more exports later from the same run, no LLM calls
 uv run mulitaminer export outputs/runs/<run_dir> -e sarif -e csaf
 
+# Rank findings into a remediation queue (KEV/EPSS/SSVC)
+uv run mulitaminer sync-feeds
+uv run mulitaminer prioritize outputs/runs/<run_dir>
+
 # Test a scanner config offline and free
 uv run mulitaminer segment report.pdf --scanner openvas
 ```

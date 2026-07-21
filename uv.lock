@@ -594,6 +594,7 @@ name = "mulitaminer"
 version = "2.0.0a1"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "openai" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -614,6 +615,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
     { name = "openai", specifier = ">=1.40" },
     { name = "openpyxl", specifier = ">=3.1" },
     { name = "pandas", specifier = ">=2.0" },

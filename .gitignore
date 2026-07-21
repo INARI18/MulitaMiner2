@@ -9,7 +9,7 @@ __pycache__/
 build/
 dist/
 
-# Run artifacts
+# Run artifacts and the regenerable KEV/EPSS feed snapshot
 outputs/
 
 # Generated baseline copies awaiting user review (tools/annotate_instances.py)

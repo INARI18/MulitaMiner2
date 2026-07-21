@@ -4,6 +4,8 @@ from pathlib import Path
 
 # Root for all run artifacts (each run gets its own subdirectory).
 OUTPUTS_DIR = Path("outputs") / "runs"
+# Local KEV/EPSS feed snapshot (regenerable daily cache).
+FEEDS_DIR = Path("outputs") / "feeds"
 
 # --- Chunk packing ----------------------------------------------------------
 # Fraction of the theoretical token budget actually used, leaving headroom for

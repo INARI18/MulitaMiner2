@@ -7,6 +7,8 @@
 | `mulitaminer extract REPORT.pdf -s SCANNER -m MODEL` | Full extraction into a new run directory |
 | `mulitaminer segment REPORT.pdf -s SCANNER` | Segmentation only, offline and free |
 | `mulitaminer export RUN_DIR -e FORMAT` | Generate exports from an existing run, no LLM calls |
+| `mulitaminer sync-feeds` | Download the KEV and EPSS feeds for prioritization |
+| `mulitaminer prioritize RUN_DIR` | Rank a run into a remediation queue (offline) |
 | `mulitaminer models` | List model profiles and their env vars |
 | `mulitaminer scanners` | List available scanners |
 | `mulitaminer formats` | List export formats and what consumes each |
