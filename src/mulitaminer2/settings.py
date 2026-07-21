@@ -1,21 +1,19 @@
-"""Tunable constants. Each value's provenance is named — most were calibrated
-empirically in MulitaMiner v1 (`configs/constants.py`) against real scanner
-reports; change them only with a parity run to back it up."""
+"""Tunable constants, calibrated empirically against real scanner reports.
+Change them only with a parity run to back it up."""
 from pathlib import Path
 
 # Root for all run artifacts (each run gets its own subdirectory).
 OUTPUTS_DIR = Path("outputs") / "runs"
 
-# --- Chunk packing (v1 calibrations) ----------------------------------------
+# --- Chunk packing ----------------------------------------------------------
 # Fraction of the theoretical token budget actually used, leaving headroom for
-# the prompt template and tokenizer estimation error. (v1: CHUNK_SAFETY_MARGIN_DEFAULT)
+# the prompt template and tokenizer estimation error.
 CHUNK_SAFETY_MARGIN = 0.85
 # Absolute floor for the chunk character ceiling, and the token multiplier
-# above it: ceiling = max(MIN, chunk_tokens * MULT). (v1: CHUNK_CHAR_CEILING_*)
+# above it: ceiling = max(MIN, chunk_tokens * MULT).
 CHUNK_CHAR_CEILING_MIN = 30_000
 CHUNK_CHAR_CEILING_TOKEN_MULT = 2
-# Fallback chars-per-token estimate when no tiktoken encoding matches the
-# model (local/HF-served models). Conservative; v1 used the same order.
+# Chars-per-token estimate when no tiktoken encoding matches the model.
 FALLBACK_CHARS_PER_TOKEN = 3.5
 
 # --- Extraction retry --------------------------------------------------------

@@ -1,6 +1,6 @@
 """DefectDojo Generic Findings Import (JSON).
 
-The pragmatic first integration from the OUTPUT_STANDARDS analysis: DefectDojo
+DefectDojo
 is the aggregator closest to MulitaMiner's role (it ingests scanner findings
 and does cross-scanner dedup/tracking), and its Generic parser takes plain
 JSON — the cheapest bridge from "PDF report" to "managed findings".

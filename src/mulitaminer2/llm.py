@@ -1,15 +1,12 @@
 """One OpenAI-compatible client for every provider, cloud or local.
 
-OpenAI, Groq, DeepSeek, Ollama and LM Studio all speak the OpenAI chat API, so
-provider differences reduce to a ModelProfile. Local profiles are keyless (a
-dummy key satisfies the SDK; those servers ignore it). Cloud profiles resolve
-their key from the FIRST set env var in `api_key_envs` — the legacy MulitaMiner
-v1 names are listed as fallbacks so an existing v1 `.env` works unchanged.
+Provider differences reduce to a ModelProfile. Local profiles are keyless (a
+dummy key satisfies the SDK). Cloud profiles resolve their key from the first
+set env var in `api_key_envs`.
 
 Structured output: JSON-Schema response_format where the provider supports it,
-otherwise `json_object` + Pydantic validation. The only pre-parse cleanup kept
-from v1 is stripping markdown fences and `<think>…</think>` reasoning blocks
-(Qwen3/DeepSeek-R1 lesson); v1's six-stage heuristic parser is gone by design.
+otherwise `json_object` + Pydantic validation. Pre-parse cleanup strips only
+markdown fences and `<think>` reasoning blocks; anything else must validate.
 """
 from __future__ import annotations
 
@@ -44,7 +41,7 @@ class ModelProfile:
     price_in: float               # USD per 1M input tokens (0 for local)
     price_out: float
     reasoning_tags: bool = False  # strip <think>…</think> from responses
-    temperature: float = 0.0      # v1 ran extraction at temperature 0
+    temperature: float = 0.0      # deterministic extraction
     encoding: str = "cl100k_base"
 
     @property
@@ -55,7 +52,7 @@ class ModelProfile:
 MODELS: dict[str, ModelProfile] = {
     "deepseek": ModelProfile(
         key="deepseek",
-        model="deepseek-v4-flash",  # aliases chat/coder resolve here (v1 note)
+        model="deepseek-v4-flash",
         base_url="https://api.deepseek.com/v1",
         api_key_envs=("DEEPSEEK_API_KEY", "API_KEY_DEEPSEEK"),
         context_window=64_000,
@@ -145,7 +142,7 @@ def _resolve_api_key(profile: ModelProfile) -> str:
 
 
 def clean_response(text: str, reasoning_tags: bool) -> str:
-    """The single fallback kept from v1's six parsing heuristics."""
+    """Strip markdown fences and reasoning blocks before JSON parsing."""
     if reasoning_tags:
         text = _THINK_RE.sub("", text)
     text = _FENCE_RE.sub("", text.strip())

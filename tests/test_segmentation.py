@@ -49,7 +49,7 @@ GET / 200
 def test_openvas_marker_starts_each_block_with_severity_header():
     blocks = get_scanner("openvas").segment(OPENVAS_FIXTURE)
     assert len(blocks) == 3
-    # The NVT lesson: the CVSS header line must be INSIDE its block, line one.
+    # The CVSS header line must be INSIDE its block, line one.
     for block in blocks:
         assert re.match(r"(Critical|High|Medium|Low|Log)\s+\(CVSS:", block.text.splitlines()[0])
 
@@ -77,14 +77,14 @@ def test_tenable_name_walkback_pulls_name_into_block():
     assert blocks[1].text.splitlines()[0].endswith("Instances (2)")
     # And the previous block must NOT have swallowed the next block's name.
     assert "Instances (2)" not in blocks[0].text
-    # JuiceShop lesson: the previous block's reference tail ('BID -') sits
+    # The previous block's reference tail ('BID -') sits
     # directly above the name and must never be pulled in as name content.
     assert not blocks[1].text.startswith("BID")
     assert "BID -" in blocks[0].text  # it stays where it belongs
 
 
 def test_tenable_wrapped_instances_title_is_fully_captured():
-    """JuiceShop lesson: long '<name> Instances (N)' titles wrap; the line
+    """Long '<name> Instances (N)' titles wrap; the line
     above the marker is then only '(1)' — the walk-back must climb one more
     line, or pairing breaks."""
     fixture = """\

@@ -5,7 +5,7 @@ Invariants (guarded by tests):
 - chunks never overlap and preserve block order;
 - every block ends up in exactly one chunk.
 
-Budgets combine three v1-calibrated limits: token budget x safety margin,
+Budgets combine three limits: token budget x safety margin,
 character ceiling, and the scanner's max blocks per chunk. Because extraction
 output largely mirrors the block text (fields quote it verbatim), the caller
 should pass a token budget derived from the model's OUTPUT cap, which is the

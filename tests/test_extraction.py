@@ -132,7 +132,7 @@ def test_port_backfill_from_block_context():
 
 
 def test_oversized_single_block_is_truncated_with_declared_marker():
-    """Tenable 'Instances (25)' lesson: a block whose output cannot fit the
+    """A block whose output cannot fit the
     model's cap is truncated at the INPUT tail (declared, never silent) so
     the finding survives with partial instances instead of being dropped."""
     big = Block(id=0, text="High (CVSS: 7.5)\nNVT: Huge\n" + ("instance line\n" * 40_000))

@@ -30,7 +30,7 @@ def test_unknown_backend_raises():
 
 
 def test_no_control_characters_survive_extraction():
-    """bBWA lesson: pypdfium2 emits broken ligatures as raw control chars
+    """pypdfium2 emits broken ligatures as raw control chars
     ("a\\x1bected" = "affected"); one control char in a field makes the LLM's
     JSON invalid by definition. The reader must map them (CID table) or strip."""
     import re as _re

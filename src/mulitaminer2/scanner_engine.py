@@ -1,10 +1,8 @@
 """Config-driven scanner engine: a scanner is ONE JSON file + ONE prompt file.
 
-Unlike v1 — where the JSON held only part of the definition and the rest lived
-in a strategy class plus regexes hardcoded in the chunker — here the JSON is
-the WHOLE definition. Adding a scanner requires no Python: drop `<name>.json`
-+ `<name>.txt` into `configs/scanners/` + `configs/prompts/` (or into the
-directory named by the MULITAMINER2_SCANNERS_DIR env var) and it registers.
+The JSON is the WHOLE definition. Adding a scanner requires no Python: drop
+`<name>.json` + `<name>.txt` into `configs/scanners/` + `configs/prompts/`
+(or into the directory named by MULITAMINER2_SCANNERS_DIR) and it registers.
 
 JSON fields:
 - name:                CLI name. Also selects the typed record class when one
@@ -18,7 +16,7 @@ JSON fields:
                        an inline "(?i)" prefix for case-insensitive matching.
 - name_above_marker:   bool; the finding NAME is the single line directly
                        ABOVE the marker and is pulled into the block (Tenable;
-                       mirror of the OpenVAS NVT lesson).
+                       the name precedes the header).
 - name_stop_pattern:   optional regex; a line matching it is never taken as
                        the name (section headers / reference tails / URLs of
                        the previous block).
@@ -77,7 +75,7 @@ class ScannerProfile:
     record_type: type[VulnRecord]
     marker: re.Pattern            # one match line == one candidate finding
     prompt_path: Path
-    max_vulns_per_chunk: int      # v1 calibration, per scanner
+    max_vulns_per_chunk: int      # empirical calibration, per scanner
     segment: Callable[[str], list[Block]]
     # records -> (consolidated records, merge-log lines). Always runs:
     # structural pairing + severity normalization + identical-identity dedup.
@@ -167,9 +165,8 @@ def _build_consolidator(cfg: dict):
         return (normalize_name(name), *(getattr(record, f) for f in pair["by"]))
 
     def _identity_key(record: VulnRecord):
-        # A duplicate is a FULLY identical record (name compared normalized).
-        # User decision, generalizing v1's 'Services' exception to everything:
-        # same key but different content means two real findings — merging
+        # A duplicate is a FULLY identical record (name compared normalized):
+        # same key with different content means two real findings — merging
         # them would silently lose one. Only exact repeats collapse.
         data = record.model_dump(mode="json", by_alias=True)
         data["Name"] = normalize_name(record.name)

@@ -45,7 +45,7 @@ def test_cloud_profile_without_env_raises_actionable_error(monkeypatch):
         _resolve_api_key(MODELS["deepseek"])
 
 
-def test_legacy_v1_env_name_accepted(monkeypatch):
+def test_legacy_env_name_accepted(monkeypatch):
     for var in MODELS["deepseek"].api_key_envs:
         monkeypatch.delenv(var, raising=False)
     monkeypatch.setenv("API_KEY_DEEPSEEK", "legacy-key")
@@ -85,7 +85,7 @@ def test_extract_propagates_invalid_json_for_retry_policy():
 
 
 def test_envelope_slips_are_rewrapped():
-    """Dropped-blocks lesson: models sometimes skip the {"items": [...]}
+    """Models sometimes skip the {"items": [...]}
     envelope, especially on single-block calls. Shape is adapted; content
     is never repaired."""
 
@@ -110,4 +110,4 @@ def test_envelope_slips_are_rewrapped():
 
 def test_unknown_model_key_raises():
     with pytest.raises(ValueError, match="Unknown model"):
-        get_model("gpt4")  # v1's misleading alias intentionally not carried over
+        get_model("gpt4")

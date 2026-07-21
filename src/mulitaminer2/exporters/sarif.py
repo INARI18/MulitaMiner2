@@ -2,8 +2,7 @@
 (GitHub code scanning, DefectDojo, SonarQube, Azure DevOps).
 
 Network findings carry no file location, so results use logicalLocations
-(`host:port`); scanner-specific fields ride in the SARIF property bag, as the
-OUTPUT_STANDARDS analysis recommends.
+(`host:port`); scanner-specific fields ride in the SARIF property bag.
 """
 from __future__ import annotations
 

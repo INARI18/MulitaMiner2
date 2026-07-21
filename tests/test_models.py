@@ -83,7 +83,7 @@ def test_extraction_json_schema_closes_objects():
 
 
 def test_junk_empty_structured_fields_are_coerced():
-    """Dropped-blocks lesson: the report's empty-idiom ("-") leaks into the
+    """The report's empty-idiom ("-") leaks into the
     LLM's JSON for structured fields; coerce instead of failing the record."""
     rec = TenableRecord.model_validate(
         {"Name": "X", "severity": "LOW", "cvss": [], "plugin_details": "-", "instances": ""}

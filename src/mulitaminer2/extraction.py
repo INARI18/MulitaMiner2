@@ -6,8 +6,7 @@ Segmentation already knows the exact candidate count, so validation is exact:
 - unknown or duplicate IDs are dropped with a warning.
 
 This is what makes the raw output count equal the marker count regardless of
-deduplication — v1's chunk-level "discovery" extraction could silently gain or
-lose findings at chunk boundaries.
+deduplication.
 """
 from __future__ import annotations
 
@@ -90,11 +89,8 @@ def extract_blocks(
             log.info(
                 "Retry round %d: re-sending %d unresolved block(s)", round_no, len(pending)
             )
-        # Shrink chunks each retry round (4 -> 2 -> 1): a chunk whose response
-        # hit the output-token cap fails identically at the same size, so
-        # re-sending smaller groups is what actually makes retries converge
-        # (bBWA lesson: reasoning models spend hidden thinking tokens from the
-        # same completion budget).
+        # Shrink chunks each retry round (4 -> 2 -> 1): a response that hit
+        # the output cap fails identically at the same size.
         chunks, pack_warnings = pack(
             pending,
             max_blocks_per_chunk=max(1, profile.max_vulns_per_chunk // (2 ** round_no)),
@@ -122,11 +118,10 @@ def extract_blocks(
 
 
 def _truncate_oversized(chunk: Chunk, client: LLMClient, warnings: list[str]) -> list[Block]:
-    """A single block whose expected output cannot fit the model's output cap
-    is truncated at the INPUT tail with an explicit marker (the repetitive
-    instances section is what overflows — Tenable 'Instances (25)' lesson).
-    Core fields live at the top and survive; partial data beats a dropped
-    finding, and the truncation is declared, never silent."""
+    """Truncate a single block whose expected output cannot fit the model's
+    output cap: cut the input tail (the repetitive instances section) with an
+    explicit marker. Core fields live at the top and survive; the truncation
+    is declared, never silent."""
     if len(chunk.blocks) != 1:
         return chunk.blocks
     budget = int(client.profile.max_output_tokens * settings.CHUNK_SAFETY_MARGIN)

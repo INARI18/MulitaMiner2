@@ -1,7 +1,6 @@
 """Output writers: JSON (primary), XLSX, CSV.
 
-Columns are derived from the record model — never hardcoded (v1 lesson: a
-hand-maintained column list silently dropped the severity key).
+Columns are derived from the record model — never hardcoded.
 """
 from __future__ import annotations
 

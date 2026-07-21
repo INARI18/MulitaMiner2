@@ -1,8 +1,7 @@
 """Export seam: `--export <name>` resolves an exporter from this registry.
 
 An exporter is a deterministic mapping from validated VulnRecords to a target
-format — never an LLM concern (the OUTPUT_STANDARDS lesson from v1: extraction
-and serialization must not mix; CAIS-as-a-prompt was the cautionary tale).
+format — never an LLM concern; extraction and serialization must not mix.
 
 Adding a format: write `to_<fmt>` in a module here, decorate with
 @register("<fmt>"), import the module below.

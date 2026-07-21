@@ -35,7 +35,7 @@ def test_openvas_different_port_is_a_different_finding():
 
 
 def test_repeating_findings_with_distinct_content_survive():
-    """Generalized v1 'Services' lesson: legitimate repeats on the same
+    """Legitimate repeats on the same
     host/port with different content stay separate."""
     a = _ov("Services", description=["ssh detected"])
     b = _ov("Services", description=["http detected"])

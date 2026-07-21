@@ -1,15 +1,9 @@
 """Typed data models — the single source of truth for the vulnerability record.
 
-Ported from MulitaMiner v1 `configs/vuln_schema.py` (field names, types, and the
-lessons in its comments), with two v2 changes:
-
-- `source` is no longer produced by the LLM: it is pinned per scanner record
-  type and stamped by the pipeline (the scanner is already known from the CLI).
-- The LLM response contract (`extraction_model_for`) is *derived* from the
-  record model instead of hand-copied, so the two can never drift.
-
-Everything between pipeline stages travels as these objects; nothing is written
-to disk except final run artifacts and optional debug dumps.
+`source` is never produced by the LLM: it is pinned per scanner record type
+and stamped by the pipeline. The LLM response contract
+(`extraction_model_for`) is derived from the record model, so the two can
+never drift. Everything between pipeline stages travels as these objects.
 """
 from __future__ import annotations
 
@@ -38,8 +32,8 @@ class VulnRecord(BaseModel):
 
     # extra="allow": tolerate keys a scanner emits that we didn't declare,
     # rather than hard-failing. Safety net, not the organizing mechanism.
-    # populate_by_name: accept BOTH the JSON key `Name` (v1 output format,
-    # kept for baseline compatibility) and the pythonic attribute `name`.
+    # populate_by_name: accept BOTH the JSON key `Name` (baseline-compatible
+    # output format) and the pythonic attribute `name`.
     # validate_assignment: post-validation writes (context backfill, merge
     # backfill, severity normalization) must obey the schema too — a bad
     # value can never enter a record after the fact.
@@ -80,11 +74,8 @@ class VulnRecord(BaseModel):
     # hallucination surface). Subclasses pin it with a Literal default.
     source: str = Field(default="", **_PIPELINE_FILLED)
 
-    # No untyped overflow bucket (v1's scanner_specific was dropped by user
-    # decision): scanner-specific fields live in typed subclasses; if a
-    # config-only scanner ever needs extra fields, declare them in its JSON
-    # and build the subclass dynamically (same create_model pattern as the
-    # extraction contract).
+    # Scanner-specific fields live in typed subclasses; a config-only scanner
+    # needing extras should declare them in its JSON (dynamic subclass).
 
     @field_validator("plugin_details", "instances", mode="before")
     @classmethod

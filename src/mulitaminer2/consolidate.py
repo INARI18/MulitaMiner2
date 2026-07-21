@@ -1,18 +1,10 @@
-"""Consolidation: ONE definition of vulnerability identity per scanner.
+"""Consolidation primitives: ONE definition of vulnerability identity.
 
-v1 had three competing notions of "same vulnerability" (scanner strategies,
-central consolidation, metrics aligner); v2 keeps a single one here.
-
-Consolidation always runs and has no user-facing toggle (v1's
---allow-duplicates flag existed to repair chunk-level over-extraction; with
-block-anchored extraction there is nothing to repair). Steps: structural
-pairing (e.g. Tenable base+instances — structure, not dedup), severity
-normalization, and merging of records with an IDENTICAL identity key.
-
-The surviving record of a merge is the most complete one, where cvss=0.0
-COUNTS as filled (a Log finding's legitimate score — v1's count_filled_fields
-nuance). Which fields define identity is declared per scanner in its JSON
-config (see scanners/engine.py).
+Consolidation always runs, no toggle: structural pairing (e.g. Tenable
+base+instances — structure, not dedup), severity normalization, then merging
+of fully identical records. The surviving record of a merge is the most
+complete one; cvss=0.0 COUNTS as filled (a Log finding's legitimate score).
+Pairing policy is declared per scanner in its JSON config (scanner_engine).
 """
 from __future__ import annotations
 
@@ -25,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 def normalize_name(name: str | None) -> str:
-    """Lowercase + strip + collapse internal whitespace (v1 dedup key)."""
+    """Lowercase + strip + collapse internal whitespace."""
     if not name:
         return ""
     return re.sub(r"\s+", " ", str(name).strip().lower())
@@ -45,7 +37,7 @@ def _completeness(record: VulnRecord) -> int:
 
 
 def _merge_pair(winner: VulnRecord, loser: VulnRecord) -> VulnRecord:
-    """Backfill the winner's empty fields from the loser (v1 Tenable merge)."""
+    """Backfill the winner's empty fields from the loser."""
     for field in type(winner).model_fields:
         if not _filled(getattr(winner, field)) and _filled(getattr(loser, field)):
             setattr(winner, field, getattr(loser, field))
