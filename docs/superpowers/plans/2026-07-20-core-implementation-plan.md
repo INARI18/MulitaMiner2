@@ -274,7 +274,10 @@ instances; user wants a closer look at this later.
   UPDATE: line-anchored recount shows the PDF has 26 INPUT TYPE lines (35 was
   a substring artifact) — the LLM run had already extracted 26/26; the prompt
   was never missing anything. The experiment is likely unnecessary.
-- [x] `tools/annotate_instances.py` (user choice, option B): deterministic
+- [x] `archive/annotate_instances.py` (user choice, option B; local-only —
+  dataset-prep aid, kept out of the versioned tool per user decision, but
+  recoverable from git history at e2c97ba if the paper's methods need it):
+  deterministic
   no-LLM parser regenerating the baselines' `instances` column from the PDF
   (Instances-block line grammar: standalone INSTANCE/PAYLOAD/PROOF/OUTPUT
   labels, inline INPUT TYPE/NAME, REQUEST MADE, RESPONSE HEADERS). Verified
