@@ -187,3 +187,26 @@ exporters/__init__.py noted, untouched (not this diff).
   archive/ annotators are gitignored (annotate_instances precedent). If
   they are now official GT, committing both would make evaluation
   reproducible from a clean clone (paper methods).
+
+Full 5-baseline sweep (2026-07-21, latest run per PDF; primary metric per
+field, means over matched pairs):
+
+| | OV JuiceShop | OV bBWA | OV artifactory | TN JuiceShop | TN bWAAP |
+| --- | --- | --- | --- | --- | --- |
+| coverage (recall/prec) | 1.000/1.000 | 1.000/0.983 | 0.983/1.000 | 0.987/0.962 | 1.000/0.970 |
+| description (tokF1) | 0.966 | 0.975 | 0.822 | 0.926 | 0.905 |
+| solution (tokF1) | 0.940 | 0.921 | 0.806 | 0.774 | 0.953 |
+| references (setF1) | 0.917 | **0.304** | 0.825 | 0.663 | 0.808 |
+| cvss | 0.971 | 1.000 | 0.912 | 0.981 | 0.984 |
+| severity (exact) | 1.000 | 1.000 | 0.965 | 0.973 | 1.000 |
+| instances (struct) | — | — | — | 0.764 | 0.767 |
+
+references diagnosis (cross-scanner, consistent): BOTH prompts demand "one
+reference per element", and the extraction violates it — OpenVAS keeps raw
+'CVE: X, Y' comma-joins, label-only 'Other:' empties and 'URL:' prefixes
+(bBWA is reference-heavy in that idiom, hence 0.304); Tenable keeps whole
+multi-value label lines ~1/3 of the time. The GT conventions are now
+anchored and clean on both scanners — the low references scores are real
+extractor deviations. Candidate next step: tighten both prompts on the
+references contract (split joins, drop empty labels) and validate with one
+paid rerun per scanner.
