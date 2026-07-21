@@ -77,46 +77,37 @@ Medium -> medium, everything else -> low).
 
 ## Decision tree
 
-Read it top down: exploitation, then exposure, then severity, to a category.
 `unknown` (no CVE) follows the same path as `likely`: no CVE is absence of
 evidence, not evidence of safety, so it is never discounted as safe.
 
+Three inputs are read in order, mapping to one category:
+
 ```mermaid
 flowchart LR
-    S([Finding]) --> E{"Exploitation?"}
-    E -->|active KEV| A{"Exposed?"}
-    E -->|likely / unknown| L{"Exposed?"}
-    E -->|none| N{"Exposed?"}
-
-    A -->|exposed, high or medium| ACT
-    A -->|exposed, low| ATT
-    A -->|internal, high| ACT
-    A -->|internal, medium| ATT
-    A -->|internal, low| TRS
-
-    L -->|exposed, high| ACT
-    L -->|exposed, medium| ATT
-    L -->|exposed, low| TRS
-    L -->|internal, high| ATT
-    L -->|internal, medium| TRS
-    L -->|internal, low| TRK
-
-    N -->|exposed, high| ATT
-    N -->|exposed, medium| TRS
-    N -->|exposed, low| TRK
-    N -->|internal, high| TRS
-    N -->|internal, medium or low| TRK
-
-    ACT["Act"]:::act
-    ATT["Attend"]:::att
-    TRS["Track*"]:::trs
-    TRK["Track"]:::trk
+    S([Finding]) --> E["1 · Exploitation<br>active / likely / unknown / none"]
+    E --> X["2 · Exposure<br>exposed / internal"]
+    X --> V["3 · Severity<br>high / medium / low"]
+    V --> ACT["Act"]:::act
+    V --> ATT["Attend"]:::att
+    V --> TRS["Track*"]:::trs
+    V --> TRK["Track"]:::trk
 
     classDef act fill:#d13438,color:#fff,stroke:#a4262c;
     classDef att fill:#f7a600,color:#000,stroke:#c77700;
     classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
     classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
 ```
+
+The exact mapping (`unknown` follows the same row as `likely`):
+
+| Exploitation | Exposure | high | medium | low |
+| --- | --- | :---: | :---: | :---: |
+| active | exposed | Act | Act | Attend |
+| active | internal | Act | Attend | Track\* |
+| likely / unknown | exposed | Act | Attend | Track\* |
+| likely / unknown | internal | Attend | Track\* | Track |
+| none | exposed | Attend | Track\* | Track |
+| none | internal | Track\* | Track | Track |
 
 ## Categories
 
