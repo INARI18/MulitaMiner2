@@ -469,3 +469,12 @@ B2 self-contained HTML report with pure-SVG charts styled after the TCC
 defense deck.
 
 **State:** PLANNED.
+
+## Phase 19 - Docker image (approved 2026-07-21; LAST of everything)
+
+Reproducible `docker run` path for lay users and academic reproducibility
+(v1 had a Dockerfile). Model feeds/GGUF/feeds enter via volumes, never
+baked in. Explicitly the lowest-priority phase: implement only when every
+other planned phase the user wants is done.
+
+**State:** PLANNED (deliberately last).

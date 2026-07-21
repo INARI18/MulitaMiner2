@@ -129,3 +129,22 @@ report.html in a browser and eyeball against the deck's look.
 Sequencing note: this plan is independent of Phase 15 (new scanner +
 extra_fields) and Phase 17 (embedded model); the user picks execution
 order. B0 -> B1 -> B2 is internally ordered (each consumes the previous).
+
+## Phase B3 — Multi-run statistical aggregation (approved 2026-07-21)
+
+Consumes the B1 experiment tree. Purpose: turn "model A looks better than
+model B" into a defensible claim for TCC 2.
+
+- Per metric x field x model: mean, std, and **bootstrap confidence
+  intervals** across the X runs; paired significance test between models
+  on the same reports (paired bootstrap or Wilcoxon — decide at design
+  time with the metrics-auditor lens: n is small, normality not assumed).
+- Feeds B2: the HTML report shows CI whiskers instead of bare means, and
+  marks model-vs-model deltas whose CI excludes zero.
+- Scope guard: no inter-rater kappa (user deferred), no charts beyond what
+  B2 already renders.
+
+**Verify:** unit tests with synthetic run sets (known spread -> known CI;
+identical runs -> zero-width CI); aggregation output embedded in the
+manifest/report.
+**State:** TODO (planned; implement after B1).
