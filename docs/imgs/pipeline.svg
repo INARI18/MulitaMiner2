@@ -1,8 +1,9 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='1320' height='308' viewBox='0 0 1320 308'>
-<rect width='1320' height='308' fill='#fbf6ef'/>
+<svg xmlns='http://www.w3.org/2000/svg' width='1320' height='292' viewBox='0 0 1320 292'>
+<rect width='1320' height='292' fill='#fbf6ef'/>
 <text x='32' y='36' font-size='13' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='2' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>PIPELINE</text>
-<rect x='199.57142857142858' y='66' width='736.2857142857143' height='208' rx='18' fill='none' stroke='#e0572a' stroke-width='1.5' stroke-dasharray='6 6' opacity='0.55'/>
-<text x='213.57142857142858' y='66' font-size='11.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.5' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>IN MEMORY</text>
+<rect x='199.57142857142858' y='64' width='736.2857142857143' height='210' rx='18' fill='none' stroke='#e0572a' stroke-width='1.5' stroke-dasharray='6 6' opacity='0.5'/>
+<rect x='215.57142857142858' y='55' width='84' height='18' fill='#fbf6ef'/>
+<text x='221.57142857142858' y='64' font-size='11.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.5' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>IN MEMORY</text>
 <rect x='30.0' y='96' width='152.57142857142858' height='150' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
 <circle cx='52.0' cy='118' r='13' fill='#e0572a'/>
 <text x='52.0' y='118' font-size='13' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1</text>
@@ -43,7 +44,7 @@
 <text x='844.5714285714287' y='226' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>pair · dedup</text>
 <line x1='925.8571428571429' y1='171.0' x2='943.8571428571429' y2='171.0' stroke='#e0572a' stroke-width='2.2'/>
 <path d='M 942.8571428571429 166.0 L 949.8571428571429 171.0 L 942.8571428571429 176.0 Z' fill='#e0572a'/>
-<rect x='952.8571428571429' y='96' width='152.57142857142858' height='150' rx='16' fill='#f6e2cf' stroke='#e6d6c1' stroke-width='1.5'/>
+<rect x='952.8571428571429' y='96' width='152.57142857142858' height='150' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
 <circle cx='974.8571428571429' cy='118' r='13' fill='#e0572a'/>
 <text x='974.8571428571429' y='118' font-size='13' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>6</text>
 <g stroke='#e0572a' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M 1022.1428571428571 142 c -5 0 -2 7 -6 8 c 4 1 1 8 6 8'/><path d='M 1036.142857142857 142 c 5 0 2 7 6 8 c -4 1 -1 8 -6 8'/><circle cx='1029.142857142857' cy='158' r='1.8' fill='#e0572a'/></g>
@@ -51,11 +52,10 @@
 <text x='1029.142857142857' y='226' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>primary output</text>
 <line x1='1110.4285714285716' y1='171.0' x2='1128.4285714285716' y2='171.0' stroke='#e0572a' stroke-width='2.2'/>
 <path d='M 1127.4285714285716 166.0 L 1134.4285714285716 171.0 L 1127.4285714285716 176.0 Z' fill='#e0572a'/>
-<rect x='1137.4285714285716' y='96' width='152.57142857142858' height='150' rx='16' fill='#f6e2cf' stroke='#e6d6c1' stroke-width='1.5'/>
+<rect x='1137.4285714285716' y='96' width='152.57142857142858' height='150' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
 <circle cx='1159.4285714285716' cy='118' r='13' fill='#e0572a'/>
 <text x='1159.4285714285716' y='118' font-size='13' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>7</text>
 <g stroke='#e0572a' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M 1209.7142857142858 142 h 12 l 6 6 v 20 h -18 z'/><path d='M 1201.7142857142858 148 h 12 l 6 6 v 20 h -18 z' fill='#fbf6ef'/><path d='M 1201.7142857142858 148 h 12 l 6 6 v 20 h -18 z'/></g>
 <text x='1213.7142857142858' y='202' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Exports</text>
 <text x='1213.7142857142858' y='226' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>sarif · csaf · …</text>
-<text x='660.0' y='282' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>PDF in, structured records out; every intermediate stage lives in memory.</text>
 </svg>

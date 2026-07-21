@@ -15,7 +15,6 @@ MUTED = "#9b8e7d"
 ORANGE = "#e0572a"
 CARD = "#f4e9db"
 CARD_LINE = "#e6d6c1"
-OUT = "#f6e2cf"
 
 SANS = ("font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,"
         "sans-serif'")
@@ -96,7 +95,7 @@ def icon(kind, cx, cy):
 
 
 def build():
-    height = CARD_Y + CARD_H + 62
+    height = CARD_Y + CARD_H + 46
     p = [f"<svg xmlns='http://www.w3.org/2000/svg' width='{W}' height='{height}' "
          f"viewBox='0 0 {W} {height}'>",
          f"<rect width='{W}' height='{height}' fill='{BG}'/>",
@@ -107,18 +106,19 @@ def build():
     # "In memory" group behind the processing stages.
     gx0 = xs[IN_MEMORY[0]] - 15
     gx1 = xs[IN_MEMORY[-1]] + CARD_W + 15
-    p.append(f"<rect x='{gx0}' y='{CARD_Y-30}' width='{gx1-gx0}' height='{CARD_H+58}' "
+    gy = CARD_Y - 32
+    p.append(f"<rect x='{gx0}' y='{gy}' width='{gx1-gx0}' height='{CARD_H+60}' "
              f"rx='18' fill='none' stroke='{ORANGE}' stroke-width='1.5' "
-             f"stroke-dasharray='6 6' opacity='0.55'/>")
-    p.append(text(gx0 + 14, CARD_Y - 30, "IN MEMORY", 11.5, ORANGE, "bold", MONO,
-                  "start", "1.5"))
+             f"stroke-dasharray='6 6' opacity='0.5'/>")
+    # Mask the dashes behind the label, then draw the label.
+    p.append(f"<rect x='{gx0+16}' y='{gy-9}' width='84' height='18' fill='{BG}'/>")
+    p.append(text(gx0 + 22, gy, "IN MEMORY", 11.5, ORANGE, "bold", MONO, "start", "1.5"))
 
     for i, (title, sub, ic) in enumerate(STAGES):
         x = xs[i]
         cx = x + CARD_W / 2
-        fill = OUT if i >= N - 2 else CARD
         p.append(f"<rect x='{x}' y='{CARD_Y}' width='{CARD_W}' height='{CARD_H}' rx='16' "
-                 f"fill='{fill}' stroke='{CARD_LINE}' stroke-width='1.5'/>")
+                 f"fill='{CARD}' stroke='{CARD_LINE}' stroke-width='1.5'/>")
         p.append(f"<circle cx='{x+22}' cy='{CARD_Y+22}' r='13' fill='{ORANGE}'/>")
         p.append(text(x + 22, CARD_Y + 22, str(i + 1), 13, "#fff", "bold", MONO))
         p.append(icon(ic, cx, CARD_Y + 62))
@@ -131,9 +131,6 @@ def build():
             p.append(f"<path d='M {bx-10} {MIDY-5} L {bx-3} {MIDY} L {bx-10} {MIDY+5} Z' "
                      f"fill='{ORANGE}'/>")
 
-    p.append(text(W / 2, height - 26,
-                  "PDF in, structured records out; every intermediate stage lives in memory.",
-                  12.5, MUTED, "normal", MONO))
     p.append("</svg>")
     return "\n".join(p)
 
