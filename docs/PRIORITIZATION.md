@@ -77,49 +77,15 @@ Medium -> medium, everything else -> low).
 
 ## Decision tree
 
-Branch on exploitation, then exposure, then severity. `unknown` (no CVE)
-follows the same branch as `likely`: no CVE is absence of evidence, not
-evidence of safety, so it is never discounted as safe. Leaf color is the
-category.
+Branch on exploitation, then exposure, then severity, to one of four actions.
+`unknown` (no CVE) follows the same branch as `likely`: no CVE is absence of
+evidence, not evidence of safety, so it is never discounted as safe.
 
-```mermaid
-flowchart LR
-    S([Finding]) --> E{"Exploitation?"}
-    E -->|active KEV| A{"Exposed?"}
-    E -->|likely / unknown| L{"Exposed?"}
-    E -->|none| N{"Exposed?"}
+![SSVC decision tree](imgs/decision_tree.svg)
 
-    A -->|"exp · H/M"| ACT
-    A -->|"exp · L"| ATT
-    A -->|"int · H"| ACT
-    A -->|"int · M"| ATT
-    A -->|"int · L"| TRS
-
-    L -->|"exp · H"| ACT
-    L -->|"exp · M"| ATT
-    L -->|"exp · L"| TRS
-    L -->|"int · H"| ATT
-    L -->|"int · M"| TRS
-    L -->|"int · L"| TRK
-
-    N -->|"exp · H"| ATT
-    N -->|"exp · M"| TRS
-    N -->|"exp · L"| TRK
-    N -->|"int · H"| TRS
-    N -->|"int · M/L"| TRK
-
-    ACT["Act"]:::act
-    ATT["Attend"]:::att
-    TRS["Track*"]:::trs
-    TRK["Track"]:::trk
-
-    classDef act fill:#d13438,color:#fff,stroke:#a4262c;
-    classDef att fill:#f7a600,color:#111,stroke:#c77700;
-    classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
-    classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
-```
-
-Edge labels: `exp`/`int` = exposed/internal, `H`/`M`/`L` = high/medium/low severity.
+The diagram is generated from the actual decision table by
+`tools/render_decision_tree.py`, so it cannot drift from the code. Regenerate
+with `uv run python tools/render_decision_tree.py`.
 
 ## Categories
 

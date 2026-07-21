@@ -1,0 +1,138 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1320' height='978' viewBox='0 0 1320 978'>
+<rect width='1320' height='978' fill='#0d1117'/>
+<text x='375.0' y='60' font-size='17' fill='#a371f7' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>1. Exploitation</text>
+<text x='606.0' y='60' font-size='17' fill='#a371f7' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>2. Exposure</text>
+<text x='866.0' y='60' font-size='17' fill='#a371f7' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>3. Severity</text>
+<text x='1195.0' y='60' font-size='17' fill='#a371f7' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>4. Action</text>
+<rect x='40' y='475.0' width='150' height='52' rx='26' fill='#161b22' fill-opacity='1.0' stroke='#6e7681' stroke-width='1.5'/>
+<text x='115.0' y='501.0' font-size='17' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Finding</text>
+<path d='M 190 501.0 H 245.0 V 225.0 H 300' fill='none' stroke='#8b949e' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='300' y='199.0' width='150' height='52' rx='10' fill='#8957e5' fill-opacity='0.22' stroke='#8957e5' stroke-width='1.5'/>
+<text x='375.0' y='218.0' font-size='16' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Active</text>
+<text x='375.0' y='237.0' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>(known)</text>
+<path d='M 190 501.0 H 245.0 V 501.0 H 300' fill='none' stroke='#8b949e' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='300' y='475.0' width='150' height='52' rx='10' fill='#388bfd' fill-opacity='0.22' stroke='#388bfd' stroke-width='1.5'/>
+<text x='375.0' y='494.0' font-size='16' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Likely</text>
+<text x='375.0' y='513.0' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>(unknown)</text>
+<path d='M 190 501.0 H 245.0 V 777.0 H 300' fill='none' stroke='#8b949e' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='300' y='751.0' width='150' height='52' rx='10' fill='#484f58' fill-opacity='0.22' stroke='#484f58' stroke-width='1.5'/>
+<text x='375.0' y='770.0' font-size='16' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>None</text>
+<text x='375.0' y='789.0' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>(no evidence)</text>
+<path d='M 450 225.0 H 505.0 V 156.0 H 560' fill='none' stroke='#8957e5' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='560' y='134.0' width='92' height='44' rx='10' fill='#2ea043' fill-opacity='0.28' stroke='#2ea043' stroke-width='1.5'/>
+<text x='606.0' y='156.0' font-size='14' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>exposed</text>
+<path d='M 450 225.0 H 505.0 V 294.0 H 560' fill='none' stroke='#8957e5' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='560' y='272.0' width='92' height='44' rx='10' fill='#1f6feb' fill-opacity='0.28' stroke='#1f6feb' stroke-width='1.5'/>
+<text x='606.0' y='294.0' font-size='14' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>internal</text>
+<path d='M 450 501.0 H 505.0 V 432.0 H 560' fill='none' stroke='#388bfd' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='560' y='410.0' width='92' height='44' rx='10' fill='#2ea043' fill-opacity='0.28' stroke='#2ea043' stroke-width='1.5'/>
+<text x='606.0' y='432.0' font-size='14' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>exposed</text>
+<path d='M 450 501.0 H 505.0 V 570.0 H 560' fill='none' stroke='#388bfd' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='560' y='548.0' width='92' height='44' rx='10' fill='#1f6feb' fill-opacity='0.28' stroke='#1f6feb' stroke-width='1.5'/>
+<text x='606.0' y='570.0' font-size='14' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>internal</text>
+<path d='M 450 777.0 H 505.0 V 708.0 H 560' fill='none' stroke='#484f58' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='560' y='686.0' width='92' height='44' rx='10' fill='#2ea043' fill-opacity='0.28' stroke='#2ea043' stroke-width='1.5'/>
+<text x='606.0' y='708.0' font-size='14' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>exposed</text>
+<path d='M 450 777.0 H 505.0 V 846.0 H 560' fill='none' stroke='#484f58' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='560' y='824.0' width='92' height='44' rx='10' fill='#1f6feb' fill-opacity='0.28' stroke='#1f6feb' stroke-width='1.5'/>
+<text x='606.0' y='846.0' font-size='14' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>internal</text>
+<path d='M 652 156.0 H 736.0 V 110 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='92' width='92' height='36' rx='10' fill='#d13438' fill-opacity='0.3' stroke='#d13438' stroke-width='1.5'/>
+<text x='842' y='110' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>H</text>
+<text x='880' y='110' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>high</text>
+<path d='M 652 156.0 H 736.0 V 156 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='138' width='92' height='36' rx='10' fill='#f0a020' fill-opacity='0.3' stroke='#f0a020' stroke-width='1.5'/>
+<text x='842' y='156' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>M</text>
+<text x='880' y='156' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>medium</text>
+<path d='M 652 156.0 H 736.0 V 202 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='184' width='92' height='36' rx='10' fill='#bb8009' fill-opacity='0.3' stroke='#bb8009' stroke-width='1.5'/>
+<text x='842' y='202' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>L</text>
+<text x='880' y='202' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>low</text>
+<path d='M 652 294.0 H 736.0 V 248 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='230' width='92' height='36' rx='10' fill='#d13438' fill-opacity='0.3' stroke='#d13438' stroke-width='1.5'/>
+<text x='842' y='248' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>H</text>
+<text x='880' y='248' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>high</text>
+<path d='M 652 294.0 H 736.0 V 294 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='276' width='92' height='36' rx='10' fill='#f0a020' fill-opacity='0.3' stroke='#f0a020' stroke-width='1.5'/>
+<text x='842' y='294' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>M</text>
+<text x='880' y='294' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>medium</text>
+<path d='M 652 294.0 H 736.0 V 340 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='322' width='92' height='36' rx='10' fill='#bb8009' fill-opacity='0.3' stroke='#bb8009' stroke-width='1.5'/>
+<text x='842' y='340' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>L</text>
+<text x='880' y='340' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>low</text>
+<path d='M 652 432.0 H 736.0 V 386 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='368' width='92' height='36' rx='10' fill='#d13438' fill-opacity='0.3' stroke='#d13438' stroke-width='1.5'/>
+<text x='842' y='386' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>H</text>
+<text x='880' y='386' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>high</text>
+<path d='M 652 432.0 H 736.0 V 432 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='414' width='92' height='36' rx='10' fill='#f0a020' fill-opacity='0.3' stroke='#f0a020' stroke-width='1.5'/>
+<text x='842' y='432' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>M</text>
+<text x='880' y='432' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>medium</text>
+<path d='M 652 432.0 H 736.0 V 478 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='460' width='92' height='36' rx='10' fill='#bb8009' fill-opacity='0.3' stroke='#bb8009' stroke-width='1.5'/>
+<text x='842' y='478' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>L</text>
+<text x='880' y='478' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>low</text>
+<path d='M 652 570.0 H 736.0 V 524 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='506' width='92' height='36' rx='10' fill='#d13438' fill-opacity='0.3' stroke='#d13438' stroke-width='1.5'/>
+<text x='842' y='524' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>H</text>
+<text x='880' y='524' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>high</text>
+<path d='M 652 570.0 H 736.0 V 570 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='552' width='92' height='36' rx='10' fill='#f0a020' fill-opacity='0.3' stroke='#f0a020' stroke-width='1.5'/>
+<text x='842' y='570' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>M</text>
+<text x='880' y='570' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>medium</text>
+<path d='M 652 570.0 H 736.0 V 616 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='598' width='92' height='36' rx='10' fill='#bb8009' fill-opacity='0.3' stroke='#bb8009' stroke-width='1.5'/>
+<text x='842' y='616' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>L</text>
+<text x='880' y='616' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>low</text>
+<path d='M 652 708.0 H 736.0 V 662 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='644' width='92' height='36' rx='10' fill='#d13438' fill-opacity='0.3' stroke='#d13438' stroke-width='1.5'/>
+<text x='842' y='662' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>H</text>
+<text x='880' y='662' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>high</text>
+<path d='M 652 708.0 H 736.0 V 708 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='690' width='92' height='36' rx='10' fill='#f0a020' fill-opacity='0.3' stroke='#f0a020' stroke-width='1.5'/>
+<text x='842' y='708' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>M</text>
+<text x='880' y='708' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>medium</text>
+<path d='M 652 708.0 H 736.0 V 754 H 820' fill='none' stroke='#2ea043' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='736' width='92' height='36' rx='10' fill='#bb8009' fill-opacity='0.3' stroke='#bb8009' stroke-width='1.5'/>
+<text x='842' y='754' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>L</text>
+<text x='880' y='754' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>low</text>
+<path d='M 652 846.0 H 736.0 V 800 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='782' width='92' height='36' rx='10' fill='#d13438' fill-opacity='0.3' stroke='#d13438' stroke-width='1.5'/>
+<text x='842' y='800' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>H</text>
+<text x='880' y='800' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>high</text>
+<path d='M 652 846.0 H 736.0 V 846 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='828' width='92' height='36' rx='10' fill='#f0a020' fill-opacity='0.3' stroke='#f0a020' stroke-width='1.5'/>
+<text x='842' y='846' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>M</text>
+<text x='880' y='846' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>medium</text>
+<path d='M 652 846.0 H 736.0 V 892 H 820' fill='none' stroke='#1f6feb' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='820' y='874' width='92' height='36' rx='10' fill='#bb8009' fill-opacity='0.3' stroke='#bb8009' stroke-width='1.5'/>
+<text x='842' y='892' font-size='15' fill='#e6edf3' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>L</text>
+<text x='880' y='892' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>low</text>
+<path d='M 912 110 H 1016.0 V 225.0 H 1120' fill='none' stroke='#d13438' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 156 H 1016.0 V 225.0 H 1120' fill='none' stroke='#f0a020' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 248 H 1016.0 V 225.0 H 1120' fill='none' stroke='#d13438' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 386 H 1016.0 V 225.0 H 1120' fill='none' stroke='#d13438' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='1120' y='88' width='150' height='320' rx='10' fill='#d13438' fill-opacity='0.9' stroke='#d13438' stroke-width='1.5'/>
+<text x='1195.0' y='248.0' font-size='18' fill='#ffffff' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Act</text>
+<path d='M 912 202 H 1016.0 V 422.8 H 1120' fill='none' stroke='#bb8009' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 294 H 1016.0 V 422.8 H 1120' fill='none' stroke='#f0a020' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 432 H 1016.0 V 422.8 H 1120' fill='none' stroke='#f0a020' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 524 H 1016.0 V 422.8 H 1120' fill='none' stroke='#d13438' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 662 H 1016.0 V 422.8 H 1120' fill='none' stroke='#d13438' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='1120' y='180' width='150' height='504' rx='10' fill='#f0a020' fill-opacity='0.9' stroke='#f0a020' stroke-width='1.5'/>
+<text x='1195.0' y='432.0' font-size='18' fill='#ffffff' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Attend</text>
+<path d='M 912 340 H 1016.0 V 579.2 H 1120' fill='none' stroke='#bb8009' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 478 H 1016.0 V 579.2 H 1120' fill='none' stroke='#bb8009' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 570 H 1016.0 V 579.2 H 1120' fill='none' stroke='#f0a020' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 708 H 1016.0 V 579.2 H 1120' fill='none' stroke='#f0a020' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 800 H 1016.0 V 579.2 H 1120' fill='none' stroke='#d13438' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='1120' y='318' width='150' height='504' rx='10' fill='#3a96dd' fill-opacity='0.9' stroke='#3a96dd' stroke-width='1.5'/>
+<text x='1195.0' y='570.0' font-size='18' fill='#ffffff' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Track*</text>
+<path d='M 912 616 H 1016.0 V 777.0 H 1120' fill='none' stroke='#bb8009' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 754 H 1016.0 V 777.0 H 1120' fill='none' stroke='#bb8009' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 846 H 1016.0 V 777.0 H 1120' fill='none' stroke='#f0a020' stroke-width='2' stroke-opacity='0.8'/>
+<path d='M 912 892 H 1016.0 V 777.0 H 1120' fill='none' stroke='#bb8009' stroke-width='2' stroke-opacity='0.8'/>
+<rect x='1120' y='594' width='150' height='320' rx='10' fill='#6e7681' fill-opacity='0.9' stroke='#6e7681' stroke-width='1.5'/>
+<text x='1195.0' y='754.0' font-size='18' fill='#ffffff' font-weight='bold' text-anchor='middle' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Track</text>
+<text x='60' y='954' font-size='12' fill='#8b949e' font-weight='normal' text-anchor='start' font-family='Segoe UI, Helvetica, Arial, sans-serif' dominant-baseline='middle'>Diamonds are decisions; colored nodes are the SSVC action. unknown (no CVE) follows the same branch as likely.</text>
+</svg>
