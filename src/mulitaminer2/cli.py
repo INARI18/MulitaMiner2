@@ -104,7 +104,7 @@ def segment(
 ) -> None:
     """Segment REPORT into blocks WITHOUT calling any LLM (free, offline).
 
-    The config-writing feedback loop (docs/ADDING_A_SCANNER.md): the block
+    The config-writing feedback loop (docs/SCANNER_CONFIGS.md): the block
     count must equal the report's finding count.
     """
     _setup_logging(debug=False)

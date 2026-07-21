@@ -8,6 +8,24 @@ in `scanners/engine.py`; this document records **why** each built-in value is
 what it is — most of it was learned empirically, first in MulitaMiner v1 and
 then during the v2 validation runs.
 
+## Adding a scanner in short
+
+Start minimal — `name`, `source`, `prompt`, `max_vulns_per_chunk`, and the
+`marker_pattern` (the line that opens every finding; one match = one block).
+Then look at YOUR report and answer three questions; each "yes" adds one key:
+
+1. Is the finding's NAME on the line above the marker? → `name_above_marker`
+   (+ `name_stop_pattern` if that line is sometimes previous-block content).
+2. Is there information valid for SEVERAL findings printed above them
+   (port headers, a single host line)? → `context`.
+3. Is one finding printed as TWO OR MORE blocks to re-join? → `pair`.
+
+Verify offline, free, no LLM: `mulitaminer2 segment report.pdf --scanner
+<name>` — the block count must equal the report's finding count; iterate on
+the config until it does. For the prompt, copy the closest built-in from
+`configs/prompts/` and adapt the INPUT FORMAT and field rules, keeping the
+`### BLOCK` / `block_id` contract and one worked example.
+
 ## OpenVAS (`openvas.json`)
 
 **Marker `^\s*(Critical|High|Medium|Low|Log)\s+\(CVSS:`** — one match line is
