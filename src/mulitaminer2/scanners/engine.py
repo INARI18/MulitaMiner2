@@ -36,9 +36,11 @@ JSON fields:
                        merge_instances}. Tenable pairs Base + "Instances (N)"
                        records by (name, plugin).
 - severity_map:        optional post-pairing normalization, e.g. {"INFO": "LOG"}.
-- identity:            fields defining a DUPLICATE (skipped when the user
-                       passes --allow-duplicates). "name" is normalized.
 - keys starting with "_" are documentation (lessons travel with the config).
+
+Duplicate merging is not configurable: a duplicate is a FULLY identical
+record (name compared normalized) — same key with different content is two
+real findings and never collapses.
 """
 from __future__ import annotations
 
@@ -133,7 +135,6 @@ def _build_consolidator(cfg: dict):
     pair = cfg.get("pair")
     strip_suffix = re.compile(pair["strip_name_suffix"], re.IGNORECASE) if pair and "strip_name_suffix" in pair else None
     severity_map = cfg.get("severity_map") or {}
-    identity = cfg.get("identity") or ["name"]
 
     def _pair_key(record: VulnRecord):
         name = record.name or ""
@@ -141,17 +142,14 @@ def _build_consolidator(cfg: dict):
             name = strip_suffix.sub("", name)
         return (normalize_name(name), *(getattr(record, f) for f in pair["by"]))
 
-    exceptions = {normalize_name(n) for n in cfg.get("identity_exceptions", [])}
-
     def _identity_key(record: VulnRecord):
-        if normalize_name(record.name) in exceptions:
-            # Exception names (e.g. OpenVAS 'Services') legitimately repeat
-            # with different content — only a fully identical record is a dup.
-            return json.dumps(record.model_dump(mode="json"), sort_keys=True)
-        return tuple(
-            normalize_name(getattr(record, f)) if f == "name" else getattr(record, f)
-            for f in identity
-        )
+        # A duplicate is a FULLY identical record (name compared normalized).
+        # User decision, generalizing v1's 'Services' exception to everything:
+        # same key but different content means two real findings — merging
+        # them would silently lose one. Only exact repeats collapse.
+        data = record.model_dump(mode="json", by_alias=True)
+        data["Name"] = normalize_name(record.name)
+        return json.dumps(data, sort_keys=True)
 
     def consolidate(records: list[VulnRecord]):
         log_lines: list[str] = []

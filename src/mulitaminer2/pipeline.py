@@ -89,6 +89,7 @@ def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, 
         debug_sink: list | None = [] if config.debug else None
         records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink)
         raw_count = len(records)
+        raw_records = list(records)
         records, merge_log = profile.consolidate(records)
         log.info(
             "Extracted %d/%d blocks; %d records after consolidation",
@@ -106,6 +107,10 @@ def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, 
         )
 
         write_json(records, run_dir / "results.json")
+        if merge_log:
+            # Consolidation changed something: keep the pre-consolidation
+            # records so every merge decision stays auditable offline.
+            write_json(raw_records, run_dir / "results.raw.json")
         for fmt in config.formats:
             get_exporter(fmt)(records, profile.record_type, run_dir)
 

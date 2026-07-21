@@ -17,13 +17,16 @@ def test_normalize_name_collapses_case_and_whitespace():
     assert normalize_name("  SSL/TLS:   Cert  ") == normalize_name("ssl/tls: cert")
 
 
-def test_openvas_dedupe_merges_same_identity_keeps_most_complete():
+def test_only_fully_identical_records_merge():
+    """User rule: a duplicate is an exact repeat (name compared normalized).
+    Same key with different content = two real findings, never merged."""
     a = _ov("TLS Weak Cipher")
-    b = _ov("TLS  weak  cipher", **{"description": ["Weak ciphers enabled."]})
-    merged, log_lines = consolidate_openvas([a, b])
-    assert len(merged) == 1
-    assert merged[0].description == ["Weak ciphers enabled."]
-    assert log_lines
+    identical = _ov("TLS  weak  CIPHER")  # same after name normalization
+    different = _ov("TLS Weak Cipher", description=["Weak ciphers enabled."])
+    merged, log_lines = consolidate_openvas([a, identical])
+    assert len(merged) == 1 and log_lines
+    merged, log_lines = consolidate_openvas([a, different])
+    assert len(merged) == 2 and not log_lines
 
 
 def test_openvas_different_port_is_a_different_finding():
@@ -31,24 +34,13 @@ def test_openvas_different_port_is_a_different_finding():
     assert len(merged) == 2
 
 
-def test_openvas_services_repeats_are_not_merged():
-    """v1 lesson (identity_exceptions): 'Services' repeats legitimately on the
-    same host/port — only a fully identical record is a duplicate."""
+def test_repeating_findings_with_distinct_content_survive():
+    """Generalized v1 'Services' lesson: legitimate repeats on the same
+    host/port with different content stay separate."""
     a = _ov("Services", description=["ssh detected"])
     b = _ov("Services", description=["http detected"])
     merged, _ = consolidate_openvas([a, b])
     assert len(merged) == 2
-    identical = _ov("Services", description=["ssh detected"])
-    merged, _ = consolidate_openvas([a, identical])
-    assert len(merged) == 1
-
-
-def test_cvss_zero_counts_as_filled():
-    """v1 nuance: a Log finding's 0.0 must not lose to a null-cvss duplicate."""
-    with_zero = _ov("Log finding", cvss=0.0)
-    without = _ov("Log finding", cvss=None, description=["text"])
-    merged, _ = consolidate_openvas([with_zero, without])
-    assert merged[0].cvss == 0.0
 
 
 def _tn(name, plugin=98056, instances=(), **kw):

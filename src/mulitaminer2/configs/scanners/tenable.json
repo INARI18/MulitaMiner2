@@ -15,6 +15,5 @@
     "merge_instances": true,
     "_lesson": "A finding appears as TWO consecutive blocks — Base (Description/Solution/Risk/Plugin Details) and 'Name Instances (N)' (per-URL evidence). Pairing them is structure, not deduplication: it always runs."
   },
-  "severity_map": { "INFO": "LOG" },
-  "identity": ["name", "plugin"]
+  "severity_map": { "INFO": "LOG" }
 }
