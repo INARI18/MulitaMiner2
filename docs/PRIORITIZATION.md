@@ -84,22 +84,42 @@ category.
 
 ```mermaid
 flowchart LR
-    F([Finding]) --> E{{Exploitation}}
+    S([Finding]) --> E{"Exploitation?"}
+    E -->|active KEV| A{"Exposed?"}
+    E -->|likely / unknown| L{"Exposed?"}
+    E -->|none| N{"Exposed?"}
 
-    E -->|active| A{{Exposure}}
-    E -->|likely / unknown| L{{Exposure}}
-    E -->|none| N{{Exposure}}
+    A -->|"exp · H/M"| ACT
+    A -->|"exp · L"| ATT
+    A -->|"int · H"| ACT
+    A -->|"int · M"| ATT
+    A -->|"int · L"| TRS
 
-    A -->|exposed| A1["high · Act<br>medium · Act<br>low · Attend"]
-    A -->|internal| A2["high · Act<br>medium · Attend<br>low · Track*"]
-    L -->|exposed| L1["high · Act<br>medium · Attend<br>low · Track*"]
-    L -->|internal| L2["high · Attend<br>medium · Track*<br>low · Track"]
-    N -->|exposed| N1["high · Attend<br>medium · Track*<br>low · Track"]
-    N -->|internal| N2["high · Track*<br>medium · Track<br>low · Track"]
+    L -->|"exp · H"| ACT
+    L -->|"exp · M"| ATT
+    L -->|"exp · L"| TRS
+    L -->|"int · H"| ATT
+    L -->|"int · M"| TRS
+    L -->|"int · L"| TRK
 
-    classDef leaf fill:#f3f2f1,color:#111,stroke:#c8c6c4;
-    class A1,A2,L1,L2,N1,N2 leaf;
+    N -->|"exp · H"| ATT
+    N -->|"exp · M"| TRS
+    N -->|"exp · L"| TRK
+    N -->|"int · H"| TRS
+    N -->|"int · M/L"| TRK
+
+    ACT["Act"]:::act
+    ATT["Attend"]:::att
+    TRS["Track*"]:::trs
+    TRK["Track"]:::trk
+
+    classDef act fill:#d13438,color:#fff,stroke:#a4262c;
+    classDef att fill:#f7a600,color:#111,stroke:#c77700;
+    classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
+    classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
 ```
+
+Edge labels: `exp`/`int` = exposed/internal, `H`/`M`/`L` = high/medium/low severity.
 
 ## Categories
 
