@@ -84,43 +84,21 @@ category.
 
 ```mermaid
 flowchart LR
-    F([Finding]):::root --> E{{Exploitation}}
+    F([Finding]) --> E{{Exploitation}}
 
     E -->|active| A{{Exposure}}
     E -->|likely / unknown| L{{Exposure}}
     E -->|none| N{{Exposure}}
 
-    A -->|exposed| Ae{{Severity}}
-    A -->|internal| Ai{{Severity}}
-    L -->|exposed| Le{{Severity}}
-    L -->|internal| Li{{Severity}}
-    N -->|exposed| Ne{{Severity}}
-    N -->|internal| Ni{{Severity}}
+    A -->|exposed| A1["high · Act<br>medium · Act<br>low · Attend"]
+    A -->|internal| A2["high · Act<br>medium · Attend<br>low · Track*"]
+    L -->|exposed| L1["high · Act<br>medium · Attend<br>low · Track*"]
+    L -->|internal| L2["high · Attend<br>medium · Track*<br>low · Track"]
+    N -->|exposed| N1["high · Attend<br>medium · Track*<br>low · Track"]
+    N -->|internal| N2["high · Track*<br>medium · Track<br>low · Track"]
 
-    Ae -->|high| r1((Act)):::act
-    Ae -->|med| r2((Act)):::act
-    Ae -->|low| r3((Attend)):::att
-    Ai -->|high| r4((Act)):::act
-    Ai -->|med| r5((Attend)):::att
-    Ai -->|low| r6(("Track*")):::trs
-    Le -->|high| r7((Act)):::act
-    Le -->|med| r8((Attend)):::att
-    Le -->|low| r9(("Track*")):::trs
-    Li -->|high| r10((Attend)):::att
-    Li -->|med| r11(("Track*")):::trs
-    Li -->|low| r12((Track)):::trk
-    Ne -->|high| r13((Attend)):::att
-    Ne -->|med| r14(("Track*")):::trs
-    Ne -->|low| r15((Track)):::trk
-    Ni -->|high| r16(("Track*")):::trs
-    Ni -->|med| r17((Track)):::trk
-    Ni -->|low| r18((Track)):::trk
-
-    classDef root fill:#2b2b2b,color:#fff,stroke:#555;
-    classDef act fill:#d13438,color:#fff,stroke:#a4262c;
-    classDef att fill:#f7a600,color:#111,stroke:#c77700;
-    classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
-    classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
+    classDef leaf fill:#f3f2f1,color:#111,stroke:#c8c6c4;
+    class A1,A2,L1,L2,N1,N2 leaf;
 ```
 
 ## Categories
