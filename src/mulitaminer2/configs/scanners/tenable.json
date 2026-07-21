@@ -6,7 +6,7 @@
   "name_above_marker": true,
   "name_stop_pattern": "^\\s*(Description|Solution|Risk Information|Plugin Details|Reference Information|Identification|HTTP Info|See Also|BID\\b|CWE\\b|WASC\\b|OWASP\\b|CVE\\b).*$|^\\s*https?://",
   "pair": {
-    "strip_name_suffix": "\\s*Instances\\s*\\(\\d+\\)\\s*$",
+    "strip_name_suffix": "\\s*Instances\\s*(\\(\\d+\\))?\\s*$",
     "by": ["plugin"],
     "merge_instances": true
   },

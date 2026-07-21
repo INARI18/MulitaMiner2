@@ -59,6 +59,10 @@ RECORD_TYPES: dict[str, type[VulnRecord]] = {
     "generic": VulnRecord,
 }
 
+# A wrapped block-title tail, e.g. "(1)" or "Instances" / "Instances (25)"
+# alone on the line above a marker — the real name sits one line further up.
+_SUFFIX_FRAGMENT = re.compile(r"^(\(\d+\)|Instances(\s*\(\d+\))?)\s*$", re.IGNORECASE)
+
 def _build_segmenter(cfg: dict):
     marker = re.compile(cfg["marker_pattern"])
     context = cfg.get("context") or {}
@@ -107,6 +111,13 @@ def _build_segmenter(cfg: dict):
                 candidate = lines[idx - 1].strip()
                 if candidate and not (name_stop and name_stop.match(candidate)):
                     start = idx - 1
+                    # Long "<name> Instances (N)" titles wrap: the line above
+                    # the marker is then only the suffix fragment ("(1)" or
+                    # "Instances"). Climb one more line for the real name.
+                    if _SUFFIX_FRAGMENT.match(candidate) and start - 1 > barrier:
+                        above = lines[start - 1].strip()
+                        if above and not (name_stop and name_stop.match(above)):
+                            start -= 1
             starts.append(start)
 
         blocks: list[Block] = []
