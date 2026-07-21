@@ -339,3 +339,28 @@ def test_orchestration_structural_instances_scoring():
     assert 0.0 < score_partial < 1.0
     assert _structural_score(plan, [], []) == (1.0, True)
     assert _structural_score(plan, ext, []) == (0.0, False)
+
+
+# --- report ------------------------------------------------------------------
+
+
+def test_report_writes_json_and_md(mini_run):
+    import json as _json
+
+    from mulitaminer.evaluation import evaluate_run
+    from mulitaminer.evaluation.report import summary_table, write_reports
+
+    res = evaluate_run(mini_run)
+    paths = write_reports(res, mini_run)
+    data = _json.loads(paths["json"].read_text(encoding="utf-8"))
+    assert data["coverage"]["matched"] == 2
+    assert data["meta"]["generated_at"] and data["meta"]["tool_version"]
+    assert data["fields"]["severity"]["exact"]["mean"] == 1.0
+
+    md = paths["md"].read_text(encoding="utf-8")
+    assert "## Coverage" in md
+    assert "Missed Finding" in md and "Ghost Finding" in md
+    assert "extra_gt_column" in md  # unevaluated column noted
+
+    table = summary_table(res)
+    assert "severity" in table and "exact" in table

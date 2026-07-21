@@ -119,7 +119,8 @@ all_scanners(). --metrics accepts aliases bert/rouge.
 
 **Verify:** `pytest -k report` — JSON structure and MD sections present with
 expected numbers on the fabricated fixture.
-**State:** TODO.
+**State:** DONE (1 test; 107 total). evaluation.json carries generated_at +
+tool_version in meta; MD embeds the same summary table the console prints.
 
 ## Phase E6 — CLI and dependencies
 
