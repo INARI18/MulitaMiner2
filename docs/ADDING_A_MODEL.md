@@ -76,10 +76,13 @@ works by setting `base_url` to its address.
 
 `supports_json_schema` decides how the model is asked to return JSON:
 
-- `true`: strict JSON-Schema response format. The server guarantees the shape.
-  Use it for OpenAI models and LM Studio (which supports it natively).
+- `true`: strict JSON-Schema response format. The server constrains decoding
+  to the schema, so the format cannot come out malformed. Use it for OpenAI,
+  LM Studio, and Ollama (all constrain natively). Strongly preferred for
+  small local models: on a 1.5B it recovered 6 findings a small model
+  otherwise dropped to invalid JSON, and ran ~3.5x faster.
 - `false` (the default): `json_object` mode plus validation on our side. Use
-  it for providers without strict schema support (DeepSeek, Groq, Ollama).
+  it for providers without strict schema support (DeepSeek, Groq).
 
 If unsure, leave it out. A wrong `true` fails fast with a provider error;
 `false` always works, just with our validation and retry doing the enforcing.
