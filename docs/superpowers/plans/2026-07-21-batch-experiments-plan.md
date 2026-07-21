@@ -112,6 +112,10 @@ the result underwhelms (user call, 2026-07-21).
   - Run-to-run variance: per model, the spread of key metrics across the
     X runs (the reason multiple runs exist).
   - Cost/latency: cost per report and duration per model.
+  - Severity confusion: a small GT x extracted matrix (table, not a
+    headline chart), rendered ONLY when severity errors exist — its value
+    is the error direction (MEDIUM->LOW under-triage matters; LOW->MEDIUM
+    is queue noise).
   - Footnotes: vacuous counts, unavailable metrics, skipped files,
     baseline provenance (re-annotated columns) — honesty notes mirroring
     evaluation.md.

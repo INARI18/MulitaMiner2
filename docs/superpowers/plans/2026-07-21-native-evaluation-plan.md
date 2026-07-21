@@ -237,3 +237,13 @@ negation flip "auth required" vs "NO auth required" scores 0.000
 identical text 0.999; legitimate paraphrase 0.999 (no false alarm).
 bertscore available. NLI runtime note: ~seconds/pair on CPU — opt-in via
 --metrics nli, excluded from 'all' by design.
+
+Full-battery run (TN JuiceShop rerun, token_f1+rouge_l+bertscore+nli):
+coverage 76/76 perfect; references 0.999, cvss 1.000, instances 0.898,
+bertscore description 0.977. KNOWN NLI LIMITATION (diagnosed 2026-07-21):
+on very long fields (Apache "Multiple Vulnerabilities" descriptions, far
+past the model's 512-token window) premise truncation produces false
+contradiction positives — description nli 0.789 is a truncation artifact,
+not real negation flips (near-identical texts scored ~0.06). NLI is
+trustworthy on short/medium fields (name 0.994). Queued refinement:
+sentence-to-sentence premise matching for long fields.
