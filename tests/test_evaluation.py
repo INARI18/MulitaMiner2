@@ -203,3 +203,139 @@ def test_align_empty_sides():
     assert res.unmatched_baseline == [0] and not res.pairs
     res = align([{"Name": "A"}], [])
     assert res.unmatched_extraction == [0] and not res.pairs
+
+
+# --- orchestration -----------------------------------------------------------
+
+
+@pytest.fixture
+def mini_run(tmp_path):
+    """A fabricated run dir + baseline XLSX (OpenVAS, 3 findings)."""
+    import pandas as pd
+
+    records = [
+        OpenVASRecord(
+            name="SQL Injection", severity="HIGH", cvss=8.1, port=80, protocol="tcp",
+            description=["Injectable parameter found."],
+            references=["CVE-2021-1111", "CVE-2020-2222"],
+        ),
+        OpenVASRecord(
+            name="Weak Cipher Suites", severity="MEDIUM", cvss=5.3, port=443, protocol="tcp",
+            description=["Server accepts weak TLS ciphers."],
+        ),
+        OpenVASRecord(  # spurious: not in the baseline
+            name="Ghost Finding", severity="LOW", cvss=2.0, port=21, protocol="tcp",
+        ),
+    ]
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    (run_dir / "results.json").write_text(
+        __import__("json").dumps(
+            [r.model_dump(mode="json", by_alias=True) for r in records]
+        ),
+        encoding="utf-8",
+    )
+    pdf_path = tmp_path / "Report.pdf"
+    (run_dir / "run.json").write_text(
+        __import__("json").dumps({"config": {"input": str(pdf_path)}}), encoding="utf-8"
+    )
+    baseline = pd.DataFrame(
+        [
+            {"Name": "SQL Injection", "severity": "HIGH", "cvss": 8.1, "port": 80,
+             "protocol": "tcp", "description": "Injectable parameter found.",
+             "references": "['CVE-2021-1111', 'CVE-2020-2222']",
+             "extra_gt_column": "not in schema"},
+            {"Name": "Weak Cipher Suites", "severity": "MEDIUM", "cvss": 5.3, "port": 443,
+             "protocol": "tcp", "description": "Server accepts weak TLS ciphers.",
+             "references": None, "extra_gt_column": None},
+            {"Name": "Missed Finding", "severity": "LOW", "cvss": 1.0, "port": 22,
+             "protocol": "tcp", "description": "Never extracted.",
+             "references": None, "extra_gt_column": None},
+        ]
+    )
+    baseline.to_excel(tmp_path / "Report.xlsx", index=False)
+    return run_dir
+
+
+def test_orchestration_end_to_end(mini_run):
+    from mulitaminer.evaluation import evaluate_run
+
+    res = evaluate_run(mini_run)
+    assert res.coverage["matched"] == 2
+    assert res.coverage["missed"] == ["Missed Finding"]
+    assert res.coverage["spurious"] == ["Ghost Finding"]
+    assert res.coverage["recall"] == pytest.approx(2 / 3, abs=1e-4)
+    assert res.coverage["precision"] == pytest.approx(2 / 3, abs=1e-4)
+    # exact fields perfect on the matched pairs
+    assert res.fields["severity"]["exact"]["mean"] == 1.0
+    assert res.fields["cvss"]["exact"]["mean"] == 1.0
+    # references: override set_f1; pair 1 exact sets, pair 2 vacuous (both empty)
+    ref = res.fields["references"]["set_f1"]
+    assert ref["mean"] == 1.0 and ref["vacuous_n"] == 1
+    # text metrics present for description
+    assert res.fields["description"]["token_f1"]["mean"] == 1.0
+    # GT column outside the schema is reported, not scored
+    assert res.unevaluated_baseline_columns == ["extra_gt_column"]
+    assert res.meta["source"] == "OPENVAS"
+
+
+def test_orchestration_bare_results_needs_baseline(mini_run, tmp_path):
+    from mulitaminer.evaluation import evaluate_run
+
+    bare = mini_run / "results.json"
+    with pytest.raises(ValueError, match="baseline"):
+        evaluate_run(bare)
+    res = evaluate_run(bare, baseline=tmp_path / "Report.xlsx")
+    assert res.coverage["matched"] == 2
+
+
+def test_orchestration_metrics_selection(mini_run):
+    from mulitaminer.evaluation import evaluate_run
+    from mulitaminer.evaluation.runner import resolve_metrics
+
+    res = evaluate_run(mini_run, metrics="token_f1")
+    assert "rouge_l" not in res.fields["description"]
+    assert "token_f1" in res.fields["description"]
+    # structural scorers unaffected by the text filter
+    assert "exact" in res.fields["severity"]
+    with pytest.raises(ValueError, match="valid"):
+        resolve_metrics("nope")
+    bert = SCORERS["bertscore"]
+    if not bert.available:
+        with pytest.raises(RuntimeError, match="eval"):
+            resolve_metrics("bert")
+
+
+def test_orchestration_instances_generated_provenance(tmp_path):
+    import pandas as pd
+
+    from mulitaminer.evaluation.runner import load_baseline
+
+    base = pd.DataFrame([{"Name": "A", "instances": None}])
+    base.to_excel(tmp_path / "T.xlsx", index=False)
+    gen = pd.DataFrame(
+        [{"Name": "A", "instances": "[{'instance': 'http://x', 'proof': 'p'}]"}]
+    )
+    gen.to_excel(tmp_path / "T_instances_generated.xlsx", index=False)
+
+    rows, provenance = load_baseline(tmp_path / "T.xlsx")
+    assert provenance["instances_from"].endswith("T_instances_generated.xlsx")
+    assert rows[0]["instances"] == [{"instance": "http://x", "proof": "p"}]
+
+
+def test_orchestration_structural_instances_scoring():
+    from mulitaminer.evaluation.fields import field_plans
+    from mulitaminer.evaluation.runner import _structural_score
+
+    plan = next(p for p in field_plans(TenableRecord) if p.name == "instances")
+    ext = [{"instance": "http://a/1", "proof": "same proof"},
+           {"instance": "http://a/2", "proof": "other"}]
+    base_same = [{"instance": "http://a/1", "proof": "same proof"},
+                 {"instance": "http://a/2", "proof": "other"}]
+    score, vacuous = _structural_score(plan, ext, base_same)
+    assert score == pytest.approx(1.0) and not vacuous
+    # a missing base item halves the normalizer's numerator
+    score_partial, _ = _structural_score(plan, ext, base_same[:1])
+    assert 0.0 < score_partial < 1.0
+    assert _structural_score(plan, [], []) == (1.0, True)
+    assert _structural_score(plan, ext, []) == (0.0, False)

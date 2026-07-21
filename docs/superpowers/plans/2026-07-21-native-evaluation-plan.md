@@ -100,7 +100,13 @@ Composite-key layouts keyed by record source (key_parts_for_source).
 **Verify:** `pytest -k orchestration` — end-to-end on fabricated mini
 baseline + results.json: expected coverage, means, provenance, unevaluated
 columns.
-**State:** TODO.
+**State:** DONE (5 tests; 106 total green). Orchestration lives in
+`runner.py` (re-exported from `__init__`) to keep modules single-purpose.
+Structural list scoring: greedy item sub-align on the sub-model's first
+field (Instance.instance URL), pair mean over leaf scores (numeric→exact,
+text→token_f1), normalized by max(len_ext, len_base) so missing/spurious
+items cost score. Scanner overrides resolved by record source via
+all_scanners(). --metrics accepts aliases bert/rouge.
 
 ## Phase E5 — Report writers
 
