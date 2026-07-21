@@ -131,6 +131,27 @@ def test_port_backfill_from_block_context():
     assert records[0].port == 80 and records[0].protocol == "tcp"
 
 
+def test_oversized_single_block_is_truncated_with_declared_marker():
+    """Tenable 'Instances (25)' lesson: a block whose output cannot fit the
+    model's cap is truncated at the INPUT tail (declared, never silent) so
+    the finding survives with partial instances instead of being dropped."""
+    big = Block(id=0, text="High (CVSS: 7.5)\nNVT: Huge\n" + ("instance line\n" * 40_000))
+    seen = {}
+
+    class CapturingClient(FakeClient):
+        def extract(self, system_prompt, user_content, response_model):
+            seen["content"] = user_content
+            return super().extract(system_prompt, user_content, response_model)
+
+    client = CapturingClient([[_item(0, "Huge")]])
+    records, warnings = extract_blocks([big], PROFILE, client, TokenUsage())
+    assert len(records) == 1
+    assert "[TRUNCATED:" in seen["content"]
+    assert len(seen["content"]) < len(big.text)
+    assert any("input truncated" in w for w in warnings)
+    assert sum("input truncated" in w for w in warnings) == 1  # warned once
+
+
 def test_pseudo_protocol_context_never_enters_the_record():
     """OpenVAS 'general/CPE-T' headers are context for the LLM, not data."""
     block = Block(id=0, text="Log (CVSS: 0.0)\nNVT: CPE Inventory",

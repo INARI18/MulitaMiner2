@@ -6,9 +6,9 @@
   "max_vulns_per_chunk": 3,
   "marker_pattern": "(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?VULNERABILITY\\s+(CRITICAL|HIGH|MEDIUM|LOW|INFO)\\s+PLUGIN\\s+ID\\s+\\d+",
   "marker_ignorecase": true,
-  "name_walkback": 2,
-  "name_stop_pattern": "^\\s*(Description|Solution|Risk Information|Plugin Details|Reference Information|Identification|HTTP Info|See Also)\\b.*:?\\s*$|^\\s*https?://",
-  "_name_lesson": "The vulnerability NAME sits on the line(s) immediately BEFORE the VULNERABILITY header — the walk-back pulls it into the block it names (mirror image of the OpenVAS NVT lesson). Wrapped names span up to 2 lines and never end with sentence punctuation; previous-block body content usually does.",
+  "name_walkback": 1,
+  "name_stop_pattern": "^\\s*(Description|Solution|Risk Information|Plugin Details|Reference Information|Identification|HTTP Info|See Also|BID\\b|CWE\\b|WASC\\b|OWASP\\b|CVE\\b).*$|^\\s*https?://",
+  "_name_lesson": "The vulnerability NAME is the ONE line immediately BEFORE the VULNERABILITY header (mirror image of the OpenVAS NVT lesson). Verified against the ground truth: names never wrap (max 56 chars). A 2-line walk-back polluted names with the previous block's reference tail ('BID -', 'CVE -') on the JuiceShop report — 22 broken base/instances pairings and 8 dropped blocks. The stop pattern also rejects reference-content lines as a second guard.",
   "pair": {
     "strip_name_suffix": "\\s*Instances\\s*\\(\\d+\\)\\s*$",
     "by": ["plugin"],

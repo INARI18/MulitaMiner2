@@ -34,6 +34,9 @@ Description:
 The remote web server does not send the HSTS header.
 Solution:
 Enable HSTS.
+Reference Information:
+CVE CVE-2021-33193, CVE-2021-40438
+BID -
 Missing HTTP Strict Transport Security Policy Instances (2)
 VULNERABILITY HIGH PLUGIN ID 98056
 Identification:
@@ -74,6 +77,10 @@ def test_tenable_name_walkback_pulls_name_into_block():
     assert blocks[1].text.splitlines()[0].endswith("Instances (2)")
     # And the previous block must NOT have swallowed the next block's name.
     assert "Instances (2)" not in blocks[0].text
+    # JuiceShop lesson: the previous block's reference tail ('BID -') sits
+    # directly above the name and must never be pulled in as name content.
+    assert not blocks[1].text.startswith("BID")
+    assert "BID -" in blocks[0].text  # it stays where it belongs
 
 
 def test_tenable_severity_hint():
