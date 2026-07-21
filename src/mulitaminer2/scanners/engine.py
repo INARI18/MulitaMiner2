@@ -7,23 +7,22 @@ the WHOLE definition. Adding a scanner requires no Python: drop
 directory named by the MULITAMINER2_SCANNERS_DIR env var) and it registers.
 
 JSON fields:
-- name:                CLI name.
+- name:                CLI name. Also selects the typed record class when one
+                       matches (openvas/tenable); otherwise the base VulnRecord
+                       is used. An explicit "record" key overrides.
 - source:              stamped into every record's `source` field.
-- record:              "openvas" | "tenable" | "generic" (typed record class;
-                       generic uses the base VulnRecord).
 - prompt:              prompt filename, relative to the JSON file.
 - max_vulns_per_chunk: chunk-size cap for this scanner.
 - marker_pattern:      regex; ONE match line == ONE finding block. If it has a
-                       capture group 1, that group is the severity hint.
-- marker_ignorecase:   optional bool (default false).
-- name_walkback:       lines of finding NAME to pull in from ABOVE the marker
-                       (0 = none; Tenable uses 2 — the name precedes its
-                       VULNERABILITY header).
-- name_stop_pattern:   optional regex; the walk-back never crosses a line
-                       matching it (section headers / URLs of the previous
-                       block). Beyond the first line, the walk-back also stops
-                       at sentence-final punctuation (wrapped names don't end
-                       with '.').
+                       capture group 1, that group is the severity hint. Use
+                       an inline "(?i)" prefix for case-insensitive matching.
+- name_above_marker:   bool; the finding NAME is the single line directly
+                       ABOVE the marker and is pulled into the block (Tenable;
+                       mirror of the OpenVAS NVT lesson). Names never wrap —
+                       verified against ground truth.
+- name_stop_pattern:   optional regex; a line matching it is never taken as
+                       the name (section headers / reference tails / URLs of
+                       the previous block).
 - context:             optional tracking of state that lives OUTSIDE blocks:
     header_patterns:   regexes with named groups (?P<sev>/(?P<port>/(?P<proto>;
                        the latest match above a marker becomes that block's
@@ -36,11 +35,13 @@ JSON fields:
                        merge_instances}. Tenable pairs Base + "Instances (N)"
                        records by (name, plugin).
 - severity_map:        optional post-pairing normalization, e.g. {"INFO": "LOG"}.
-- keys starting with "_" are documentation (lessons travel with the config).
 
 Duplicate merging is not configurable: a duplicate is a FULLY identical
 record (name compared normalized) — same key with different content is two
 real findings and never collapses.
+
+The rationale behind each built-in config value (marker choices, name
+placement, pairing) is documented in docs/SCANNER_CONFIGS.md.
 """
 from __future__ import annotations
 
@@ -58,18 +59,13 @@ RECORD_TYPES: dict[str, type[VulnRecord]] = {
     "generic": VulnRecord,
 }
 
-_SENTENCE_END = (".", ":", ";", "!", "?")
-
-
 def _build_segmenter(cfg: dict):
-    marker = re.compile(
-        cfg["marker_pattern"], re.IGNORECASE if cfg.get("marker_ignorecase") else 0
-    )
+    marker = re.compile(cfg["marker_pattern"])
     context = cfg.get("context") or {}
     headers = [re.compile(p, re.IGNORECASE) for p in context.get("header_patterns", [])]
     host_anchor = re.compile(context["host_anchor"], re.IGNORECASE) if "host_anchor" in context else None
     host_line = re.compile(context["host_line"]) if "host_line" in context else None
-    walkback = int(cfg.get("name_walkback", 0))
+    walkback = 1 if cfg.get("name_above_marker") else 0
     name_stop = re.compile(cfg["name_stop_pattern"], re.IGNORECASE) if "name_stop_pattern" in cfg else None
 
     def segment(text: str) -> list[Block]:
@@ -107,17 +103,10 @@ def _build_segmenter(cfg: dict):
         for k, (idx, _) in enumerate(markers):
             start = idx
             barrier = markers[k - 1][0] if k else -1
-            walked = 0
-            for j in range(idx - 1, max(barrier, idx - 1 - walkback), -1):
-                candidate = lines[j].strip()
-                if not candidate or (name_stop and name_stop.match(candidate)):
-                    break
-                if walked >= 1 and candidate.endswith(_SENTENCE_END):
-                    break
-                start = j
-                walked += 1
-                if walked >= walkback:
-                    break
+            if walkback and idx - 1 > barrier:
+                candidate = lines[idx - 1].strip()
+                if candidate and not (name_stop and name_stop.match(candidate)):
+                    start = idx - 1
             starts.append(start)
 
         blocks: list[Block] = []
@@ -187,13 +176,12 @@ def _resolve_prompt(config_path: Path, prompt_name: str) -> Path:
 def load_profile(config_path: Path) -> ScannerProfile:
     cfg = json.loads(config_path.read_text(encoding="utf-8"))
     try:
-        record_type = RECORD_TYPES[cfg.get("record", "generic")]
+        record_type = RECORD_TYPES.get(cfg.get("record", cfg["name"]), VulnRecord)
         return ScannerProfile(
             name=cfg["name"],
             source=cfg["source"],
             record_type=record_type,
-            marker=re.compile(cfg["marker_pattern"],
-                              re.IGNORECASE if cfg.get("marker_ignorecase") else 0),
+            marker=re.compile(cfg["marker_pattern"]),
             prompt_path=_resolve_prompt(config_path, cfg["prompt"]),
             max_vulns_per_chunk=int(cfg["max_vulns_per_chunk"]),
             segment=_build_segmenter(cfg),
