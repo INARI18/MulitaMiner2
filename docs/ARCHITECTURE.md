@@ -2,16 +2,7 @@
 
 ## Pipeline
 
-```mermaid
-flowchart LR
-    A([PDF]) --> B[Extract text]
-    B --> C[Split into blocks]
-    C --> D[Pack chunks]
-    D --> E[LLM fills each block]
-    E --> F[Consolidate]
-    F --> G[(results.json)]
-    G --> H[[Exports]]
-```
+![MulitaMiner pipeline](imgs/pipeline.svg)
 
 All intermediate state flows in memory as typed Pydantic objects. Disk is
 touched only for final run artifacts and optional `--debug` dumps.

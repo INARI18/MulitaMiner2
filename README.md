@@ -31,13 +31,12 @@ vulnerabilities, so the output count always matches the report.
 1. **PDF**: the scanner report goes in.
 2. **Extract text**: pull clean text out of the PDF.
 3. **Split blocks**: cut the text into one block per finding, deterministically, so the finding count is known before any LLM call.
-4. **LLM extract**: the model fills the fields of each block; block ids keep one record per finding.
-5. **Consolidate**: pair base and instances, normalize severity, merge identical records.
-6. **results.json**: the structured records, the primary artifact.
-7. **Exports**: optional SARIF, CSAF, DefectDojo Generic, CSV, XLSX.
+4. **Pack chunks**: group whole blocks into token-budgeted chunks (blocks are never split).
+5. **LLM extract**: the model fills the fields of each block; block ids keep one record per finding. Blocks that fail loop back to step 4 in smaller chunks.
+6. **Consolidate**: pair base and instances, normalize severity, merge identical records.
+7. **results.json**: the structured records, the primary artifact.
+8. **Exports**: optional SARIF, CSAF, DefectDojo Generic, CSV, XLSX.
 
-One module per stage in `src/mulitaminer/`. Everything between stages stays
-in memory.
 
 ## Supported
 

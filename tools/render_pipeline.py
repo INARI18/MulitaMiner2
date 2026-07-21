@@ -25,12 +25,14 @@ STAGES = [
     ("PDF", "input", "page"),
     ("Extract text", "pdf_reader", "search"),
     ("Split blocks", "scanner_engine", "blocks"),
+    ("Pack chunks", "chunking", "chunk"),
     ("LLM extract", "block-anchored", "spark"),
     ("Consolidate", "pair · dedup", "merge"),
     ("results.json", "primary output", "braces"),
     ("Exports", "sarif · csaf · …", "files"),
 ]
-IN_MEMORY = range(1, 5)  # stages 2..5 (indices 1..4) run in memory
+IN_MEMORY = range(1, 6)  # Extract text .. Consolidate run in memory
+RETRY = (3, 4)  # LLM extract (4) loops failed blocks back to Pack chunks (3)
 
 W = 1320
 MARGIN = 30
@@ -86,6 +88,11 @@ def icon(kind, cx, cy):
         g += [f"<path d='M {cx-7} {cy-16} c -5 0 -2 7 -6 8 c 4 1 1 8 6 8'/>",
               f"<path d='M {cx+7} {cy-16} c 5 0 2 7 6 8 c -4 1 -1 8 -6 8'/>",
               f"<circle cx='{cx}' cy='{cy}' r='1.8' fill='{o}'/>"]
+    elif kind == "chunk":
+        g += [f"<path d='M {cx-10} {cy-15} h -5 v 30 h 5'/>",
+              f"<path d='M {cx+10} {cy-15} h 5 v 30 h -5'/>",
+              f"<rect x='{cx-7}' y='{cy-10}' width='14' height='8' rx='2'/>",
+              f"<rect x='{cx-7}' y='{cy+2}' width='14' height='8' rx='2'/>"]
     elif kind == "files":
         g += [f"<path d='M {cx-4} {cy-16} h 12 l 6 6 v 20 h -18 z'/>",
               f"<path d='M {cx-12} {cy-10} h 12 l 6 6 v 20 h -18 z' fill='{BG}'/>",
@@ -95,7 +102,11 @@ def icon(kind, cx, cy):
 
 
 def build():
-    height = CARD_Y + CARD_H + 46
+    cb = CARD_Y + CARD_H       # card bottom
+    loop_y = cb + 36           # retry loop level
+    gy = CARD_Y - 32           # group top
+    g_bottom = loop_y + 22     # group bottom (contains the retry loop)
+    height = g_bottom + 18
     p = [f"<svg xmlns='http://www.w3.org/2000/svg' width='{W}' height='{height}' "
          f"viewBox='0 0 {W} {height}'>",
          f"<rect width='{W}' height='{height}' fill='{BG}'/>",
@@ -106,13 +117,20 @@ def build():
     # "In memory" group behind the processing stages.
     gx0 = xs[IN_MEMORY[0]] - 15
     gx1 = xs[IN_MEMORY[-1]] + CARD_W + 15
-    gy = CARD_Y - 32
-    p.append(f"<rect x='{gx0}' y='{gy}' width='{gx1-gx0}' height='{CARD_H+60}' "
+    p.append(f"<rect x='{gx0}' y='{gy}' width='{gx1-gx0}' height='{g_bottom-gy}' "
              f"rx='18' fill='none' stroke='{ORANGE}' stroke-width='1.5' "
              f"stroke-dasharray='6 6' opacity='0.5'/>")
-    # Mask the dashes behind the label, then draw the label.
     p.append(f"<rect x='{gx0+16}' y='{gy-9}' width='84' height='18' fill='{BG}'/>")
     p.append(text(gx0 + 22, gy, "IN MEMORY", 11.5, ORANGE, "bold", MONO, "start", "1.5"))
+
+    # Retry loop: LLM extract sends failed blocks back to be re-packed smaller.
+    xp = xs[RETRY[0]] + CARD_W / 2
+    xl = xs[RETRY[1]] + CARD_W / 2
+    p.append(f"<path d='M {xl} {cb} V {loop_y} H {xp} V {cb}' fill='none' "
+             f"stroke='{ORANGE}' stroke-width='2' stroke-dasharray='4 4'/>")
+    p.append(f"<path d='M {xp-5} {cb+8} L {xp} {cb} L {xp+5} {cb+8} Z' fill='{ORANGE}'/>")
+    p.append(text((xp + xl) / 2, loop_y + 12, "retry: fewer blocks per chunk",
+                  10.5, ORANGE, "bold", MONO))
 
     for i, (title, sub, ic) in enumerate(STAGES):
         x = xs[i]
