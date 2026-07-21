@@ -6,9 +6,9 @@ decision is a column in the output, so a category can be re-derived by hand.
 
 | Signal | Source | Meaning |
 | --- | --- | --- |
-| KEV | CISA Known Exploited Vulnerabilities | The CVE is exploited in the wild |
-| EPSS | FIRST.org | Probability of exploitation in the next 30 days |
-| SSVC | CISA decision methodology | Act / Attend / Track category per finding |
+| KEV | [CISA Known Exploited Vulnerabilities](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) | The CVE is exploited in the wild |
+| EPSS | [FIRST.org EPSS](https://www.first.org/epss/) | Probability of exploitation in the next 30 days |
+| SSVC | [CISA SSVC](https://www.cisa.gov/ssvc) | Act / Attend / Track category per finding |
 
 CVE ids come from each record's `references` and, for Tenable, its
 `plugin_details`. Findings without a CVE are handled explicitly (see the tree
@@ -82,54 +82,50 @@ Read it top down: exploitation, then exposure, then severity, to a category.
 evidence, not evidence of safety, so it is never discounted as safe.
 
 ```mermaid
-flowchart TD
-    S([Finding]) --> E{Exploitation?}
-    E -->|active KEV| Ae{Exposed?}
-    E -->|likely / unknown| Le{Exposed?}
-    E -->|none| Ne{Exposed?}
+flowchart LR
+    S([Finding]) --> E{"Exploitation?"}
+    E -->|active KEV| A{"Exposed?"}
+    E -->|likely / unknown| L{"Exposed?"}
+    E -->|none| N{"Exposed?"}
 
-    Ae -->|yes| Aey{Severity?}
-    Ae -->|no| Aen{Severity?}
-    Le -->|yes| Ley{Severity?}
-    Le -->|no| Len{Severity?}
-    Ne -->|yes| Ney{Severity?}
-    Ne -->|no| Nen{Severity?}
+    A -->|exposed, high or medium| ACT
+    A -->|exposed, low| ATT
+    A -->|internal, high| ACT
+    A -->|internal, medium| ATT
+    A -->|internal, low| TRS
 
-    Aey -->|high| ACT
-    Aey -->|medium| ACT
-    Aey -->|low| ATT
-    Aen -->|high| ACT
-    Aen -->|medium| ATT
-    Aen -->|low| TRS
-    Ley -->|high| ACT
-    Ley -->|medium| ATT
-    Ley -->|low| TRS
-    Len -->|high| ATT
-    Len -->|medium| TRS
-    Len -->|low| TRK
-    Ney -->|high| ATT
-    Ney -->|medium| TRS
-    Ney -->|low| TRK
-    Nen -->|high| TRS
-    Nen -->|medium| TRK
-    Nen -->|low| TRK
+    L -->|exposed, high| ACT
+    L -->|exposed, medium| ATT
+    L -->|exposed, low| TRS
+    L -->|internal, high| ATT
+    L -->|internal, medium| TRS
+    L -->|internal, low| TRK
 
-    ACT((Act))
-    ATT((Attend))
-    TRS(("Track*"))
-    TRK((Track))
+    N -->|exposed, high| ATT
+    N -->|exposed, medium| TRS
+    N -->|exposed, low| TRK
+    N -->|internal, high| TRS
+    N -->|internal, medium or low| TRK
+
+    ACT["Act"]:::act
+    ATT["Attend"]:::att
+    TRS["Track*"]:::trs
+    TRK["Track"]:::trk
 
     classDef act fill:#d13438,color:#fff,stroke:#a4262c;
     classDef att fill:#f7a600,color:#000,stroke:#c77700;
     classDef trs fill:#3a96dd,color:#fff,stroke:#2b6ca3;
     classDef trk fill:#8a8886,color:#fff,stroke:#605e5c;
-    class ACT act;
-    class ATT att;
-    class TRS trs;
-    class TRK trk;
 ```
 
-Urgency: **Act** > **Attend** > **Track\*** > **Track**.
+## Categories
+
+| Category | Urgency | Meaning |
+| --- | --- | --- |
+| **Act** | Highest | Remediate now: exploited or high-stakes exposure |
+| **Attend** | High | Bring to the response team soon; needs supervised action |
+| **Track\*** | Moderate | Monitor; act if it worsens (a notch above plain Track) |
+| **Track** | Lowest | Keep an eye on it; no action needed for now |
 
 ## Ordering
 
