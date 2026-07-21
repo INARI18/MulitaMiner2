@@ -150,6 +150,9 @@ optional block:
 - `bertscore` — lazy import; when `bert-score` is missing the scorer is
   registered as unavailable and the report notes "install the `eval` group".
 
+The set of text scorers actually run is CLI-selectable (`--metrics`, §7);
+the registry is the single source of truth for what can be selected.
+
 Pair rules kept from v1: empty×empty = 1.0 (vacuous match);
 present×absent = 0.0. **New:** the per-field summary counts vacuous matches
 (`vacuous_n`) and reports both-side fill rates, so a real 1.0 is
@@ -179,17 +182,28 @@ Console output: the field × metric summary table.
 ## 7. CLI
 
 ```
-mulitaminer evaluate <run_dir> [--baseline PATH] [--threshold 0.7] [--no-bert]
+mulitaminer evaluate <target> [--baseline PATH] [--metrics all] [--threshold 0.7]
 ```
 
-- Baseline auto-discovery: `run.json → config.input`, swap extension to
-  `.xlsx` in the same directory. If `<stem>_instances_generated.xlsx` exists
-  alongside, the `instances` column is taken from it. `--baseline` overrides
-  discovery entirely.
-- `--no-bert`: skip BERTScore even when installed (it is the slow one — loads
-  a transformer model).
-- Writes `evaluation.json` + `evaluation.md` into the run dir; prints the
-  summary table.
+- `<target>` is a run directory (containing `results.json` + `run.json`) or a
+  direct path to a `results.json`-shaped file. **`evaluate` never runs
+  extraction** — it always consumes an existing extraction output.
+- Baseline auto-discovery (run-dir targets only): `run.json → config.input`,
+  swap extension to `.xlsx` in the same directory. If
+  `<stem>_instances_generated.xlsx` exists alongside, the `instances` column
+  is taken from it. `--baseline` overrides discovery entirely, and is
+  required when the target is a bare results file (no `run.json` to discover
+  from).
+- `--metrics` selects which **text scorers** run: `all` (default — every
+  installed scorer), or a comma-separated subset (`token_f1,rouge_l`,
+  `bertscore`, …). Structural scorers (`exact`, `set_f1`) always run — they
+  are the only meaningful metric for their fields, so filtering them would
+  leave fields unevaluated. Requesting an unavailable scorer (e.g.
+  `bertscore` without the `eval` group) fails with an actionable message.
+- `mulitaminer evaluate --list-metrics` prints the scorer registry with
+  availability (mirrors the `mulitaminer formats` pattern).
+- Writes `evaluation.json` + `evaluation.md` next to the target (run dir, or
+  the results file's directory); prints the summary table.
 
 ## 8. Testing (offline, no torch)
 
@@ -206,6 +220,9 @@ mulitaminer evaluate <run_dir> [--baseline PATH] [--threshold 0.7] [--no-bert]
   present×absent = 0.0; missing bert-score → unavailable without crash.
 - **end-to-end:** fabricated mini baseline XLSX + `results.json` →
   `evaluation.json`/`.md` with expected coverage and means.
+- **CLI:** `--metrics` subset runs only the requested text scorers (structural
+  ones still present); unavailable scorer requested → actionable error; bare
+  `results.json` target without `--baseline` → actionable error.
 
 ## 9. Companion changes (separate commits, outside `evaluation/`)
 
