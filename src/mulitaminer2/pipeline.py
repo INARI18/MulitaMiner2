@@ -19,7 +19,7 @@ from mulitaminer2.extraction import extract_blocks
 from mulitaminer2.llm import LLMClient, get_model
 from mulitaminer2.models import RunResult, TokenUsage
 from mulitaminer2.reader import DEFAULT_BACKEND, extract_pdf
-from mulitaminer2.scanners import get_scanner
+from mulitaminer2.scanner_engine import get_scanner
 from mulitaminer2.exporters import get_exporter
 from mulitaminer2.writers import write_json
 

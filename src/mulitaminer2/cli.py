@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from mulitaminer2.llm import MODELS, FatalLLMError
 from mulitaminer2.reader import BACKENDS, DEFAULT_BACKEND
-from mulitaminer2.scanners import all_scanners
+from mulitaminer2.scanner_engine import all_scanners
 
 app = typer.Typer(
     name="mulitaminer2",
@@ -109,7 +109,7 @@ def segment(
     """
     _setup_logging(debug=False)
     from mulitaminer2.reader import extract_pdf
-    from mulitaminer2.scanners import get_scanner
+    from mulitaminer2.scanner_engine import get_scanner
 
     profile = get_scanner(scanner)
     doc = extract_pdf(report, backend=pdf_backend)

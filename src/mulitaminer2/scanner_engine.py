@@ -2,8 +2,8 @@
 
 Unlike v1 — where the JSON held only part of the definition and the rest lived
 in a strategy class plus regexes hardcoded in the chunker — here the JSON is
-the WHOLE definition. Adding a scanner requires no Python: drop
-`<name>.json` + `<name>_prompt.txt` into `scanners/configs/` (or into the
+the WHOLE definition. Adding a scanner requires no Python: drop `<name>.json`
++ `<name>.txt` into `configs/scanners/` + `configs/prompts/` (or into the
 directory named by the MULITAMINER2_SCANNERS_DIR env var) and it registers.
 
 JSON fields:
@@ -18,8 +18,7 @@ JSON fields:
                        an inline "(?i)" prefix for case-insensitive matching.
 - name_above_marker:   bool; the finding NAME is the single line directly
                        ABOVE the marker and is pulled into the block (Tenable;
-                       mirror of the OpenVAS NVT lesson). Names never wrap —
-                       verified against ground truth.
+                       mirror of the OpenVAS NVT lesson).
 - name_stop_pattern:   optional regex; a line matching it is never taken as
                        the name (section headers / reference tails / URLs of
                        the previous block).
@@ -46,12 +45,15 @@ placement, pairing) is documented in docs/SCANNER_CONFIGS.md.
 from __future__ import annotations
 
 import json
+import os
 import re
+from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
+from typing import Callable
 
 from mulitaminer2.consolidate import dedupe, normalize_name
 from mulitaminer2.models import Block, OpenVASRecord, TenableRecord, VulnRecord
-from mulitaminer2.scanners.profile import ScannerProfile
 
 RECORD_TYPES: dict[str, type[VulnRecord]] = {
     "openvas": OpenVASRecord,
@@ -59,9 +61,31 @@ RECORD_TYPES: dict[str, type[VulnRecord]] = {
     "generic": VulnRecord,
 }
 
+_BUILTIN_DIR = Path(__file__).parent / "configs" / "scanners"
+
 # A wrapped block-title tail, e.g. "(1)" or "Instances" / "Instances (25)"
 # alone on the line above a marker — the real name sits one line further up.
 _SUFFIX_FRAGMENT = re.compile(r"^(\(\d+\)|Instances(\s*\(\d+\))?)\s*$", re.IGNORECASE)
+
+
+@dataclass(frozen=True)
+class ScannerProfile:
+    """Everything that defines one scanner, built from its JSON config."""
+
+    name: str                     # CLI name, e.g. "openvas"
+    source: str                   # stamped into VulnRecord.source
+    record_type: type[VulnRecord]
+    marker: re.Pattern            # one match line == one candidate finding
+    prompt_path: Path
+    max_vulns_per_chunk: int      # v1 calibration, per scanner
+    segment: Callable[[str], list[Block]]
+    # records -> (consolidated records, merge-log lines). Always runs:
+    # structural pairing + severity normalization + identical-identity dedup.
+    consolidate: Callable[[list[VulnRecord]], tuple[list[VulnRecord], list[str]]]
+
+    def prompt(self) -> str:
+        return self.prompt_path.read_text(encoding="utf-8")
+
 
 def _build_segmenter(cfg: dict):
     marker = re.compile(cfg["marker_pattern"])
@@ -200,3 +224,30 @@ def load_profile(config_path: Path) -> ScannerProfile:
         )
     except KeyError as exc:
         raise ValueError(f"Scanner config {config_path} is missing field {exc}") from exc
+
+
+@lru_cache
+def _registry(extra_dir: str | None) -> dict[str, ScannerProfile]:
+    profiles: dict[str, ScannerProfile] = {}
+    dirs = [_BUILTIN_DIR]
+    if extra_dir:
+        user_dir = Path(extra_dir)
+        # Accept both a flat user dir and one mirroring the scanners/ split.
+        dirs += [user_dir, user_dir / "scanners"]
+    for directory in dirs:
+        for config in sorted(directory.glob("*.json")):
+            profile = load_profile(config)
+            profiles[profile.name] = profile
+    return profiles
+
+
+def all_scanners() -> dict[str, ScannerProfile]:
+    return _registry(os.getenv("MULITAMINER2_SCANNERS_DIR"))
+
+
+def get_scanner(name: str) -> ScannerProfile:
+    scanners = all_scanners()
+    try:
+        return scanners[name.lower()]
+    except KeyError:
+        raise ValueError(f"Unknown scanner '{name}'. Available: {sorted(scanners)}")

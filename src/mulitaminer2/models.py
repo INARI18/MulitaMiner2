@@ -80,9 +80,11 @@ class VulnRecord(BaseModel):
     # hallucination surface). Subclasses pin it with a Literal default.
     source: str = Field(default="", **_PIPELINE_FILLED)
 
-    # Overflow bucket: a new scanner can dump anything here with zero changes
-    # to this file. Promote entries to a subclass when they deserve typing.
-    scanner_specific: dict = Field(default_factory=dict, **_PIPELINE_FILLED)
+    # No untyped overflow bucket (v1's scanner_specific was dropped by user
+    # decision): scanner-specific fields live in typed subclasses; if a
+    # config-only scanner ever needs extra fields, declare them in its JSON
+    # and build the subclass dynamically (same create_model pattern as the
+    # extraction contract).
 
     @field_validator("plugin_details", "instances", mode="before")
     @classmethod

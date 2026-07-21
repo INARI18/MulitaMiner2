@@ -21,7 +21,7 @@ from mulitaminer2 import settings
 from mulitaminer2.chunking import pack
 from mulitaminer2.llm import LLMClient
 from mulitaminer2.models import Block, Chunk, TokenUsage, VulnRecord, extraction_model_for
-from mulitaminer2.scanners.profile import ScannerProfile
+from mulitaminer2.scanner_engine import ScannerProfile
 
 log = logging.getLogger(__name__)
 

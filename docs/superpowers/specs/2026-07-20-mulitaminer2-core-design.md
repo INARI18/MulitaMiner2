@@ -316,3 +316,5 @@ inherited: profile keys name the actual model).
 | In-process HF inference | Deferred to a post-1.0 optional extra | Heavy torch dependency; servers cover the same models |
 | Scanner definition | JSON config + generic engine (no Python per scanner) | User requirement: lay users plug scanners; JSON is the WHOLE definition, unlike v1 |
 | --allow-duplicates flag | Removed; consolidation always runs | User decision: the flag repaired v1 over-extraction, which no longer exists; identical-identity merge is a safe no-op on well-formed reports |
+| scanners/ package | Collapsed into single `scanner_engine.py` | User concern: two dirs named "scanners"; the 3 files shared one responsibility and no independent consumers — module boundary (exports) unchanged |
+| scanner_specific field | Removed | User decision (YAGNI): typed subclasses are the extension mechanism; config-declared dynamic fields can be added the day a config-only scanner needs extras |

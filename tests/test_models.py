@@ -52,7 +52,7 @@ def test_extraction_model_derives_from_record():
     fields = set(model.model_fields)
     assert "block_id" in fields
     # Pipeline-filled fields must NOT be part of the LLM contract.
-    assert {"host", "source", "scanner_specific"}.isdisjoint(fields)
+    assert {"host", "source"}.isdisjoint(fields)
     # LLM-produced fields must all be there.
     assert {"name", "description", "severity", "cvss", "port"} <= fields
 
