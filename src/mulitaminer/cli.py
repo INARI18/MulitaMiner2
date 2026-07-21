@@ -161,7 +161,7 @@ def sync_feeds_cmd() -> None:
     from mulitaminer.settings import FEEDS_DIR
 
     meta = sync_feeds()
-    typer.echo(f"Synced to {FEEDS_DIR}/: {meta['kev_count']} KEV entries, "
+    typer.echo(f"Synced to {FEEDS_DIR.resolve()}: {meta['kev_count']} KEV entries, "
                f"{meta['epss_count']} EPSS scores (score date {meta['epss_score_date']})")
 
 

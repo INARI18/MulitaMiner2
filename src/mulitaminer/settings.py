@@ -4,8 +4,12 @@ from pathlib import Path
 
 # Root for all run artifacts (each run gets its own subdirectory).
 OUTPUTS_DIR = Path("outputs") / "runs"
-# Local KEV/EPSS feed snapshot (regenerable daily cache).
-FEEDS_DIR = Path("outputs") / "feeds"
+# Local KEV/EPSS feed snapshot (regenerable daily cache). Lives at the repo
+# root, NOT under outputs/: it is a persistent input for prioritization, and
+# cleaning old runs must not destroy it. Deliberately a visible project-local
+# dir (not an OS user-data dir), so the cache never accumulates silently
+# outside the project; the path is CWD-relative as a documented consequence.
+FEEDS_DIR = Path("feeds")
 
 # --- Chunk packing ----------------------------------------------------------
 # Fraction of the theoretical token budget actually used, leaving headroom for

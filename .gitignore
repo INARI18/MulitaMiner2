@@ -9,8 +9,11 @@ __pycache__/
 build/
 dist/
 
-# Run artifacts and the regenerable KEV/EPSS feed snapshot
+# Run artifacts
 outputs/
+
+# Regenerable KEV/EPSS feed snapshot (mulitaminer sync-feeds)
+feeds/
 
 # Generated baseline copies awaiting user review (tools/annotate_instances.py)
 *_instances_generated.xlsx
