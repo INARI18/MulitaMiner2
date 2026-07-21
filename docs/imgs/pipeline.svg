@@ -1,0 +1,52 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1300' height='248' viewBox='0 0 1300 248'>
+<rect width='1300' height='248' fill='#fbf6ef'/>
+<text x='32' y='34' font-size='13' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='2' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>PIPELINE</text>
+<rect x='28.0' y='70' width='152.0' height='118' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='104.0' cy='70' r='16' fill='#e0572a'/>
+<text x='104.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1</text>
+<text x='104.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>PDF</text>
+<text x='104.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>input</text>
+<line x1='184.0' y1='129.0' x2='202.0' y2='129.0' stroke='#e0572a' stroke-width='2.2'/>
+<path d='M 201.0 124.0 L 208.0 129.0 L 201.0 134.0 Z' fill='#e0572a'/>
+<rect x='210.0' y='70' width='152.0' height='118' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='286.0' cy='70' r='16' fill='#e0572a'/>
+<text x='286.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>2</text>
+<text x='286.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Extract text</text>
+<text x='286.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>pdf_reader</text>
+<line x1='366.0' y1='129.0' x2='384.0' y2='129.0' stroke='#e0572a' stroke-width='2.2'/>
+<path d='M 383.0 124.0 L 390.0 129.0 L 383.0 134.0 Z' fill='#e0572a'/>
+<rect x='392.0' y='70' width='152.0' height='118' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='468.0' cy='70' r='16' fill='#e0572a'/>
+<text x='468.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>3</text>
+<text x='468.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Split blocks</text>
+<text x='468.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>scanner_engine</text>
+<line x1='548.0' y1='129.0' x2='566.0' y2='129.0' stroke='#e0572a' stroke-width='2.2'/>
+<path d='M 565.0 124.0 L 572.0 129.0 L 565.0 134.0 Z' fill='#e0572a'/>
+<rect x='574.0' y='70' width='152.0' height='118' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='650.0' cy='70' r='16' fill='#e0572a'/>
+<text x='650.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>4</text>
+<text x='650.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>LLM extract</text>
+<text x='650.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>block-anchored</text>
+<line x1='730.0' y1='129.0' x2='748.0' y2='129.0' stroke='#e0572a' stroke-width='2.2'/>
+<path d='M 747.0 124.0 L 754.0 129.0 L 747.0 134.0 Z' fill='#e0572a'/>
+<rect x='756.0' y='70' width='152.0' height='118' rx='16' fill='#f4e9db' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='832.0' cy='70' r='16' fill='#e0572a'/>
+<text x='832.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>5</text>
+<text x='832.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Consolidate</text>
+<text x='832.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>pair · dedup</text>
+<line x1='912.0' y1='129.0' x2='930.0' y2='129.0' stroke='#e0572a' stroke-width='2.2'/>
+<path d='M 929.0 124.0 L 936.0 129.0 L 929.0 134.0 Z' fill='#e0572a'/>
+<rect x='938.0' y='70' width='152.0' height='118' rx='16' fill='#f6e2cf' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='1014.0' cy='70' r='16' fill='#e0572a'/>
+<text x='1014.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>6</text>
+<text x='1014.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>results.json</text>
+<text x='1014.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>primary output</text>
+<line x1='1094.0' y1='129.0' x2='1112.0' y2='129.0' stroke='#e0572a' stroke-width='2.2'/>
+<path d='M 1111.0 124.0 L 1118.0 129.0 L 1111.0 134.0 Z' fill='#e0572a'/>
+<rect x='1120.0' y='70' width='152.0' height='118' rx='16' fill='#f6e2cf' stroke='#e6d6c1' stroke-width='1.5'/>
+<circle cx='1196.0' cy='70' r='16' fill='#e0572a'/>
+<text x='1196.0' y='70' font-size='14' fill='#fff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>7</text>
+<text x='1196.0' y='122' font-size='16' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif' dominant-baseline='middle'>Exports</text>
+<text x='1196.0' y='148' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>sarif · csaf · …</text>
+<text x='650.0' y='222' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>Everything between stages stays in memory.</text>
+</svg>

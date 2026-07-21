@@ -26,16 +26,7 @@ vulnerabilities, so the output count always matches the report.
 
 ## Pipeline
 
-```mermaid
-flowchart LR
-    A([PDF]) --> B[Extract text]
-    B --> C[Split into blocks]
-    C --> D[Pack chunks]
-    D --> E[LLM fills each block]
-    E --> F[Consolidate]
-    F --> G[(results.json)]
-    G --> H[[Exports]]
-```
+![MulitaMiner pipeline](docs/imgs/pipeline.svg)
 
 One module per stage in `src/mulitaminer/`. Everything between stages stays
 in memory.
