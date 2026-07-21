@@ -230,3 +230,10 @@ Phase 11 envelope/junk fixes — 10 more raw blocks recovered and the final
 count landed exactly on ground truth. bBWA text fields read slightly lower
 after only because the after-numbers exclude vacuous pairs; run-to-run LLM
 variance is within noise (raw counts identical, 0 warnings both).
+
+NLI smoke (2026-07-21, eval group installed, DeBERTa-v3-base-mnli-fever-anli):
+negation flip "auth required" vs "NO auth required" scores 0.000
+(contradiction, exactly the failure mode the metric was added for);
+identical text 0.999; legitimate paraphrase 0.999 (no false alarm).
+bertscore available. NLI runtime note: ~seconds/pair on CPU — opt-in via
+--metrics nli, excluded from 'all' by design.
