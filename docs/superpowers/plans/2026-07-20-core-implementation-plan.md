@@ -271,6 +271,16 @@ instances; user wants a closer look at this later.
   restored into the prompt, then compare. Note: the baseline XLSX is NOT the
   referee here — it has 73 input_type filled (more than the PDF contains;
   annotated from outside the PDF) and 0 payloads (which the PDF does have).
+  UPDATE: line-anchored recount shows the PDF has 26 INPUT TYPE lines (35 was
+  a substring artifact) — the LLM run had already extracted 26/26; the prompt
+  was never missing anything. The experiment is likely unnecessary.
+- [x] `tools/annotate_instances.py` (user choice, option B): deterministic
+  no-LLM parser regenerating the baselines' `instances` column from the PDF
+  (Instances-block line grammar: standalone INSTANCE/PAYLOAD/PROOF/OUTPUT
+  labels, inline INPUT TYPE/NAME, REQUEST MADE, RESPONSE HEADERS). Verified
+  against line counts: JuiceShop 19/19 payloads, 26/26 input_type; bWAAP
+  21/21 input_type. Writes `*_instances_generated.xlsx` copies (gitignored)
+  for the user to review and adopt — originals untouched.
 
 - [ ] (user request) Drop the `_prompt` suffix from prompt filenames:
   `configs/prompts/openvas_prompt.txt` → `openvas.txt`, same for tenable.

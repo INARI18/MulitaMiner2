@@ -12,6 +12,9 @@ dist/
 # Run artifacts
 outputs/
 
+# Generated baseline copies awaiting user review (tools/annotate_instances.py)
+*_instances_generated.xlsx
+
 # Tooling caches
 .pytest_cache/
 .mypy_cache/
