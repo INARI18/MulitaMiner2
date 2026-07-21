@@ -56,6 +56,9 @@ uv run mulitaminer extract report.pdf -s tenable -m ollama --model-name qwen3
 # Write inspection artifacts (layout, blocks, raw LLM traffic) into the run dir
 uv run mulitaminer extract report.pdf -s openvas -m deepseek --debug
 
+# Generate more exports later from an existing run, no LLM calls
+uv run mulitaminer export outputs/runs/<run_dir> -e sarif -e csaf
+
 uv run mulitaminer models     # model profiles and their env vars
 uv run mulitaminer scanners   # available scanners
 uv run mulitaminer formats    # export formats and what consumes each

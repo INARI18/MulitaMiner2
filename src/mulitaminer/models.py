@@ -107,6 +107,16 @@ class TenableRecord(VulnRecord):
     instances: list[Instance] = []
 
 
+BY_SOURCE: dict[str, type[VulnRecord]] = {
+    "OPENVAS": OpenVASRecord,
+    "TENABLEWAS": TenableRecord,
+}
+
+
+def record_type_for_source(source: str | None) -> type[VulnRecord]:
+    return BY_SOURCE.get(source or "", VulnRecord)
+
+
 def _is_llm_produced(field) -> bool:
     extra = field.json_schema_extra if isinstance(field.json_schema_extra, dict) else {}
     return extra.get("llm_produced", True)

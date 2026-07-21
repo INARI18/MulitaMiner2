@@ -131,6 +131,30 @@ def segment(
 
 
 @app.command()
+def export(
+    results: Path = typer.Argument(
+        ..., exists=True, help="A results.json or a run directory containing one"
+    ),
+    formats: list[str] = typer.Option(
+        ..., "--export", "-e", help="Formats to generate (repeatable). See `mulitaminer formats`."
+    ),
+) -> None:
+    """Generate exports from an existing results.json. No LLM calls."""
+    import json
+
+    from mulitaminer.exporters import get_exporter
+    from mulitaminer.models import record_type_for_source
+
+    path = results / "results.json" if results.is_dir() else results
+    data = json.loads(path.read_text(encoding="utf-8"))
+    record_type = record_type_for_source(data[0].get("source") if data else None)
+    records = [record_type.model_validate(r) for r in data]
+    for fmt in formats:
+        out = get_exporter(fmt)(records, record_type, path.parent)
+        typer.echo(f"{fmt}: {out}")
+
+
+@app.command()
 def formats() -> None:
     """List available export formats for --export."""
     from mulitaminer.exporters import DESCRIPTIONS, EXPORTERS
