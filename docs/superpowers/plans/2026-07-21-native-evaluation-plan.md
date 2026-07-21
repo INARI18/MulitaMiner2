@@ -210,3 +210,23 @@ anchored and clean on both scanners — the low references scores are real
 extractor deviations. Candidate next step: tighten both prompts on the
 references contract (split joins, drop empty labels) and validate with one
 paid rerun per scanner.
+
+PROMPT-FIX VALIDATION (2026-07-21, commit 137a99a, reruns evaluated with
+measured means — the "before" numbers are inclusive means, slightly
+inflated by vacuous pairs, so text-field deltas are not apples-to-apples):
+
+| | before | after (measured) |
+| --- | --- | --- |
+| OV bBWA references set_f1 | 0.304 | **0.879** (set_f1_ids 0.943) |
+| TN JuiceShop references set_f1 | 0.663 | **0.999** (set_f1_ids 0.997) |
+| TN JuiceShop cvss set_f1 | 0.981 | **1.000** |
+| TN JuiceShop instances | 0.764 | **0.898** |
+| TN JuiceShop coverage | 75/76, 3 spurious | **76/76, 0 missed, 0 spurious** |
+| TN JuiceShop raw/final | 139/78, 23 warn | **149/76 (=GT), 13 warn** |
+
+The one-reference-per-element clause + exercised few-shot examples fixed
+the violation on both scanners. Bonus: the TN rerun also confirms the
+Phase 11 envelope/junk fixes — 10 more raw blocks recovered and the final
+count landed exactly on ground truth. bBWA text fields read slightly lower
+after only because the after-numbers exclude vacuous pairs; run-to-run LLM
+variance is within noise (raw counts identical, 0 warnings both).
