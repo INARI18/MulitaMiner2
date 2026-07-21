@@ -1,3 +1,19 @@
+<div align="center">
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="imgs/MulitaMiner_logo_light.png">
+    <source media="(prefers-color-scheme: light)" srcset="imgs/MulitaMiner_logo_dark.png">
+    <img src="imgs/MulitaMiner_logo_light.png" width="500" alt="MulitaMiner logo">
+  </picture>
+
+**Vulnerability Extraction from Security Reports using LLMs**
+
+![Python](https://img.shields.io/badge/Python-3.11+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+
+</div>
+
 # MulitaMiner
 
 Extracts structured vulnerability records from security-scanner PDF reports
@@ -21,78 +37,49 @@ flowchart LR
     G --> H[[Exports]]
 ```
 
-One module per stage in `src/mulitaminer/`: `pdf_reader`, `scanner_engine`,
-`chunking`, `llm` + `extraction`, `consolidate`, `writers`, `exporters/`.
-Everything between stages stays in memory.
+One module per stage in `src/mulitaminer/`. Everything between stages stays
+in memory.
 
 ## Supported
 
 | | |
 | --- | --- |
-| Scanners | OpenVAS/Greenbone, Tenable WAS (add your own: see below) |
+| Scanners | OpenVAS/Greenbone, Tenable WAS (add your own with a JSON config) |
 | Cloud models | DeepSeek, OpenAI (gpt-4o, gpt-4o-mini), Groq (Llama 3.3 70B) |
 | Local models | Ollama, LM Studio, any OpenAI-compatible server. No API key needed |
 | Exports | XLSX, CSV, SARIF 2.1.0, DefectDojo Generic JSON, CAIS, CSAF 2.0 |
 
-## Install
+## Quickstart
 
 ```bash
 uv sync
 cp .env.example .env    # fill in the keys for the cloud providers you use
-```
 
-## Usage
-
-```bash
-# Extract with DeepSeek and also write a spreadsheet
+# Extract and also write a spreadsheet
 uv run mulitaminer extract report.pdf --scanner openvas --model deepseek --export xlsx
 
-# Multiple exports: repeat the flag
-uv run mulitaminer extract report.pdf -s openvas -m deepseek -e sarif -e generic
-
-# Local model via Ollama, no key
-uv run mulitaminer extract report.pdf -s tenable -m ollama --model-name qwen3
-
-# Write inspection artifacts (layout, blocks, raw LLM traffic) into the run dir
-uv run mulitaminer extract report.pdf -s openvas -m deepseek --debug
-
-# Generate more exports later from an existing run, no LLM calls
+# Generate more exports later from the same run, no LLM calls
 uv run mulitaminer export outputs/runs/<run_dir> -e sarif -e csaf
 
-uv run mulitaminer models     # model profiles and their env vars
-uv run mulitaminer scanners   # available scanners
-uv run mulitaminer formats    # export formats and what consumes each
+# Test a scanner config offline and free
+uv run mulitaminer segment report.pdf --scanner openvas
 ```
 
-## Outputs
+Each run creates `outputs/runs/<timestamp>_<input>_<model>/` with
+`results.json` (the records), `run.json` (config, tokens, cost, warnings) and
+one file per requested export.
 
-Each run creates `outputs/runs/<timestamp>_<input>_<model>/` containing:
+## Documentation
 
-| File | Content |
+| Document | Description |
 | --- | --- |
-| `results.json` | The extracted records (primary artifact) |
-| `run.json` | Config snapshot, token/cost accounting, duration, warnings, merge log |
-| `results.raw.json` | Pre-consolidation records, written only when merges happened |
-| `results.<format>.*` | One file per `--export` |
-| `layout.txt`, `blocks.txt`, `llm_traffic.jsonl`, `debug.log` | Only with `--debug` |
-
-Consolidation always runs: Tenable base+instances pairing, severity
-normalization (INFO becomes LOG), and merging of fully identical records.
-Findings that repeat with different content are never merged.
-
-## Adding a scanner
-
-A scanner is one JSON config plus one prompt file, no Python. Drop
-`<name>.json` and `<name>.txt` into a folder and point the
-`MULITAMINER_SCANNERS_DIR` env var at it. Test the config offline and for
-free with:
-
-```bash
-uv run mulitaminer segment report.pdf --scanner <name>
-```
-
-The block count must equal the report's finding count. Full guide and the
-rationale behind the built-in configs: [docs/SCANNER_CONFIGS.md](docs/SCANNER_CONFIGS.md).
+| [docs/INSTALL.md](docs/INSTALL.md) | Requirements, installation and a keyless verification run |
+| [docs/USAGE.md](docs/USAGE.md) | All commands, flags, run artifacts and examples |
+| [docs/CONFIG.md](docs/CONFIG.md) | API keys, model profiles and tunables |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline stages, modules and design rules |
+| [docs/SCANNER_CONFIGS.md](docs/SCANNER_CONFIGS.md) | Adding a scanner and the built-in config rationale |
+| [docs/EXPORTS.md](docs/EXPORTS.md) | Export formats, who consumes each, field mapping |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Symptoms, causes and fixes |
 
 ## Development
 
@@ -100,8 +87,7 @@ rationale behind the built-in configs: [docs/SCANNER_CONFIGS.md](docs/SCANNER_CO
 uv run pytest    # full suite, offline (fake LLM)
 ```
 
-Design history and the phased plan with verification state live in
-`docs/superpowers/`. Backend comparison and parity tools live in `tools/`.
+Design history and the phased plan live in `docs/superpowers/`.
 
 ## License
 
