@@ -369,6 +369,25 @@ More open-source candidates (all free):
 Decision to make at design time: one scanner on the PDF path (ZAP) vs. one on
 the structured path (Nuclei) vs. both.
 
+DECIDED (2026-07-21, user): Phase 15 also delivers **config-declared extra
+fields** — `"extra_fields": {"name": "type"}` in the scanner JSON, closing
+the gap where "a scanner is one JSON + one prompt" breaks the moment a new
+scanner needs a field the core schema lacks. Constraints set by the user
+(anti-gambiarra requirements, to be honored in the design):
+- Minimal type vocabulary only: str, text (list[str] paragraphs), int,
+  float, bool, list (list[str] atomic items). NO nested models via config —
+  nested structures stay Python subclasses by design.
+- Extra fields must not shadow core fields (clear config error, never
+  silent behavior).
+- One mechanism, no parallel paths: the generated subclass flows through
+  the same `extraction_model_for` / writers / evaluation inference as
+  Python-declared fields — zero special-casing downstream. Record-type
+  resolution moves from the static BY_SOURCE dict to the ScannerProfile
+  (touches extraction, writers, evaluation — regression-test all three).
+- Existing behavior unchanged when `extra_fields` is absent; full test
+  suite must stay green; design reviewed before implementation
+  (brainstorm/spec first, as usual).
+
 - [x] (user request) Drop the `_prompt` suffix from prompt filenames:
   `configs/prompts/openvas.txt` / `tenable.txt`; `prompt` key now optional,
   defaulting to `<name>.txt` — both built-in JSONs lost the key. Applied
