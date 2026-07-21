@@ -226,10 +226,14 @@ mulitaminer evaluate <target> [--baseline PATH] [--metrics all] [--threshold 0.7
 
 ## 9. Companion changes (separate commits, outside `evaluation/`)
 
-1. **Feeds cache fix:** `FEEDS_DIR` moves from `outputs/feeds` (ephemeral,
-   CWD-relative — user spotted the inconsistency) to
-   `platformdirs.user_data_dir("mulitaminer")/feeds`. New dep `platformdirs`.
-   Existing caches are simply re-synced (`mulitaminer sync-feeds`).
+1. **Feeds cache fix:** `FEEDS_DIR` moves from `outputs/feeds` to a
+   gitignored `feeds/` directory at the project root. Rationale: feeds are a
+   persistent input cache for prioritization, not a run artifact — parking
+   them under the ephemeral `outputs/` meant cleaning old runs also destroyed
+   the cache (user spotted the inconsistency). A visible in-repo directory
+   was chosen over an OS user-data dir (platformdirs) so the cache never
+   accumulates silently outside the project. No new dependency. Existing
+   caches are simply re-synced (`mulitaminer sync-feeds`).
 2. **Plan updates:** Phase 11 caveat revised — Tenable `instances` GT is now
    reliable via the deterministic re-annotation; Phase 14 state updated as
    work lands.
