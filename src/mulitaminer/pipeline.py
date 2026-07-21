@@ -10,16 +10,16 @@ import json
 import logging
 import re
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
 from mulitaminer import settings
 from mulitaminer.extraction import extract_blocks
-from mulitaminer.llm import LLMClient, get_model
+from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.models import RunResult, TokenUsage
 from mulitaminer.pdf_reader import DEFAULT_BACKEND, extract_pdf
-from mulitaminer.scanner_engine import get_scanner
+from mulitaminer.scanner_engine import detect_scanner, get_scanner
 from mulitaminer.exporters import get_exporter
 from mulitaminer.writers import write_json
 
@@ -29,7 +29,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class RunConfig:
     input_path: Path
-    scanner: str
+    scanner: str | None                # None = auto-detect (directory mode)
     model: str
     model_name: str | None = None      # override for generic local profiles
     pdf_backend: str = DEFAULT_BACKEND
@@ -59,6 +59,61 @@ def _make_run_dir(config: RunConfig) -> Path:
     run_dir = root / f"{stamp}_{_slug(config.input_path.stem)}_{_slug(config.model)}"
     run_dir.mkdir(parents=True, exist_ok=False)
     return run_dir
+
+
+def run_directory(config: RunConfig, client: LLMClient | None = None) -> list[dict]:
+    """Extract every PDF in the directory ``config.input_path``.
+
+    Per file: resolve the scanner (config.scanner forces one for the whole
+    batch; None auto-detects via marker census, skipping files no scanner
+    uniquely claims), then run the normal pipeline into its own run dir.
+    A failing file is recorded and the batch continues, EXCEPT for
+    FatalLLMError (bad key/quota): every subsequent file would fail the
+    same way, so the batch aborts.
+
+    Returns one summary dict per PDF: file, status (ok|skipped|failed),
+    scanner, detail, and run_dir/cost_usd when extracted.
+    """
+    pdfs = sorted(config.input_path.glob("*.pdf"))
+    if not pdfs:
+        raise ValueError(f"No PDF files in {config.input_path}")
+
+    summaries: list[dict] = []
+    for pdf in pdfs:
+        entry = {"file": pdf.name, "status": "failed", "scanner": config.scanner,
+                 "detail": ""}
+        summaries.append(entry)
+        try:
+            scanner_name = config.scanner
+            if scanner_name is None:
+                doc = extract_pdf(pdf, backend=config.pdf_backend)
+                scanner_name, counts = detect_scanner(doc.text)
+                if scanner_name is None:
+                    positive = {k: v for k, v in counts.items() if v}
+                    entry["status"] = "skipped"
+                    entry["detail"] = (
+                        f"ambiguous scanner markers {positive}" if positive
+                        else "no scanner markers found"
+                    )
+                    log.warning("%s: skipped (%s)", pdf.name, entry["detail"])
+                    continue
+                log.info("%s -> %s (%d markers)", pdf.name, scanner_name,
+                         counts[scanner_name])
+            result, run_dir = run(replace(config, input_path=pdf,
+                                          scanner=scanner_name), client=client)
+            entry.update(
+                status="ok", scanner=scanner_name, run_dir=str(run_dir),
+                cost_usd=result.usage.cost_usd,
+                detail=f"{len(result.records)} records in {result.duration_s}s",
+            )
+        except FatalLLMError:
+            entry["detail"] = "fatal provider error; batch aborted"
+            raise
+        except Exception as exc:  # one bad file must not sink the batch
+            entry["scanner"] = scanner_name
+            entry["detail"] = f"{type(exc).__name__}: {exc}"
+            log.error("%s: failed (%s)", pdf.name, entry["detail"])
+    return summaries
 
 
 def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, Path]:

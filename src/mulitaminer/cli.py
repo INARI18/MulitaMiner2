@@ -29,8 +29,14 @@ def _setup_logging(debug: bool) -> None:
 
 @app.command()
 def extract(
-    report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
-    scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer scanners`"),
+    report: Path = typer.Argument(
+        ..., exists=True, readable=True,
+        help="Scanner PDF report, or a directory of PDFs",
+    ),
+    scanner: str | None = typer.Option(
+        None, "--scanner", "-s",
+        help="Force a scanner profile; omit to auto-detect (see `mulitaminer scanners`)",
+    ),
     model: str = typer.Option("deepseek", "--model", "-m", help="See `mulitaminer models`"),
     model_name: str | None = typer.Option(
         None, "--model-name", help="Provider model id override (for ollama/lmstudio)"
@@ -47,10 +53,10 @@ def extract(
     output_dir: Path | None = typer.Option(None, "--output-dir", help="Run artifacts root"),
     debug: bool = typer.Option(False, "--debug", help="Dump layout/blocks/LLM traffic to the run dir"),
 ) -> None:
-    """Extract vulnerabilities from REPORT into a fresh run directory."""
+    """Extract vulnerabilities from REPORT (file or directory) into run directories."""
     _setup_logging(debug)
     load_dotenv()
-    from mulitaminer.pipeline import RunConfig, run
+    from mulitaminer.pipeline import RunConfig, run, run_directory
 
     config = RunConfig(
         input_path=report,
@@ -64,6 +70,45 @@ def extract(
         output_dir=output_dir,
         debug=debug,
     )
+
+    if report.is_dir():
+        try:
+            summaries = run_directory(config)
+        except (FatalLLMError, ValueError) as exc:
+            typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+            raise typer.Exit(code=1)
+        ok = [s for s in summaries if s["status"] == "ok"]
+        for s in summaries:
+            color = {"ok": typer.colors.GREEN, "skipped": typer.colors.YELLOW}.get(
+                s["status"], typer.colors.RED)
+            typer.secho(
+                f"{s['status']:<8} {s['file']:<45} {s['scanner'] or '-':<9} {s['detail']}",
+                fg=color,
+            )
+        total_cost = sum(s.get("cost_usd", 0.0) for s in ok)
+        typer.echo(
+            f"\n{len(ok)} extracted, "
+            f"{sum(s['status'] == 'skipped' for s in summaries)} skipped, "
+            f"{sum(s['status'] == 'failed' for s in summaries)} failed; "
+            f"total ${total_cost:.4f}"
+        )
+        raise typer.Exit(code=0 if ok else 1)
+
+    if scanner is None:
+        from mulitaminer.pdf_reader import extract_pdf
+        from mulitaminer.scanner_engine import detect_scanner
+
+        detected, counts = detect_scanner(extract_pdf(report, backend=pdf_backend).text)
+        if detected is None:
+            typer.secho(
+                f"Error: could not identify the scanner for {report.name} "
+                f"(marker counts: {counts}). Pass --scanner explicitly.",
+                fg=typer.colors.RED, err=True,
+            )
+            raise typer.Exit(code=1)
+        typer.echo(f"Detected scanner: {detected} ({counts[detected]} markers)")
+        config.scanner = detected
+
     try:
         result, run_dir = run(config)
     except (FatalLLMError, ValueError) as exc:

@@ -223,3 +223,24 @@ def get_scanner(name: str) -> ScannerProfile:
         return scanners[name.lower()]
     except KeyError:
         raise ValueError(f"Unknown scanner '{name}'. Available: {sorted(scanners)}")
+
+
+def detect_scanner(text: str) -> tuple[str | None, dict[str, int]]:
+    """Deterministic scanner identification by marker census.
+
+    Counts every registered profile's marker matches in the extracted text.
+    A scanner claims the document only when it alone has matches; zero
+    everywhere or more than one positive returns None (callers skip or ask
+    for an explicit --scanner). Never guesses: even a hypothetical wrong
+    claim would segment 0 blocks and extract nothing, but the rule keeps
+    that scenario out entirely.
+    """
+    # Count per line, mirroring how the segmenter applies markers (patterns
+    # may use ^ without MULTILINE because segmentation is line-oriented).
+    lines = text.splitlines()
+    counts = {
+        name: sum(1 for line in lines if profile.marker.search(line))
+        for name, profile in all_scanners().items()
+    }
+    positive = [name for name, n in counts.items() if n > 0]
+    return (positive[0] if len(positive) == 1 else None), counts
