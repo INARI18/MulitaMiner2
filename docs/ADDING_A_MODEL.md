@@ -34,8 +34,8 @@ mechanism as scanners).
 Then `uv run mulitaminer extract report.pdf -s openvas -m mistral-large`.
 
 Anthropic's Claude works through its OpenAI-compatible endpoint — see the
-built-in `claude-haiku.json` (`base_url` `https://api.anthropic.com/v1/`,
-key in `ANTHROPIC_API_KEY`).
+built-in `haiku.json` (`base_url` `https://api.anthropic.com/v1/`, key in
+`CLAUDE_API_KEY`).
 
 ## Local model
 

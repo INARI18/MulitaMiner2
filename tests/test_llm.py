@@ -115,10 +115,10 @@ def test_unknown_model_key_raises():
 def test_registry_loads_builtin_profiles():
     models = all_models()
     for key in ("deepseek", "gpt-4o-mini", "gpt-4o", "llama-3.3-70b",
-                "ollama", "lmstudio", "claude-haiku"):
+                "ollama", "lmstudio", "haiku"):
         assert key in models
-    assert models["claude-haiku"].api_key_env == "ANTHROPIC_API_KEY"
-    assert models["claude-haiku"].base_url.startswith("https://api.anthropic.com")
+    assert models["haiku"].api_key_env == "CLAUDE_API_KEY"
+    assert models["haiku"].base_url.startswith("https://api.anthropic.com")
 
 
 def test_registry_local_profile_omits_api_key_field():
