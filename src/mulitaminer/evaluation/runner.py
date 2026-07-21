@@ -28,7 +28,7 @@ from mulitaminer.evaluation.scorers import (
     render_text,
     text_scorers,
 )
-from mulitaminer.models import VulnRecord, record_type_for_source
+from mulitaminer.models import record_type_for_source
 
 # Convenience aliases accepted by --metrics.
 _METRIC_ALIASES = {"bert": "bertscore", "rouge": "rouge_l"}
@@ -86,9 +86,14 @@ def load_baseline(path: Path) -> tuple[list[dict], dict]:
     return rows, provenance
 
 
-def load_extraction(path: Path) -> list[VulnRecord]:
+def load_extraction(path: Path) -> list[dict]:
+    """results.json rows, deliberately NOT re-validated: the evaluator scores
+    what the run actually wrote — an out-of-schema value (e.g. a bad protocol
+    from an older run) should cost score, not crash the evaluation."""
     data = json.loads(path.read_text(encoding="utf-8"))
-    return [record_type_for_source(d.get("source"))(**d) for d in data]
+    if not isinstance(data, list):
+        raise ValueError(f"{path} is not a results.json record list")
+    return data
 
 
 def _resolve_target(target: Path) -> tuple[Path, dict | None]:
@@ -114,14 +119,14 @@ def discover_baseline(run: dict | None) -> Path | None:
     return candidate if candidate.is_file() else None
 
 
-def _overrides_for_source(source: str | None) -> dict[str, str]:
-    """Match a scanner profile by record source; no profile -> no overrides."""
+def _profile_for_source(source: str | None):
+    """Match a scanner profile by record source; None when no profile fits."""
     from mulitaminer.scanner_engine import all_scanners
 
     for profile in all_scanners().values():
         if profile.source == (source or ""):
-            return dict(profile.field_metric_overrides)
-    return {}
+            return profile
+    return None
 
 
 def resolve_metrics(spec: str | None) -> list[Scorer]:
@@ -297,17 +302,29 @@ def evaluate_run(
             "needs a run directory whose run.json points at the source PDF."
         )
 
-    records = load_extraction(results_path)
-    if not records:
+    ext_rows = load_extraction(results_path)
+    if not ext_rows:
         raise ValueError(f"{results_path} contains no records")
     base_rows, provenance = load_baseline(Path(baseline_path))
 
-    source = records[0].source
+    source = ext_rows[0].get("source")
     record_type = record_type_for_source(source)
-    plans = field_plans(record_type, _overrides_for_source(source))
+    profile = _profile_for_source(source)
+    plans = field_plans(
+        record_type, dict(profile.field_metric_overrides) if profile else {}
+    )
     selected_text = resolve_metrics(metrics)
 
-    ext_rows = [r.model_dump(mode="json", by_alias=True) for r in records]
+    # Apply the scanner's severity normalization (e.g. INFO->LOG) to both
+    # sides: pipeline output is already mapped; the baseline is not. Scoring
+    # the by-design tier rename as a mismatch would be unfair, and it would
+    # also perturb the tenable composite key (which includes severity).
+    if profile and profile.severity_map:
+        sev_map = {k.upper(): v for k, v in profile.severity_map}
+        for row in (*ext_rows, *base_rows):
+            sev = row.get("severity")
+            if isinstance(sev, str) and sev.upper() in sev_map:
+                row["severity"] = sev_map[sev.upper()]
     alignment = align(ext_rows, base_rows, key_parts_for_source(source), threshold)
 
     pair_scores = [

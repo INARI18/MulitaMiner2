@@ -65,11 +65,25 @@ uv run mulitaminer prioritize outputs/runs/<run_dir>
 
 # Test a scanner config offline and free
 uv run mulitaminer segment report.pdf --scanner openvas
+
+# Score a finished run against a ground-truth XLSX (offline, no LLM)
+uv run mulitaminer evaluate outputs/runs/<run_dir>
 ```
 
 Each run creates `outputs/runs/<timestamp>_<input>_<model>/` with
 `results.json` (the records), `run.json` (config, tokens, cost, warnings) and
 one file per requested export.
+
+## Evaluation
+
+`mulitaminer evaluate <run_dir>` aligns a run's records to a baseline XLSX
+(auto-discovered next to the source PDF, or `--baseline`) and writes
+`evaluation.json` + `evaluation.md` into the run directory: coverage
+(recall/precision, missed/spurious findings) and per-field scores. Metrics are
+derived from the record schema — exact match for numeric/categorical fields,
+set F1 for reference lists, token F1 + ROUGE-L for text (select with
+`--metrics`, list with `--list-metrics`). BERTScore is optional and heavy
+(torch): `uv sync --group eval`.
 
 ## Documentation
 

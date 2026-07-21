@@ -42,7 +42,8 @@ def summary_table(result: EvalResult) -> str:
         row = [field_name]
         for c in cols:
             stats = metrics.get(c)
-            row.append(f"{stats['mean']:.3f}" if stats else "—")
+            # ASCII placeholder: Windows consoles often decode cp1252.
+            row.append(f"{stats['mean']:.3f}" if stats else "-")
         rows.append(row)
     widths = [max(len(r[i]) for r in rows) for i in range(len(header))]
     return "\n".join(
@@ -113,6 +114,17 @@ def render_markdown(result: EvalResult) -> str:
         )
     for name, hint in result.meta.get("unavailable_metrics", {}).items():
         notes.append(f"metric `{name}` not run — {hint}.")
+    never_filled = [
+        f for f, metrics in result.fields.items()
+        if metrics and all(s["fill_rate_baseline"] == 0.0 for s in metrics.values())
+    ]
+    if never_filled:
+        notes.append(
+            "baseline never fills " + ", ".join(f"`{f}`" for f in never_filled)
+            + " — scores there only measure presence agreement: 1.0 means the "
+            "extraction also left the field empty; low values mean it filled a "
+            "field the ground truth does not annotate."
+        )
     if result.unevaluated_baseline_columns:
         notes.append(
             "baseline columns outside the record schema (not scored): "

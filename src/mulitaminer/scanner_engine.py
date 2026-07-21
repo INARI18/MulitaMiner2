@@ -46,6 +46,11 @@ class ScannerProfile:
     # Per-field metric overrides for evaluation (config "evaluation.field_metrics");
     # frozen dataclass needs a hashable default, hence tuple of pairs.
     field_metric_overrides: tuple[tuple[str, str], ...] = ()
+    # Severity tier normalization (config "severity_map", e.g. INFO->LOG).
+    # Exposed so evaluation can apply the same mapping to baseline rows —
+    # the pipeline output is already mapped, and scoring INFO vs LOG as a
+    # mismatch would penalize a by-design normalization.
+    severity_map: tuple[tuple[str, str], ...] = ()
 
     def prompt(self) -> str:
         return self.prompt_path.read_text(encoding="utf-8")
@@ -187,6 +192,7 @@ def load_profile(config_path: Path) -> ScannerProfile:
             field_metric_overrides=tuple(
                 (cfg.get("evaluation") or {}).get("field_metrics", {}).items()
             ),
+            severity_map=tuple((cfg.get("severity_map") or {}).items()),
         )
     except KeyError as exc:
         raise ValueError(f"Scanner config {config_path} is missing field {exc}") from exc

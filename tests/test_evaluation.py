@@ -410,3 +410,25 @@ def test_cli_evaluate_list_metrics():
     assert result.exit_code == 0
     for name in ("exact", "set_f1", "token_f1", "rouge_l", "bertscore"):
         assert name in result.output
+
+
+def test_orchestration_severity_map_applied_to_baseline(tmp_path):
+    import json as _json
+
+    import pandas as pd
+
+    from mulitaminer.evaluation import evaluate_run
+
+    records = [
+        TenableRecord(name="Some Info Finding", severity="LOG", plugin=1234).model_dump(
+            mode="json", by_alias=True
+        )
+    ]
+    (tmp_path / "results.json").write_text(_json.dumps(records), encoding="utf-8")
+    pd.DataFrame(
+        [{"Name": "Some Info Finding", "severity": "INFO", "plugin": 1234}]
+    ).to_excel(tmp_path / "base.xlsx", index=False)
+
+    res = evaluate_run(tmp_path / "results.json", baseline=tmp_path / "base.xlsx")
+    # INFO->LOG is the scanner's by-design normalization, not a mismatch.
+    assert res.fields["severity"]["exact"]["mean"] == 1.0

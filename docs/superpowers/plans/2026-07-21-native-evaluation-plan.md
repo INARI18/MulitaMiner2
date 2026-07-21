@@ -153,4 +153,24 @@ exporters/__init__.py noted, untouched (not this diff).
 
 **Verify:** both live evaluations produce sane `evaluation.json`/`.md`; 
 `uv run pytest` fully green; docs updated.
-**State:** TODO.
+**State:** DONE (111 tests). Live results:
+- OpenVAS JuiceShop: 34/34 matched, recall/precision 1.000; text means
+  0.94–1.00, references set_f1 0.917 — consistent with the v1-harness
+  numbers in core plan Phase 9. Loader change forced by this run: results
+  are read as raw dicts, NOT re-validated (an older run carries
+  protocol='cpe-t' from before the Phase-10 type guard; the evaluator must
+  score what the run wrote, and out-of-schema values cost score instead of
+  crashing).
+- Tenable JuiceShop: 75/76 matched (recall 0.987, precision 0.962),
+  instances 0.764 against the *_instances_generated GT. Two fixes came out
+  of diagnosis: (1) the scanner's severity_map (INFO->LOG) is now applied
+  to both sides before align/score — severity went 0.560 -> 0.973 (the
+  remainder is real extraction divergence); ScannerProfile exposes
+  severity_map. (2) the MD report notes fields the baseline never fills
+  (plugin_details etc.), where scores only measure presence agreement.
+- OPEN QUESTION for the user (GT annotation conventions, not code):
+  references set_f1 0.445 — the GT keeps junk entries ('CVE -', 'BID -')
+  that the pipeline's junk-coercion drops; cvss set_f1 0.413 — the GT
+  strips the 'CVSSV3 BASE SCORE'/'CVSS VECTOR' label prefixes that the PDF
+  (and extraction) carry. Either fix the GT files or add normalization; do
+  not tune the extractor toward the current GT idiom without deciding.

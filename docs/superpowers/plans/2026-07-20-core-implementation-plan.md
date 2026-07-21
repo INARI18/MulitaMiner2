@@ -317,12 +317,15 @@ Phase 13 tool); those files are the instances reference for evaluation.
 
 ## Phase 14 — Native metrics (user-chosen next step, to be designed)
 
-- [ ] Lean evaluation subsystem in this repo (BERTScore, ROUGE-L, token/field
+- [x] Lean evaluation subsystem in this repo (BERTScore, ROUGE-L, token/field
   F1, coverage) against the baseline XLSX files, replacing the v1 harness
   bridge. Design first (alignment strategy, report format), then implement.
   Caveats already recorded: Tenable `instances` ground truth is unreliable
   (see Phase 11 note); exclude or use the regenerated
   `*_instances_generated.xlsx` after user review.
+  DONE (2026-07-21): implemented and live-verified (34/34 OpenVAS
+  JuiceShop; 75/76 Tenable JuiceShop). See the phase plan's E7 State for
+  live numbers and the open GT-convention question (references/cvss).
   DESIGNED (2026-07-21): spec at
   `docs/superpowers/specs/2026-07-21-native-evaluation-design.md`,
   implementation plan at
