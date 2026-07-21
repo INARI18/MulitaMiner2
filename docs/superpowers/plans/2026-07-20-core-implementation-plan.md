@@ -239,6 +239,13 @@ honors the v1 Services lesson), backfill type-guard + validate_assignment.
 
 **State:** running (detached script, log in session scratchpad).
 
+**Baseline data caveat (from the user, 2026-07-21):** the Tenable ground-truth
+XLSX files often left `instances` UNFILLED (typically ~25 per finding — too
+many to annotate). Field metrics on `instances` are therefore unreliable
+against these baselines, and an extraction with more instances than the
+baseline may be correct. Do not tune the extractor toward the baseline's empty
+instances; user wants a closer look at this later.
+
 ## Phase 12 — Export seam (user-chosen next step)
 
 - [x] `exporters/` registry; `--export/-e` repeatable CLI option (+ `--xlsx`/
