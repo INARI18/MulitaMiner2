@@ -267,6 +267,9 @@ many to annotate). Field metrics on `instances` are therefore unreliable
 against these baselines, and an extraction with more instances than the
 baseline may be correct. Do not tune the extractor toward the baseline's empty
 instances; user wants a closer look at this later.
+UPDATE (2026-07-21, user): no longer unreliable — the instances column was
+re-annotated deterministically from the PDFs (`*_instances_generated.xlsx`,
+Phase 13 tool); those files are the instances reference for evaluation.
 
 ## Phase 12 — Export seam (user-chosen next step)
 
@@ -320,6 +323,14 @@ instances; user wants a closer look at this later.
   Caveats already recorded: Tenable `instances` ground truth is unreliable
   (see Phase 11 note); exclude or use the regenerated
   `*_instances_generated.xlsx` after user review.
+  DESIGNED (2026-07-21): spec at
+  `docs/superpowers/specs/2026-07-21-native-evaluation-design.md`,
+  implementation plan at
+  `docs/superpowers/plans/2026-07-21-native-evaluation-plan.md` (phases
+  E0–E7; E0 is the feeds-dir companion fix). Key calls: Hungarian-only
+  alignment, schema-driven metric inference with scanner-JSON overrides,
+  `--metrics` CLI selection, BERTScore in optional `eval` group, instances
+  measured against the `*_instances_generated.xlsx` re-annotation.
 
 ## Phase 15 — New scanner (user request, after metrics)
 
