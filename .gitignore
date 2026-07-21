@@ -23,3 +23,7 @@ feeds/
 .mypy_cache/
 .ruff_cache/
 archive/
+
+# Local training/eval datasets (user-provided, never committed)
+pdfs/
+vulnnet_scans_openvas.csv
