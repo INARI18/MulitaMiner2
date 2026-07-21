@@ -76,6 +76,7 @@ one file per requested export.
 | [docs/INSTALL.md](docs/INSTALL.md) | Requirements, installation and a keyless verification run |
 | [docs/USAGE.md](docs/USAGE.md) | All commands, flags, run artifacts and examples |
 | [docs/CONFIG.md](docs/CONFIG.md) | API keys, model profiles and tunables |
+| [docs/ADDING_A_MODEL.md](docs/ADDING_A_MODEL.md) | Plug a new LLM, cloud or local |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline stages, modules and design rules |
 | [docs/SCANNER_CONFIGS.md](docs/SCANNER_CONFIGS.md) | Adding a scanner and the built-in config rationale |
 | [docs/EXPORTS.md](docs/EXPORTS.md) | Export formats, who consumes each, field mapping |
