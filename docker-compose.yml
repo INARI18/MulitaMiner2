@@ -1,0 +1,73 @@
+# OPTIONAL Docker path (needs root / the docker group + the NVIDIA Container
+# Toolkit). On a locked-down shared GPU box without those, run vLLM in your own
+# user space instead: `uv pip install vllm && vllm serve numind/NuExtract-1.5
+# --served-model-name nuextract --port 8000` — the nuextract profile already
+# points at localhost:8000, so no container is required.
+#
+# With Docker available, run NuExtract (local, GPU) and DeepSeek (API) together:
+#   echo "DEEPSEEK_API_KEY=sk-..." > .env   # gitignored; delete when done
+#   docker compose up --build               # vLLM comes up, then the experiment runs
+#   # results land in ./output_experiments  ->  scp back to your machine
+#
+# Override the run: MODELS=deepseek,nuextract RUNS=5 docker compose up --build
+#
+# The mulita service shares vLLM's network namespace, so the profile's
+# localhost:8000 reaches the server both here and in the user-space path.
+
+services:
+  vllm:
+    # Serves NuExtract over an OpenAI-compatible API with json_schema guided
+    # decoding (the constrained-decoding path the extractor relies on).
+    # NOTE: the RTX 5080 is Blackwell (sm_120) and needs CUDA 12.8 kernels. If
+    # you see "no kernel image is available for execution on the device", pull a
+    # newer/nightly vllm-openai tag that ships Blackwell support.
+    image: vllm/vllm-openai:latest
+    command: >
+      --model ${NUEXTRACT_MODEL:-numind/NuExtract-1.5}
+      --served-model-name nuextract
+      --max-model-len 8192
+      --gpu-memory-utilization 0.90
+      --host 0.0.0.0 --port 8000
+    environment:
+      HF_HOME: /hf
+      HUGGING_FACE_HUB_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - ./.cache/hf:/hf          # persist model weights across restarts
+    ports:
+      - "8000:8000"              # optional: reach the server from the host
+    ipc: host                    # vLLM needs host IPC for its shared-memory tensors
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 60                # first run downloads the weights; give it time
+      start_period: 90s
+
+  mulita:
+    build:
+      context: .
+      args:
+        INSTALL_EVAL: "${INSTALL_EVAL:-false}"
+    depends_on:
+      vllm:
+        condition: service_healthy
+    network_mode: "service:vllm"   # share vLLM's netns so localhost:8000 reaches it
+    environment:
+      # Optional: only needed when 'deepseek' is in MODELS. A nuextract-only run
+      # on a shared GPU box needs no key at all.
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    volumes:
+      - ./resources:/app/resources               # input PDFs (+ baseline xlsx)
+      - ./output_experiments:/app/output_experiments
+    command: >
+      experiment resources
+      --models ${MODELS:-deepseek,nuextract}
+      --runs ${RUNS:-3}
+      --metrics ${METRICS:-all}

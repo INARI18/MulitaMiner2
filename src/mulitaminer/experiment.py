@@ -9,10 +9,13 @@ concurrently; runs within a bucket run sequentially. A local model and an API
 model land in different buckets and overlap.
 
 Checkpointing: a run dir with results.json + run.json is skipped on
-re-invocation, so an interrupted experiment resumes where it stopped. The
-manifest is rewritten after every finished run. Duration accounting sums each
-run's active duration_s (never wall clock), so pausing and resuming from
-checkpoint never inflates the total.
+re-invocation, its metrics re-read from disk so the rewritten manifest stays
+complete after a resume. This also composes across hosts: run one model here,
+another on a GPU box, drop its run dirs into the same tree, and re-invoke with
+both model keys to get one unified manifest and report (every run cached, no
+API calls). The manifest is rewritten after every finished run. Duration
+accounting sums each run's active duration_s (never wall clock), so pausing and
+resuming from checkpoint never inflates the total.
 """
 from __future__ import annotations
 
@@ -102,12 +105,35 @@ def _evaluate(run_dir: Path, report: Path, metrics: str) -> dict | None:
     return result.coverage
 
 
+def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
+    """Rebuild a complete manifest entry for an already-finished run from its own
+    files. Without this, a resumed (or cross-host-merged) experiment would list
+    cached runs with no coverage/cost, so the report would drop them."""
+    outcome: dict = {"status": "cached"}
+    try:
+        rj = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+        outcome["duration_s"] = rj.get("duration_s", 0.0)
+        outcome["cost_usd"] = rj.get("usage", {}).get("cost_usd", 0.0)
+        outcome["records"] = rj.get("final_record_count")
+    except (OSError, json.JSONDecodeError):
+        pass
+    eval_path = run_dir / "evaluation.json"
+    if eval_path.is_file():
+        try:
+            outcome["coverage"] = json.loads(eval_path.read_text(encoding="utf-8")).get("coverage")
+        except json.JSONDecodeError:
+            pass
+    else:
+        outcome["coverage"] = _evaluate(run_dir, report, metrics)
+    return outcome
+
+
 def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict, on_done) -> None:
     """Run one bucket's tasks sequentially (shared rate limit / local server)."""
     clients: dict[str, LLMClient] = {}
     for task in tasks:
         if _is_complete(task.run_dir):
-            on_done(task, {"status": "cached"})
+            on_done(task, _cached_outcome(task.run_dir, task.report, config.metrics))
             continue
         client = clients.get(task.model)
         if client is None:
