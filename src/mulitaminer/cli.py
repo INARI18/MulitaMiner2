@@ -253,6 +253,51 @@ def evaluate(
         typer.echo(f"{kind}: {path}")
 
 
+@app.command()
+def experiment(
+    reports: Path = typer.Argument(
+        ..., exists=True, help="A PDF, or a directory searched recursively for PDFs"
+    ),
+    models: str = typer.Option(..., "--models", help="Comma-separated model keys"),
+    runs: int = typer.Option(3, "--runs", help="Runs per (model, report)"),
+    scanner: str | None = typer.Option(
+        None, "--scanner", "-s", help="Force a scanner; omit to auto-detect per report"
+    ),
+    metrics: str = typer.Option("all", "--metrics", help="Metrics for per-run evaluation"),
+    output_dir: Path = typer.Option(Path("output_experiments"), "--output-dir"),
+) -> None:
+    """Run X extractions per (model, report), local and API models in parallel."""
+    import json
+
+    _setup_logging(debug=False)
+    load_dotenv()
+    from mulitaminer.experiment import ExperimentConfig, run_experiment
+
+    pdfs = sorted(reports.rglob("*.pdf")) if reports.is_dir() else [reports]
+    if not pdfs:
+        typer.secho(f"No PDFs under {reports}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    config = ExperimentConfig(
+        reports=pdfs,
+        models=[m.strip() for m in models.split(",") if m.strip()],
+        runs=runs,
+        scanner=scanner,
+        metrics=metrics,
+        output_dir=output_dir,
+    )
+    result = run_experiment(config)
+    manifest = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
+    t = manifest["totals"]
+    typer.secho(
+        f"\n{t['done']}/{t['planned']} runs done, {t['failed']} failed, "
+        f"{t['skipped_reports']} reports skipped; "
+        f"{t['active_seconds']}s active, ${t['cost_usd']:.4f}",
+        bold=True,
+    )
+    typer.echo(f"Manifest: {result['manifest']}")
+
+
 @app.command("sync-feeds")
 def sync_feeds_cmd() -> None:
     """Download the KEV and EPSS feeds for prioritization (~5 MB, daily data)."""

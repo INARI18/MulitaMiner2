@@ -116,14 +116,23 @@ def run_directory(config: RunConfig, client: LLMClient | None = None) -> list[di
     return summaries
 
 
-def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, Path]:
-    """Execute one extraction run. Returns (result, run directory)."""
+def run(config: RunConfig, client: LLMClient | None = None,
+        run_dir: Path | None = None, doc=None) -> tuple[RunResult, Path]:
+    """Execute one extraction run. Returns (result, run directory).
+
+    ``run_dir`` pins the output location (experiment harness). ``doc`` supplies
+    an already-extracted document, so a caller can extract a PDF once and reuse
+    it across runs (pdfium is not thread-safe, so this also avoids concurrent
+    extraction of the same file)."""
     started = time.perf_counter()
     profile = get_scanner(config.scanner)
     if client is None:
         client = LLMClient(get_model(config.model), model_name=config.model_name)
 
-    run_dir = _make_run_dir(config)
+    if run_dir is None:
+        run_dir = _make_run_dir(config)
+    else:
+        run_dir.mkdir(parents=True, exist_ok=True)
     file_handler = None
     if config.debug:
         file_handler = logging.FileHandler(run_dir / "debug.log", encoding="utf-8")
@@ -131,7 +140,8 @@ def run(config: RunConfig, client: LLMClient | None = None) -> tuple[RunResult, 
         logging.getLogger().addHandler(file_handler)
 
     try:
-        doc = extract_pdf(config.input_path, backend=config.pdf_backend)
+        if doc is None:
+            doc = extract_pdf(config.input_path, backend=config.pdf_backend)
         blocks = profile.segment(doc.text)
         if not blocks:
             raise ValueError(
