@@ -259,7 +259,7 @@ def experiment(
         ..., exists=True, help="A PDF, or a directory searched recursively for PDFs"
     ),
     models: str = typer.Option(..., "--models", help="Comma-separated model keys"),
-    runs: int = typer.Option(3, "--runs", help="Runs per (model, report)"),
+    runs: int = typer.Option(..., "--runs", help="Runs per (model, report)"),
     scanner: str | None = typer.Option(
         None, "--scanner", "-s", help="Force a scanner; omit to auto-detect per report"
     ),

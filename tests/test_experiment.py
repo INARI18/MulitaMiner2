@@ -29,9 +29,10 @@ class EchoClient:
 
 @pytest.fixture(autouse=True)
 def _inject_fake_client(monkeypatch):
-    """Every model's client is the offline echo client."""
+    """Every model's client is the offline echo client, and cloud keys are present."""
     monkeypatch.setattr("mulitaminer.experiment.LLMClient",
                         lambda *a, **k: EchoClient())
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test")
 
 
 def test_bucket_key_separates_local_and_api():
@@ -72,6 +73,19 @@ def test_experiment_checkpoint_skips_completed(tmp_path):
     # Second invocation: the completed run dir is reused, not re-extracted.
     result = run_experiment(config)
     assert all(r["status"] == "cached" for r in result["records"])
+
+
+def test_experiment_skips_keyless_model(tmp_path, monkeypatch):
+    # A cloud model whose API key is unset is skipped, not run; a keyless local
+    # model in the same batch still runs.
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    config = ExperimentConfig(
+        reports=[OPENVAS_PDF], models=["deepseek", "ollama"], runs=1,
+        scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
+    )
+    result = run_experiment(config)
+    assert [s["model"] for s in result["skipped_models"]] == ["deepseek"]
+    assert {r["model"] for r in result["records"]} == {"ollama"}
 
 
 def test_experiment_parallel_buckets_and_active_time(tmp_path):

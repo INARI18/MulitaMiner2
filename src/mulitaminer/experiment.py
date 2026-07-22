@@ -14,7 +14,7 @@ import logging
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor, wait
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -157,11 +157,39 @@ def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
                        "warnings": len(result.warnings), "coverage": coverage})
 
 
+def _runnable_models(models: list[str]) -> tuple[list[str], list[dict]]:
+    """Split models into runnable and skipped (a cloud model whose API key env
+    is not set is skipped, so one missing key never sinks the whole batch)."""
+    available: list[str] = []
+    skipped: list[dict] = []
+    for m in models:
+        env = get_model(m).api_key_env
+        if env and not os.environ.get(env):
+            skipped.append({"model": m, "reason": f"{env} not set"})
+        else:
+            available.append(m)
+    return available, skipped
+
+
 def run_experiment(config: ExperimentConfig) -> dict:
-    with quiet_logging(config.verbose):  # keep PDF-read logs off the live view
-        tasks, skipped, docs = _plan(config)
+    from mulitaminer.ui import console
+
+    models, skipped_models = _runnable_models(config.models)
+    for s in skipped_models:
+        console.print(f"skipping {s['model']}: {s['reason']}", style="yellow")
+    config = replace(config, models=models)
+
     config.output_dir.mkdir(parents=True, exist_ok=True)
     manifest_path = config.output_dir / "experiment.json"
+    if not models:
+        console.print("No runnable models (all need an API key that is not set).", style="red")
+        _write_manifest(manifest_path, config, [], [], complete=True,
+                        skipped_models=skipped_models)
+        return {"manifest": str(manifest_path), "records": [], "skipped": [],
+                "skipped_models": skipped_models, "report": None}
+
+    with quiet_logging(config.verbose):  # keep PDF-read logs off the live view
+        tasks, skipped, docs = _plan(config)
 
     buckets: dict[str, list[_Task]] = {}
     for task in tasks:
@@ -185,7 +213,8 @@ def run_experiment(config: ExperimentConfig) -> dict:
                  "run_dir": str(task.run_dir), **outcome}
         with lock:
             records.append(entry)
-            _write_manifest(manifest_path, config, records, skipped, complete=False)
+            _write_manifest(manifest_path, config, records, skipped, complete=False,
+                            skipped_models=skipped_models)
         view.finish(task.model, task.run_index, task.report.stem,
                     status=outcome.get("status", "failed"),
                     blocks=outcome.get("records") or 0,
@@ -225,19 +254,21 @@ def run_experiment(config: ExperimentConfig) -> dict:
     for f in futures:
         f.result()  # all finished: surface any bucket-level exception
 
-    _write_manifest(manifest_path, config, records, skipped, complete=True)
+    _write_manifest(manifest_path, config, records, skipped, complete=True,
+                    skipped_models=skipped_models)
     report = None
     try:
         from mulitaminer.experiment_report import build_report
         report = str(build_report(config.output_dir))
     except Exception as exc:  # noqa: BLE001 - a report failure must not fail the batch
         log.warning("report generation failed: %s", exc)
-    return {"manifest": str(manifest_path), "records": records,
-            "skipped": skipped, "report": report}
+    return {"manifest": str(manifest_path), "records": records, "skipped": skipped,
+            "skipped_models": skipped_models, "report": report}
 
 
 def _write_manifest(path: Path, config: ExperimentConfig, records: list[dict],
-                    skipped: list[dict], complete: bool) -> None:
+                    skipped: list[dict], complete: bool,
+                    skipped_models: list[dict] | None = None) -> None:
     ok = [r for r in records if r["status"] in ("ok", "cached")]
     active_seconds = round(sum(r.get("duration_s", 0.0) for r in records), 2)
     total_cost = round(sum(r.get("cost_usd", 0.0) for r in records), 4)
@@ -261,5 +292,6 @@ def _write_manifest(path: Path, config: ExperimentConfig, records: list[dict],
         },
         "runs": records,
         "skipped": skipped,
+        "skipped_models": skipped_models or [],
     }
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
