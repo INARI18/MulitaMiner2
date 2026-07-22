@@ -9,8 +9,8 @@ __pycache__/
 build/
 dist/
 
-# Run artifacts
-outputs/
+# Run artifacts (outputs/, output_experiments/, output_*tok/, ...)
+output*/
 
 # Regenerable KEV/EPSS feed snapshot (mulitaminer sync-feeds)
 feeds/
