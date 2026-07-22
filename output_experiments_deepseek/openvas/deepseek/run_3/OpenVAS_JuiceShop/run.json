@@ -1,0 +1,27 @@
+{
+  "config": {
+    "input": "resources\\openvas\\OpenVAS_JuiceShop.pdf",
+    "scanner": "openvas",
+    "model": "deepseek",
+    "model_name": null,
+    "pdf_backend": "pypdfium2",
+    "formats": [],
+    "debug": false
+  },
+  "block_count": 34,
+  "raw_record_count": 34,
+  "final_record_count": 34,
+  "usage": {
+    "prompt_tokens": 32215,
+    "completion_tokens": 45278,
+    "calls": 11,
+    "cost_usd": 0.01718794
+  },
+  "duration_s": 420.68,
+  "warnings": [],
+  "merge_log": [],
+  "pdf": {
+    "pages": 24,
+    "backend": "pypdfium2"
+  }
+}

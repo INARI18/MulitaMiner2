@@ -13,7 +13,6 @@ import json
 import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,29 +21,9 @@ from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.pipeline import RunConfig, run
 from mulitaminer.scanner_engine import detect_scanner
 from mulitaminer.pdf_reader import extract_pdf
-from mulitaminer.ui import Unit, experiment_view
+from mulitaminer.ui import Unit, experiment_view, quiet_logging
 
 log = logging.getLogger(__name__)
-
-
-@contextmanager
-def _quiet_console(verbose: bool):
-    """Silence the console log handler while the live view is up, so per-chunk
-    INFO/WARNING lines do not corrupt it. Per-run file logs keep everything;
-    --verbose leaves the console log untouched."""
-    if verbose:
-        yield
-        return
-    stream = [h for h in logging.getLogger().handlers
-              if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)]
-    saved = [(h, h.level) for h in stream]
-    for h, _ in saved:
-        h.setLevel(logging.ERROR)
-    try:
-        yield
-    finally:
-        for h, lvl in saved:
-            h.setLevel(lvl)
 
 
 def bucket_key(model_key: str) -> str:
@@ -213,7 +192,7 @@ def run_experiment(config: ExperimentConfig) -> dict:
         log.info("%s %s run_%d %s -> %s", task.scanner, task.model,
                  task.run_index, task.report.stem, outcome.get("status"))
 
-    with _quiet_console(config.verbose), view:
+    with quiet_logging(config.verbose), view:
         with ThreadPoolExecutor(max_workers=len(buckets)) as pool:
             futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_start, on_done)
                        for bucket_tasks in buckets.values()]

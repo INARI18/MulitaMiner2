@@ -14,6 +14,7 @@ from mulitaminer.chunking import pack
 from mulitaminer.llm import LLMClient
 from mulitaminer.models import Block, Chunk, TokenUsage, VulnRecord, extraction_model_for
 from mulitaminer.scanner_engine import ScannerProfile
+from mulitaminer.ui import NULL_PROGRESS, Progress
 
 log = logging.getLogger(__name__)
 
@@ -65,8 +66,10 @@ def extract_blocks(
     client: LLMClient,
     usage: TokenUsage,
     debug_sink: list | None = None,
+    progress: Progress | None = None,
 ) -> tuple[list[VulnRecord], list[str]]:
     """Extract every block; returns (records ordered by block id, warnings)."""
+    progress = progress or NULL_PROGRESS
     prompt = profile.prompt()
     response_model = response_model_for(profile.record_type)
     by_id = {b.id: b for b in blocks}
@@ -92,12 +95,14 @@ def extract_blocks(
         )
         if round_no == 0:
             warnings.extend(pack_warnings)
+        if round_no:
+            progress.retry_round(round_no, len(chunks))
 
         unresolved: list[Block] = []
         for chunk in chunks:
             unresolved.extend(
                 _extract_chunk(chunk, prompt, response_model, profile, client,
-                               usage, records, warnings, by_id, debug_sink)
+                               usage, records, warnings, by_id, debug_sink, progress)
             )
         pending = unresolved
 
@@ -143,6 +148,7 @@ def _extract_chunk(
     warnings: list[str],
     by_id: dict[int, Block],
     debug_sink: list | None,
+    progress: Progress = NULL_PROGRESS,
 ) -> list[Block]:
     """Process one chunk; returns the blocks left unresolved."""
     expected = {b.id for b in chunk.blocks}
@@ -152,6 +158,7 @@ def _extract_chunk(
     except (json.JSONDecodeError, ValidationError) as exc:
         log.warning("Chunk %d: invalid response (%s); its blocks go to retry",
                     chunk.index, type(exc).__name__)
+        progress.chunk_failed()
         return chunk.blocks
 
     usage.add(call_usage["prompt_tokens"], call_usage["completion_tokens"],
@@ -177,4 +184,5 @@ def _extract_chunk(
 
     missing = expected - returned
     log.info("Chunk %d: %d/%d blocks extracted", chunk.index, len(returned), len(expected))
+    progress.chunk_done(len(returned), len(expected))
     return [by_id[i] for i in sorted(missing)]

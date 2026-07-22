@@ -73,7 +73,10 @@ def test_no_intermediate_files_without_debug(tmp_path):
     )
     _, run_dir = run(config, client=EchoClient())
     names = {p.name for p in run_dir.iterdir()}
-    assert names == {"results.json", "run.json"}
+    # run.log is always written; the debug-only inspection dumps are not.
+    assert names == {"results.json", "run.json", "run.log"}
+    for dump in ("layout.txt", "blocks.txt", "llm_traffic.jsonl", "debug.log"):
+        assert not (run_dir / dump).exists()
 
 
 def test_usage_accumulates(tmp_path):
@@ -81,3 +84,26 @@ def test_usage_accumulates(tmp_path):
     usage.add(10, 5, 0.001)
     usage.add(10, 5, 0.001)
     assert usage.calls == 2 and usage.prompt_tokens == 20
+
+
+def test_progress_receives_events(tmp_path):
+    from mulitaminer.ui import Progress
+
+    seen = {"stages": [], "segmented": None, "chunks": 0}
+
+    class Rec(Progress):
+        def stage(self, name):
+            seen["stages"].append(name)
+
+        def segmented(self, total):
+            seen["segmented"] = total
+
+        def chunk_done(self, got, expected):
+            seen["chunks"] += 1
+
+    config = RunConfig(input_path=BASELINE_PDF, scanner="openvas", model="deepseek",
+                       output_dir=tmp_path, debug=False)
+    result, _ = run(config, client=EchoClient(), progress=Rec())
+    assert seen["segmented"] == result.block_count
+    assert seen["chunks"] >= 1
+    assert {"reading", "segmenting"} <= set(seen["stages"])

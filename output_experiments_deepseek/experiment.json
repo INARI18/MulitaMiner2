@@ -1,0 +1,343 @@
+{
+  "config": {
+    "reports": [
+      "openvas_artifactory-oss_5.11.0.pdf",
+      "OpenVAS_bBWA.pdf",
+      "OpenVAS_JuiceShop.pdf",
+      "TenableWAS_bWAAP.pdf",
+      "TenableWAS_JuiceShop.pdf"
+    ],
+    "models": [
+      "deepseek"
+    ],
+    "runs": 3,
+    "scanner": null,
+    "metrics": "all"
+  },
+  "generated_at": "2026-07-22T11:43:38+00:00",
+  "complete": true,
+  "totals": {
+    "planned": 15,
+    "done": 15,
+    "failed": 0,
+    "skipped_reports": 0,
+    "active_seconds": 25601.74,
+    "cost_usd": 1.0772
+  },
+  "runs": [
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 1,
+      "report": "openvas_artifactory-oss_5.11.0.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_1\\openvas_artifactory-oss_5.11.0",
+      "status": "ok",
+      "duration_s": 4219.23,
+      "cost_usd": 0.11211703999999999,
+      "records": 115,
+      "coverage": {
+        "baseline_count": 116,
+        "extraction_count": 115,
+        "matched": 115,
+        "recall": 0.9914,
+        "precision": 1.0,
+        "missed": [
+          "ICMP Timestamp Reply Information Disclosure"
+        ],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 1,
+      "report": "OpenVAS_bBWA.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_1\\OpenVAS_bBWA",
+      "status": "ok",
+      "duration_s": 946.93,
+      "cost_usd": 0.03918992,
+      "records": 59,
+      "coverage": {
+        "baseline_count": 58,
+        "extraction_count": 59,
+        "matched": 57,
+        "recall": 0.9828,
+        "precision": 0.9661,
+        "missed": [
+          "phpinfo() output Reporting"
+        ],
+        "spurious": [
+          "phpinfo() output Reporting 2 RESULTS PER HOST 7",
+          "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm"
+        ]
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 1,
+      "report": "OpenVAS_JuiceShop.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_1\\OpenVAS_JuiceShop",
+      "status": "ok",
+      "duration_s": 264.36,
+      "cost_usd": 0.015429400000000001,
+      "records": 34,
+      "coverage": {
+        "baseline_count": 34,
+        "extraction_count": 34,
+        "matched": 34,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "tenable",
+      "model": "deepseek",
+      "run": 1,
+      "report": "TenableWAS_bWAAP.pdf",
+      "run_dir": "output_experiments\\tenable\\deepseek\\run_1\\TenableWAS_bWAAP",
+      "status": "ok",
+      "duration_s": 2063.02,
+      "cost_usd": 0.09125578000000004,
+      "records": 64,
+      "coverage": {
+        "baseline_count": 64,
+        "extraction_count": 64,
+        "matched": 64,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "tenable",
+      "model": "deepseek",
+      "run": 1,
+      "report": "TenableWAS_JuiceShop.pdf",
+      "run_dir": "output_experiments\\tenable\\deepseek\\run_1\\TenableWAS_JuiceShop",
+      "status": "ok",
+      "duration_s": 2659.89,
+      "cost_usd": 0.12010320000000008,
+      "records": 76,
+      "coverage": {
+        "baseline_count": 76,
+        "extraction_count": 76,
+        "matched": 76,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 2,
+      "report": "openvas_artifactory-oss_5.11.0.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_2\\openvas_artifactory-oss_5.11.0",
+      "status": "ok",
+      "duration_s": 2567.5,
+      "cost_usd": 0.10195836000000001,
+      "records": 116,
+      "coverage": {
+        "baseline_count": 116,
+        "extraction_count": 116,
+        "matched": 116,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 2,
+      "report": "OpenVAS_bBWA.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_2\\OpenVAS_bBWA",
+      "status": "ok",
+      "duration_s": 720.44,
+      "cost_usd": 0.03469648,
+      "records": 59,
+      "coverage": {
+        "baseline_count": 58,
+        "extraction_count": 59,
+        "matched": 58,
+        "recall": 1.0,
+        "precision": 0.9831,
+        "missed": [],
+        "spurious": [
+          "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm"
+        ]
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 2,
+      "report": "OpenVAS_JuiceShop.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_2\\OpenVAS_JuiceShop",
+      "status": "ok",
+      "duration_s": 262.58,
+      "cost_usd": 0.016762480000000003,
+      "records": 34,
+      "coverage": {
+        "baseline_count": 34,
+        "extraction_count": 34,
+        "matched": 34,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "tenable",
+      "model": "deepseek",
+      "run": 2,
+      "report": "TenableWAS_bWAAP.pdf",
+      "run_dir": "output_experiments\\tenable\\deepseek\\run_2\\TenableWAS_bWAAP",
+      "status": "ok",
+      "duration_s": 1755.22,
+      "cost_usd": 0.08439676,
+      "records": 64,
+      "coverage": {
+        "baseline_count": 64,
+        "extraction_count": 64,
+        "matched": 64,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "tenable",
+      "model": "deepseek",
+      "run": 2,
+      "report": "TenableWAS_JuiceShop.pdf",
+      "run_dir": "output_experiments\\tenable\\deepseek\\run_2\\TenableWAS_JuiceShop",
+      "status": "ok",
+      "duration_s": 2322.65,
+      "cost_usd": 0.11085228000000005,
+      "records": 76,
+      "coverage": {
+        "baseline_count": 76,
+        "extraction_count": 76,
+        "matched": 76,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 3,
+      "report": "openvas_artifactory-oss_5.11.0.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_3\\openvas_artifactory-oss_5.11.0",
+      "status": "ok",
+      "duration_s": 2355.61,
+      "cost_usd": 0.09818242,
+      "records": 115,
+      "coverage": {
+        "baseline_count": 116,
+        "extraction_count": 115,
+        "matched": 115,
+        "recall": 0.9914,
+        "precision": 1.0,
+        "missed": [
+          "Apache Tomcat Multiple Vulnerabilities (Oct 2023) - Linux"
+        ],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 3,
+      "report": "OpenVAS_bBWA.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_3\\OpenVAS_bBWA",
+      "status": "ok",
+      "duration_s": 833.49,
+      "cost_usd": 0.03565898000000001,
+      "records": 59,
+      "coverage": {
+        "baseline_count": 58,
+        "extraction_count": 59,
+        "matched": 58,
+        "recall": 1.0,
+        "precision": 0.9831,
+        "missed": [],
+        "spurious": [
+          "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm"
+        ]
+      }
+    },
+    {
+      "scanner": "openvas",
+      "model": "deepseek",
+      "run": 3,
+      "report": "OpenVAS_JuiceShop.pdf",
+      "run_dir": "output_experiments\\openvas\\deepseek\\run_3\\OpenVAS_JuiceShop",
+      "status": "ok",
+      "duration_s": 420.68,
+      "cost_usd": 0.01718794,
+      "records": 34,
+      "coverage": {
+        "baseline_count": 34,
+        "extraction_count": 34,
+        "matched": 34,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "tenable",
+      "model": "deepseek",
+      "run": 3,
+      "report": "TenableWAS_bWAAP.pdf",
+      "run_dir": "output_experiments\\tenable\\deepseek\\run_3\\TenableWAS_bWAAP",
+      "status": "ok",
+      "duration_s": 1810.58,
+      "cost_usd": 0.08865359999999999,
+      "records": 64,
+      "coverage": {
+        "baseline_count": 64,
+        "extraction_count": 64,
+        "matched": 64,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    },
+    {
+      "scanner": "tenable",
+      "model": "deepseek",
+      "run": 3,
+      "report": "TenableWAS_JuiceShop.pdf",
+      "run_dir": "output_experiments\\tenable\\deepseek\\run_3\\TenableWAS_JuiceShop",
+      "status": "ok",
+      "duration_s": 2399.56,
+      "cost_usd": 0.11076799999999999,
+      "records": 76,
+      "coverage": {
+        "baseline_count": 76,
+        "extraction_count": 76,
+        "matched": 76,
+        "recall": 1.0,
+        "precision": 1.0,
+        "missed": [],
+        "spurious": []
+      }
+    }
+  ],
+  "skipped": []
+}

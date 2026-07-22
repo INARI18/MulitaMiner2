@@ -8,8 +8,10 @@ counters (not text), and long runs keep a live totals footer.
 """
 from __future__ import annotations
 
+import logging
 import threading
 import time
+from contextlib import contextmanager
 from dataclasses import dataclass
 
 from rich.console import Console, Group
@@ -18,6 +20,26 @@ from rich.text import Text
 
 console = Console()
 err_console = Console(stderr=True)
+
+
+@contextmanager
+def quiet_logging(verbose: bool = False):
+    """Silence the console log handler while a live view is up, so per-chunk
+    INFO/WARNING lines do not corrupt it. Per-run file logs keep everything;
+    verbose leaves the console log untouched."""
+    if verbose:
+        yield
+        return
+    stream = [h for h in logging.getLogger().handlers
+              if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)]
+    saved = [(h, h.level) for h in stream]
+    for h, _ in saved:
+        h.setLevel(logging.ERROR)
+    try:
+        yield
+    finally:
+        for h, lvl in saved:
+            h.setLevel(lvl)
 
 
 def echo(msg: object = "", *, style: str | None = None) -> None:
@@ -236,3 +258,97 @@ class NullView:
 def experiment_view(header: str, units: list[Unit]):
     """rich Live in a terminal, plain line-per-unit fallback otherwise."""
     return ExperimentView(header, units) if console.is_terminal else NullView(header, units)
+
+
+class Progress:
+    """No-op progress sink fed by the pipeline. Live views subclass the hooks
+    they render; the default does nothing, so the pipeline stays decoupled."""
+
+    def stage(self, name: str) -> None: ...
+    def segmented(self, total: int) -> None: ...
+    def retry_round(self, round_no: int, chunks: int) -> None: ...
+    def chunk_done(self, got: int, expected: int) -> None: ...
+    def chunk_failed(self) -> None: ...
+
+
+NULL_PROGRESS = Progress()
+
+
+class ExtractView(Progress):
+    """Live one-line progress for a single `extract` run: phase then a block
+    bar with running counters. The pipeline feeds the Progress hooks."""
+
+    def __init__(self, model: str, report: str):
+        self.model = model
+        self.report = report
+        self.total = 0
+        self.resolved = 0
+        self.jsonerr = 0
+        self.round_no = 0
+        self._phase = "reading"
+        self._live = None
+
+    def stage(self, name: str) -> None:
+        self._phase = name
+        self._refresh()
+
+    def segmented(self, total: int) -> None:
+        self.total = total
+        self._phase = "extracting"
+        self._refresh()
+
+    def retry_round(self, round_no: int, chunks: int) -> None:
+        self.round_no = round_no
+        self._refresh()
+
+    def chunk_done(self, got: int, expected: int) -> None:
+        self.resolved += got
+        self._refresh()
+
+    def chunk_failed(self) -> None:
+        self.jsonerr += 1
+        self._refresh()
+
+    def _bar(self, width: int = 16) -> str:
+        fill, empty = ("█", "░") if _FANCY else ("#", "-")
+        if not self.total:
+            return empty * width
+        done = round(width * min(self.resolved, self.total) / self.total)
+        return fill * done + empty * (width - done)
+
+    def _render(self) -> Text:
+        sym, style = _SYM["running"]
+        t = Text()
+        t.append(f"{sym} ", style=style)
+        t.append(f"{self.model} ", style="cyan")
+        t.append(f"{_short(self.report, 30)}  ")
+        if self.total:
+            t.append(f"{self._bar()} ", style="blue")
+            t.append(f"{self.resolved}/{self.total} blocks")
+        else:
+            t.append(self._phase, style="blue")
+        if self.jsonerr:
+            t.append(f"  · {self.jsonerr} json-err", style="yellow")
+        if self.round_no:
+            t.append(f"  · retry {self.round_no}", style="dim")
+        return t
+
+    def _refresh(self) -> None:
+        if self._live is not None:
+            self._live.update(self._render())
+
+    def __enter__(self):
+        from rich.live import Live
+        self._live = Live(self._render(), console=console, refresh_per_second=8)
+        self._live.__enter__()
+        return self
+
+    def __exit__(self, *exc):
+        self._refresh()
+        self._live.__exit__(*exc)
+        self._live = None
+
+
+def extract_view(model: str, report: str) -> Progress:
+    """A live one-liner in a terminal; a silent no-op otherwise (logs stand in)."""
+    return ExtractView(model, report) if console.is_terminal else NULL_PROGRESS

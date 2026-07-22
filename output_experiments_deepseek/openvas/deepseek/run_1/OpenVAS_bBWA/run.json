@@ -1,0 +1,27 @@
+{
+  "config": {
+    "input": "resources\\openvas\\OpenVAS_bBWA.pdf",
+    "scanner": "openvas",
+    "model": "deepseek",
+    "model_name": null,
+    "pdf_backend": "pypdfium2",
+    "formats": [],
+    "debug": false
+  },
+  "block_count": 59,
+  "raw_record_count": 59,
+  "final_record_count": 59,
+  "usage": {
+    "prompt_tokens": 63314,
+    "completion_tokens": 108307,
+    "calls": 20,
+    "cost_usd": 0.03918992
+  },
+  "duration_s": 946.93,
+  "warnings": [],
+  "merge_log": [],
+  "pdf": {
+    "pages": 58,
+    "backend": "pypdfium2"
+  }
+}

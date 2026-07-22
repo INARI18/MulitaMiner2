@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import threading
 import time
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
@@ -21,9 +22,22 @@ from mulitaminer.models import RunResult, TokenUsage
 from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanner_engine import detect_scanner, get_scanner
 from mulitaminer.exporters import get_exporter
+from mulitaminer.ui import NULL_PROGRESS, Progress
 from mulitaminer.writers import write_json
 
 log = logging.getLogger(__name__)
+
+
+class _ThreadFilter(logging.Filter):
+    """Keep only records emitted from one run's thread, so concurrent runs
+    writing their own per-run log never cross-contaminate."""
+
+    def __init__(self, ident: int):
+        super().__init__()
+        self.ident = ident
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return record.thread == self.ident
 
 
 @dataclass
@@ -115,14 +129,17 @@ def run_directory(config: RunConfig, client: LLMClient | None = None) -> list[di
 
 
 def run(config: RunConfig, client: LLMClient | None = None,
-        run_dir: Path | None = None, doc=None) -> tuple[RunResult, Path]:
+        run_dir: Path | None = None, doc=None,
+        progress: Progress | None = None) -> tuple[RunResult, Path]:
     """Execute one extraction run. Returns (result, run directory).
 
     ``run_dir`` pins the output location (experiment harness). ``doc`` supplies
     an already-extracted document, so a caller can extract a PDF once and reuse
     it across runs (pdfium is not thread-safe, so this also avoids concurrent
-    extraction of the same file)."""
+    extraction of the same file). ``progress`` receives lifecycle events for a
+    live view; the default sink does nothing."""
     started = time.perf_counter()
+    progress = progress or NULL_PROGRESS
     profile = get_scanner(config.scanner)
     if client is None:
         client = LLMClient(get_model(config.model), model_name=config.model_name)
@@ -131,15 +148,21 @@ def run(config: RunConfig, client: LLMClient | None = None,
         run_dir = _make_run_dir(config)
     else:
         run_dir.mkdir(parents=True, exist_ok=True)
-    file_handler = None
-    if config.debug:
-        file_handler = logging.FileHandler(run_dir / "debug.log", encoding="utf-8")
-        file_handler.setLevel(logging.DEBUG)
-        logging.getLogger().addHandler(file_handler)
+    # A per-run log is always written (debug.log at DEBUG with --debug, else
+    # run.log at INFO), so the detailed per-chunk trace survives even when the
+    # console is quiet. A thread filter keeps concurrent experiment runs apart.
+    name, level = ("debug.log", logging.DEBUG) if config.debug else ("run.log", logging.INFO)
+    file_handler = logging.FileHandler(run_dir / name, encoding="utf-8")
+    file_handler.setLevel(level)
+    file_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+    file_handler.addFilter(_ThreadFilter(threading.get_ident()))
+    logging.getLogger().addHandler(file_handler)
 
     try:
+        progress.stage("reading")
         if doc is None:
             doc = extract_pdf(config.input_path)
+        progress.stage("segmenting")
         blocks = profile.segment(doc.text)
         if not blocks:
             raise ValueError(
@@ -147,10 +170,12 @@ def run(config: RunConfig, client: LLMClient | None = None,
                 f"'{profile.name}' scanner profile; wrong --scanner?"
             )
         log.info("Segmented %d finding blocks", len(blocks))
+        progress.segmented(len(blocks))
 
         usage = TokenUsage()
         debug_sink: list | None = [] if config.debug else None
-        records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink)
+        records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink,
+                                           progress=progress)
         raw_count = len(records)
         raw_records = list(records)
         records, merge_log = profile.consolidate(records)

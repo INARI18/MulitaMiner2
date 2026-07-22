@@ -1,0 +1,7320 @@
+{
+  "meta": {
+    "results": "output_experiments\\openvas\\deepseek\\run_2\\OpenVAS_JuiceShop\\results.json",
+    "baseline": "resources\\openvas\\OpenVAS_JuiceShop.xlsx",
+    "reannotated_from": null,
+    "reannotated_columns": [],
+    "source": "OPENVAS",
+    "threshold": 0.7,
+    "text_metrics": [
+      "token_f1",
+      "rouge_l",
+      "bertscore"
+    ],
+    "unavailable_metrics": {},
+    "generated_at": "2026-07-22T08:17:33+00:00",
+    "tool_version": "2.0.0a1"
+  },
+  "coverage": {
+    "baseline_count": 34,
+    "extraction_count": 34,
+    "matched": 34,
+    "recall": 1.0,
+    "precision": 1.0,
+    "missed": [],
+    "spurious": []
+  },
+  "fields": {
+    "name": {
+      "bertscore": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 34,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      },
+      "rouge_l": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 34,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      },
+      "token_f1": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 34,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      }
+    },
+    "description": {
+      "bertscore": {
+        "mean": 0.985,
+        "measured_mean": 0.985,
+        "n_measured": 34,
+        "min": 0.9327,
+        "std": 0.0166,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      },
+      "rouge_l": {
+        "mean": 0.9684,
+        "measured_mean": 0.9684,
+        "n_measured": 34,
+        "min": 0.5366,
+        "std": 0.095,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      },
+      "token_f1": {
+        "mean": 0.9684,
+        "measured_mean": 0.9684,
+        "n_measured": 34,
+        "min": 0.5366,
+        "std": 0.095,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      }
+    },
+    "solution": {
+      "bertscore": {
+        "mean": 0.9853,
+        "measured_mean": 0.9443,
+        "n_measured": 9,
+        "min": 0.8911,
+        "std": 0.028,
+        "n": 34,
+        "vacuous_n": 25,
+        "fill_rate_extraction": 0.2647,
+        "fill_rate_baseline": 0.2647
+      },
+      "rouge_l": {
+        "mean": 0.9403,
+        "measured_mean": 0.7747,
+        "n_measured": 9,
+        "min": 0.2424,
+        "std": 0.1435,
+        "n": 34,
+        "vacuous_n": 25,
+        "fill_rate_extraction": 0.2647,
+        "fill_rate_baseline": 0.2647
+      },
+      "token_f1": {
+        "mean": 0.9403,
+        "measured_mean": 0.7747,
+        "n_measured": 9,
+        "min": 0.2424,
+        "std": 0.1435,
+        "n": 34,
+        "vacuous_n": 25,
+        "fill_rate_extraction": 0.2647,
+        "fill_rate_baseline": 0.2647
+      }
+    },
+    "impact": {
+      "bertscore": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 1,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 33,
+        "fill_rate_extraction": 0.0294,
+        "fill_rate_baseline": 0.0294
+      },
+      "rouge_l": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 1,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 33,
+        "fill_rate_extraction": 0.0294,
+        "fill_rate_baseline": 0.0294
+      },
+      "token_f1": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 1,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 33,
+        "fill_rate_extraction": 0.0294,
+        "fill_rate_baseline": 0.0294
+      }
+    },
+    "insight": {
+      "bertscore": {
+        "mean": 0.9974,
+        "measured_mean": 0.9855,
+        "n_measured": 6,
+        "min": 0.9462,
+        "std": 0.0095,
+        "n": 34,
+        "vacuous_n": 28,
+        "fill_rate_extraction": 0.1765,
+        "fill_rate_baseline": 0.1765
+      },
+      "rouge_l": {
+        "mean": 0.9904,
+        "measured_mean": 0.9455,
+        "n_measured": 6,
+        "min": 0.8,
+        "std": 0.0352,
+        "n": 34,
+        "vacuous_n": 28,
+        "fill_rate_extraction": 0.1765,
+        "fill_rate_baseline": 0.1765
+      },
+      "token_f1": {
+        "mean": 0.9904,
+        "measured_mean": 0.9455,
+        "n_measured": 6,
+        "min": 0.8,
+        "std": 0.0352,
+        "n": 34,
+        "vacuous_n": 28,
+        "fill_rate_extraction": 0.1765,
+        "fill_rate_baseline": 0.1765
+      }
+    },
+    "references": {
+      "set_f1": {
+        "mean": 0.8529,
+        "measured_mean": 0.375,
+        "n_measured": 8,
+        "min": 0.0,
+        "std": 0.3542,
+        "n": 34,
+        "vacuous_n": 26,
+        "fill_rate_extraction": 0.2353,
+        "fill_rate_baseline": 0.2353
+      },
+      "set_f1_ids": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 8,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 26,
+        "fill_rate_extraction": 0.2353,
+        "fill_rate_baseline": 0.2353
+      }
+    },
+    "detection_result": {
+      "bertscore": {
+        "mean": 0.9874,
+        "measured_mean": 0.9874,
+        "n_measured": 34,
+        "min": 0.9461,
+        "std": 0.0138,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      },
+      "rouge_l": {
+        "mean": 0.9864,
+        "measured_mean": 0.9864,
+        "n_measured": 34,
+        "min": 0.9333,
+        "std": 0.0218,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      },
+      "token_f1": {
+        "mean": 0.9864,
+        "measured_mean": 0.9864,
+        "n_measured": 34,
+        "min": 0.9333,
+        "std": 0.0218,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      }
+    },
+    "detection_method": {
+      "bertscore": {
+        "mean": 0.9058,
+        "measured_mean": 0.6442,
+        "n_measured": 9,
+        "min": 0.0,
+        "std": 0.2822,
+        "n": 34,
+        "vacuous_n": 25,
+        "fill_rate_extraction": 0.2647,
+        "fill_rate_baseline": 0.1765
+      },
+      "rouge_l": {
+        "mean": 0.8987,
+        "measured_mean": 0.6173,
+        "n_measured": 9,
+        "min": 0.0,
+        "std": 0.2828,
+        "n": 34,
+        "vacuous_n": 25,
+        "fill_rate_extraction": 0.2647,
+        "fill_rate_baseline": 0.1765
+      },
+      "token_f1": {
+        "mean": 0.8987,
+        "measured_mean": 0.6173,
+        "n_measured": 9,
+        "min": 0.0,
+        "std": 0.2828,
+        "n": 34,
+        "vacuous_n": 25,
+        "fill_rate_extraction": 0.2647,
+        "fill_rate_baseline": 0.1765
+      }
+    },
+    "product_detection_result": {
+      "bertscore": {
+        "mean": 0.9977,
+        "measured_mean": 0.9235,
+        "n_measured": 1,
+        "min": 0.9235,
+        "std": 0.0129,
+        "n": 34,
+        "vacuous_n": 33,
+        "fill_rate_extraction": 0.0294,
+        "fill_rate_baseline": 0.0294
+      },
+      "rouge_l": {
+        "mean": 0.9902,
+        "measured_mean": 0.6667,
+        "n_measured": 1,
+        "min": 0.6667,
+        "std": 0.0563,
+        "n": 34,
+        "vacuous_n": 33,
+        "fill_rate_extraction": 0.0294,
+        "fill_rate_baseline": 0.0294
+      },
+      "token_f1": {
+        "mean": 0.9902,
+        "measured_mean": 0.6667,
+        "n_measured": 1,
+        "min": 0.6667,
+        "std": 0.0563,
+        "n": 34,
+        "vacuous_n": 33,
+        "fill_rate_extraction": 0.0294,
+        "fill_rate_baseline": 0.0294
+      }
+    },
+    "log_method": {
+      "bertscore": {
+        "mean": 0.9912,
+        "measured_mean": 0.9893,
+        "n_measured": 28,
+        "min": 0.9556,
+        "std": 0.0125,
+        "n": 34,
+        "vacuous_n": 6,
+        "fill_rate_extraction": 0.8235,
+        "fill_rate_baseline": 0.8235
+      },
+      "rouge_l": {
+        "mean": 0.9903,
+        "measured_mean": 0.9882,
+        "n_measured": 28,
+        "min": 0.8837,
+        "std": 0.0312,
+        "n": 34,
+        "vacuous_n": 6,
+        "fill_rate_extraction": 0.8235,
+        "fill_rate_baseline": 0.8235
+      },
+      "token_f1": {
+        "mean": 0.9903,
+        "measured_mean": 0.9882,
+        "n_measured": 28,
+        "min": 0.8837,
+        "std": 0.0312,
+        "n": 34,
+        "vacuous_n": 6,
+        "fill_rate_extraction": 0.8235,
+        "fill_rate_baseline": 0.8235
+      }
+    },
+    "plugin": {
+      "exact": {
+        "mean": 1.0,
+        "measured_mean": null,
+        "n_measured": 0,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 34,
+        "fill_rate_extraction": 0.0,
+        "fill_rate_baseline": 0.0
+      }
+    },
+    "plugin_details": {
+      "structural": {
+        "mean": 1.0,
+        "measured_mean": null,
+        "n_measured": 0,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 34,
+        "fill_rate_extraction": 0.0,
+        "fill_rate_baseline": 0.0
+      }
+    },
+    "instances": {
+      "bertscore": {
+        "mean": 1.0,
+        "measured_mean": null,
+        "n_measured": 0,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 34,
+        "fill_rate_extraction": 0.0,
+        "fill_rate_baseline": 0.0
+      },
+      "rouge_l": {
+        "mean": 1.0,
+        "measured_mean": null,
+        "n_measured": 0,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 34,
+        "fill_rate_extraction": 0.0,
+        "fill_rate_baseline": 0.0
+      },
+      "token_f1": {
+        "mean": 1.0,
+        "measured_mean": null,
+        "n_measured": 0,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 34,
+        "fill_rate_extraction": 0.0,
+        "fill_rate_baseline": 0.0
+      }
+    },
+    "cvss": {
+      "exact": {
+        "mean": 0.9706,
+        "measured_mean": 0.9706,
+        "n_measured": 34,
+        "min": 0.0,
+        "std": 0.169,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 0.9706
+      }
+    },
+    "severity": {
+      "exact": {
+        "mean": 1.0,
+        "measured_mean": 1.0,
+        "n_measured": 34,
+        "min": 1.0,
+        "std": 0.0,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      }
+    },
+    "port": {
+      "exact": {
+        "mean": 0.9412,
+        "measured_mean": 0.9412,
+        "n_measured": 34,
+        "min": 0.0,
+        "std": 0.2353,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 1.0,
+        "fill_rate_baseline": 1.0
+      }
+    },
+    "protocol": {
+      "exact": {
+        "mean": 0.9706,
+        "measured_mean": 0.9706,
+        "n_measured": 34,
+        "min": 0.0,
+        "std": 0.169,
+        "n": 34,
+        "vacuous_n": 0,
+        "fill_rate_extraction": 0.9706,
+        "fill_rate_baseline": 1.0
+      }
+    }
+  },
+  "pairs": [
+    {
+      "extraction_index": 0,
+      "baseline_index": 0,
+      "name": "SMTP too long line",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.9515,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9515,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9678,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.88,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.88,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9485,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 0.8696,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8696,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9518,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 1,
+      "baseline_index": 1,
+      "name": "OpenVAS / Greenbone Vulnerability Manager Default Credentials",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.9524,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9524,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9791,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.8421,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8421,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9374,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 0.8,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9462,
+            "vacuous": false
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9825,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9774,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 0.6667,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.6667,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9235,
+            "vacuous": false
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 2,
+      "baseline_index": 2,
+      "name": "SSL/TLS: Certificate Expired",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.7619,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.7619,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9416,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 0.9565,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9565,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9881,
+            "vacuous": false
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9595,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9595,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9827,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 0.8696,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8696,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9491,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 3,
+      "baseline_index": 3,
+      "name": "Check if Mailserver answer to VRFY and EXPN requests",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.2424,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.2424,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.8911,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 0.96,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.96,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9907,
+            "vacuous": false
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9794,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9797,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 4,
+      "baseline_index": 4,
+      "name": "SSL/TLS: Certificate Expired",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.7619,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.7619,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9416,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 0.9565,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9565,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9881,
+            "vacuous": false
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9971,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 0.8163,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8163,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9399,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 5,
+      "baseline_index": 5,
+      "name": "CGI Scanning Consolidation",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.9826,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9826,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9712,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9545,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9545,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9461,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9781,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 6,
+      "baseline_index": 6,
+      "name": "Greenbone Security Assistant (GSA) Detection",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9355,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9355,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9763,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9792,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 7,
+      "baseline_index": 7,
+      "name": "HTTP Security Headers Detection",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9714,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.962,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.962,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9809,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9789,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 8,
+      "baseline_index": 8,
+      "name": "Services",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9711,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9764,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 9,
+      "baseline_index": 9,
+      "name": "Services",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9711,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9764,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 10,
+      "baseline_index": 10,
+      "name": "SSL/TLS: Collect and Report Certificate Details",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.5366,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.5366,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9327,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9571,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9571,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9821,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.978,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 11,
+      "baseline_index": 11,
+      "name": "SSL/TLS: HTTP Public Key Pinning (HPKP) Missing",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.8571,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8571,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9505,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9863,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 0.8889,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8889,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9556,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 12,
+      "baseline_index": 12,
+      "name": "SSL/TLS: HTTP Strict Transport Security (HSTS) Missing",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.8571,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8571,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9427,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 0.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9961,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9782,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 13,
+      "baseline_index": 13,
+      "name": "SSL/TLS: Perfect Forward Secrecy Cipher Suites Missing",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9804,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 14,
+      "baseline_index": 14,
+      "name": "SSL/TLS: Report Medium Cipher Suites",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9965,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 0.898,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.898,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9735,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 15,
+      "baseline_index": 15,
+      "name": "SSL/TLS: Report Non Weak Cipher Suites",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9964,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 16,
+      "baseline_index": 16,
+      "name": "SSL/TLS: Report Supported Cipher Suites",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9765,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9722,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9722,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.973,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 17,
+      "baseline_index": 17,
+      "name": "wapiti (NASL wrapper)",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9816,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9375,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9375,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9484,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 0.8837,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.8837,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9688,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 18,
+      "baseline_index": 18,
+      "name": "Postfix SMTP Server Detection",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.9167,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9167,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9838,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 19,
+      "baseline_index": 19,
+      "name": "Services",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9711,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.982,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 20,
+      "baseline_index": 20,
+      "name": "SMTP antivirus scanner DoS",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 0.7692,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.7692,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9451,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 21,
+      "baseline_index": 21,
+      "name": "SMTP Missing Support For STARTTLS",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 22,
+      "baseline_index": 22,
+      "name": "SMTP Server type and version",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9333,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9333,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9694,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 23,
+      "baseline_index": 23,
+      "name": "OpenVAS / Greenbone Vulnerability Manager Detection",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.96,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.96,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9854,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 25,
+      "baseline_index": 24,
+      "name": "Services",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9711,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 24,
+      "baseline_index": 25,
+      "name": "Service Detection with '<xml/>' Request",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.988,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 26,
+      "baseline_index": 26,
+      "name": "SSL/TLS: Collect and Report Certificate Details",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.6667,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.6667,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9591,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9571,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9571,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9821,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.978,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 27,
+      "baseline_index": 27,
+      "name": "SSL/TLS: Perfect Forward Secrecy Cipher Suites Missing",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 28,
+      "baseline_index": 28,
+      "name": "SSL/TLS: Report Medium Cipher Suites",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9882,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9882,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9848,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 29,
+      "baseline_index": 29,
+      "name": "SSL/TLS: Report Non Weak Cipher Suites",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9883,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9883,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9828,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 30,
+      "baseline_index": 30,
+      "name": "SSL/TLS: Report Supported Cipher Suites",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9765,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 0.9932,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9932,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9871,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 31,
+      "baseline_index": 31,
+      "name": "CPE Inventory",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9757,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 0.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 32,
+      "baseline_index": 32,
+      "name": "OS Detection Consolidation and Reporting",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9719,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.998,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    },
+    {
+      "extraction_index": 33,
+      "baseline_index": 33,
+      "name": "Traceroute",
+      "scores": {
+        "name": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "description": {
+          "token_f1": {
+            "score": 0.9587,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 0.9587,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.961,
+            "vacuous": false
+          }
+        },
+        "solution": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "impact": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "insight": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "references": {
+          "set_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "set_f1_ids": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 0.9869,
+            "vacuous": false
+          }
+        },
+        "detection_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "product_detection_result": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "log_method": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": false
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "plugin": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "plugin_details": {
+          "structural": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "instances": {
+          "token_f1": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "rouge_l": {
+            "score": 1.0,
+            "vacuous": true
+          },
+          "bertscore": {
+            "score": 1.0,
+            "vacuous": true
+          }
+        },
+        "cvss": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "severity": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "port": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        },
+        "protocol": {
+          "exact": {
+            "score": 1.0,
+            "vacuous": false
+          }
+        }
+      }
+    }
+  ],
+  "mapping_debug": [
+    {
+      "extraction_index": 0,
+      "extraction_name": "smtp too long line",
+      "baseline_index": 0,
+      "baseline_name": "smtp too long line",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 1,
+      "extraction_name": "openvas / greenbone vulnerability manager default credentials",
+      "baseline_index": 1,
+      "baseline_name": "openvas / greenbone vulnerability manager default credentials",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 2,
+      "extraction_name": "ssl/tls: certificate expired",
+      "baseline_index": 2,
+      "baseline_name": "ssl/tls: certificate expired",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 3,
+      "extraction_name": "check if mailserver answer to vrfy and expn requests",
+      "baseline_index": 3,
+      "baseline_name": "check if mailserver answer to vrfy and expn requests",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 4,
+      "extraction_name": "ssl/tls: certificate expired",
+      "baseline_index": 4,
+      "baseline_name": "ssl/tls: certificate expired",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 5,
+      "extraction_name": "cgi scanning consolidation",
+      "baseline_index": 5,
+      "baseline_name": "cgi scanning consolidation",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 6,
+      "extraction_name": "greenbone security assistant (gsa) detection",
+      "baseline_index": 6,
+      "baseline_name": "greenbone security assistant (gsa) detection",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 7,
+      "extraction_name": "http security headers detection",
+      "baseline_index": 7,
+      "baseline_name": "http security headers detection",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 8,
+      "extraction_name": "services",
+      "baseline_index": 8,
+      "baseline_name": "services",
+      "similarity": 0.9,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 9,
+      "extraction_name": "services",
+      "baseline_index": 9,
+      "baseline_name": "services",
+      "similarity": 0.9,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 10,
+      "extraction_name": "ssl/tls: collect and report certificate details",
+      "baseline_index": 10,
+      "baseline_name": "ssl/tls: collect and report certificate details",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 11,
+      "extraction_name": "ssl/tls: http public key pinning (hpkp) missing",
+      "baseline_index": 11,
+      "baseline_name": "ssl/tls: http public key pinning (hpkp) missing",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 12,
+      "extraction_name": "ssl/tls: http strict transport security (hsts) missing",
+      "baseline_index": 12,
+      "baseline_name": "ssl/tls: http strict transport security (hsts) missing",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 13,
+      "extraction_name": "ssl/tls: perfect forward secrecy cipher suites missing",
+      "baseline_index": 13,
+      "baseline_name": "ssl/tls: perfect forward secrecy cipher suites missing",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 14,
+      "extraction_name": "ssl/tls: report medium cipher suites",
+      "baseline_index": 14,
+      "baseline_name": "ssl/tls: report medium cipher suites",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 15,
+      "extraction_name": "ssl/tls: report non weak cipher suites",
+      "baseline_index": 15,
+      "baseline_name": "ssl/tls: report non weak cipher suites",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 16,
+      "extraction_name": "ssl/tls: report supported cipher suites",
+      "baseline_index": 16,
+      "baseline_name": "ssl/tls: report supported cipher suites",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 17,
+      "extraction_name": "wapiti (nasl wrapper)",
+      "baseline_index": 17,
+      "baseline_name": "wapiti (nasl wrapper)",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 18,
+      "extraction_name": "postfix smtp server detection",
+      "baseline_index": 18,
+      "baseline_name": "postfix smtp server detection",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 19,
+      "extraction_name": "services",
+      "baseline_index": 19,
+      "baseline_name": "services",
+      "similarity": 0.9,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 20,
+      "extraction_name": "smtp antivirus scanner dos",
+      "baseline_index": 20,
+      "baseline_name": "smtp antivirus scanner dos",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 21,
+      "extraction_name": "smtp missing support for starttls",
+      "baseline_index": 21,
+      "baseline_name": "smtp missing support for starttls",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 22,
+      "extraction_name": "smtp server type and version",
+      "baseline_index": 22,
+      "baseline_name": "smtp server type and version",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 23,
+      "extraction_name": "openvas / greenbone vulnerability manager detection",
+      "baseline_index": 23,
+      "baseline_name": "openvas / greenbone vulnerability manager detection",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 24,
+      "extraction_name": "service detection with '<xml/>' request",
+      "baseline_index": 25,
+      "baseline_name": "service detection with '<xml/>' request",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 25,
+      "extraction_name": "services",
+      "baseline_index": 24,
+      "baseline_name": "services",
+      "similarity": 0.9,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 26,
+      "extraction_name": "ssl/tls: collect and report certificate details",
+      "baseline_index": 26,
+      "baseline_name": "ssl/tls: collect and report certificate details",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 27,
+      "extraction_name": "ssl/tls: perfect forward secrecy cipher suites missing",
+      "baseline_index": 27,
+      "baseline_name": "ssl/tls: perfect forward secrecy cipher suites missing",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 28,
+      "extraction_name": "ssl/tls: report medium cipher suites",
+      "baseline_index": 28,
+      "baseline_name": "ssl/tls: report medium cipher suites",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 29,
+      "extraction_name": "ssl/tls: report non weak cipher suites",
+      "baseline_index": 29,
+      "baseline_name": "ssl/tls: report non weak cipher suites",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 30,
+      "extraction_name": "ssl/tls: report supported cipher suites",
+      "baseline_index": 30,
+      "baseline_name": "ssl/tls: report supported cipher suites",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 31,
+      "extraction_name": "cpe inventory",
+      "baseline_index": 31,
+      "baseline_name": "cpe inventory",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 32,
+      "extraction_name": "os detection consolidation and reporting",
+      "baseline_index": 32,
+      "baseline_name": "os detection consolidation and reporting",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    },
+    {
+      "extraction_index": 33,
+      "extraction_name": "traceroute",
+      "baseline_index": 33,
+      "baseline_name": "traceroute",
+      "similarity": 1.0,
+      "status": "MATCHED"
+    }
+  ],
+  "unevaluated_baseline_columns": []
+}

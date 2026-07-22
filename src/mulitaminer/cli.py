@@ -13,7 +13,7 @@ from mulitaminer.scanner_engine import all_scanners
 
 app = typer.Typer(
     name="mulitaminer",
-    help="Extract structured vulnerability records from security-scanner PDF reports using LLMs.",
+    help="Extract structured vulnerability records from security-scanner PDF reports using LLMs",
     no_args_is_help=True,
 )
 
@@ -103,8 +103,15 @@ def extract(
         ui.echo(f"Detected scanner: {detected} ({counts[detected]} markers)")
         config.scanner = detected
 
+    # --debug keeps the full console log; otherwise a live one-liner with the
+    # console log quieted (the detail still lands in the per-run log file).
+    progress = ui.Progress() if debug else ui.extract_view(config.model, report.name)
     try:
-        result, run_dir = run(config)
+        if isinstance(progress, ui.ExtractView):
+            with ui.quiet_logging(), progress:
+                result, run_dir = run(config, progress=progress)
+        else:
+            result, run_dir = run(config, progress=progress)
     except (FatalLLMError, ValueError) as exc:
         ui.error(exc)
         raise typer.Exit(code=1)

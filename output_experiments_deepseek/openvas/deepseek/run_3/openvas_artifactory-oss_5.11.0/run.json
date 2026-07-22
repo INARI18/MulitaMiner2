@@ -1,0 +1,29 @@
+{
+  "config": {
+    "input": "resources\\openvas\\openvas_artifactory-oss_5.11.0.pdf",
+    "scanner": "openvas",
+    "model": "deepseek",
+    "model_name": null,
+    "pdf_backend": "pypdfium2",
+    "formats": [],
+    "debug": false
+  },
+  "block_count": 116,
+  "raw_record_count": 115,
+  "final_record_count": 115,
+  "usage": {
+    "prompt_tokens": 186269,
+    "completion_tokens": 257517,
+    "calls": 47,
+    "cost_usd": 0.09818242
+  },
+  "duration_s": 2355.61,
+  "warnings": [
+    "block 46 yielded no record after 3 attempts; dropped"
+  ],
+  "merge_log": [],
+  "pdf": {
+    "pages": 178,
+    "backend": "pypdfium2"
+  }
+}

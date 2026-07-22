@@ -1,0 +1,376 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>MulitaMiner - experiment report</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f4f1ea;--card:#faf8f2;--card2:#efece3;--accent:#d9541e;
+  --ink:#1a1a17;--ink2:#52514e;--muted:#8a887f;--grid:#e6e3da;--border:#e2ded4}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-variant-numeric:tabular-nums;max-width:1040px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.kick{font:600 11px/1 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:2.2rem;letter-spacing:-.02em;margin:.35rem 0 .1rem;font-family:ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
+h1 span{color:var(--accent)}
+h2{font-size:1.12rem;margin:.1rem 0}
+header{border-bottom:2px solid var(--accent);padding-bottom:1.1rem;margin-bottom:1.2rem;
+  display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem}
+.meta{display:flex;flex-wrap:wrap;gap:.4rem 1.3rem;font:.7rem/1.4 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;color:var(--muted);text-align:right}
+.meta b{color:var(--ink);font-weight:600}
+.hero{display:grid;grid-template-columns:minmax(240px,1fr) 1.7fr;gap:1.2rem;margin-bottom:1.6rem;align-items:stretch}
+@media(max-width:740px){.hero{grid-template-columns:1fr}}
+.hero .dark{background:var(--ink);color:#faf8f2;border-radius:14px;padding:1.4rem 1.5rem;
+  display:flex;flex-direction:column;justify-content:space-between;gap:1rem;min-height:150px}
+.hero .dark .l{font:600 10px/1 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero .dark .win{display:flex;align-items:center;gap:.55rem;margin-top:.6rem;font:700 1.4rem/1.1 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;word-break:break-word}
+.hero .dark .big{font:700 2.7rem/1 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
+.hero .dark .sub{font:.72rem/1.4 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;color:#c9c7bd;margin-top:.4rem}
+.hero .lite{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.3rem;
+  display:flex;flex-direction:column;overflow:hidden}
+/* Bounded, scrollable ranking: the hero stays compact no matter the model count. */
+#verdictBars{overflow-y:auto;overflow-x:hidden;max-height:190px;padding-right:.25rem;margin-right:-.25rem}
+.brow{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
+.brow:last-child{margin-bottom:0}
+.brow .nm{width:84px;text-align:right;font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brow .track{flex:1;height:16px;background:var(--card2);border-radius:4px;overflow:hidden}
+.brow .fill{height:100%;border-radius:4px}
+.brow .vv{width:98px;font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;flex-shrink:0}
+.brow .vv s{color:var(--muted);font-size:.6rem;text-decoration:none}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;flex-shrink:0}
+nav{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;flex-wrap:wrap;gap:.3rem;
+  padding:.7rem 0;margin-bottom:1rem;border-bottom:1px solid var(--border)}
+nav a{color:var(--ink2);text-decoration:none;font:.7rem/1 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;padding:.4rem .6rem;border-radius:6px}
+nav a:hover{background:var(--card2);color:var(--ink)}
+section{margin:2.2rem 0;scroll-margin-top:3.4rem}
+.sub{color:var(--ink2);font-size:.85rem;margin:.2rem 0 1rem;max-width:70ch}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1rem}
+.card-t{font:600 .72rem/1.2 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+  margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:740px){.grid2{grid-template-columns:1fr}}
+.chart{width:100%;height:auto;display:block}
+.grid{stroke:var(--grid);stroke-width:1}
+.tick{fill:var(--muted);font:10px ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
+.axt{fill:var(--ink2);font:600 11px ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
+.ylab{fill:var(--ink2);font:11px ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
+.err{stroke:var(--ink);stroke-opacity:.4;stroke-width:1.4}
+.wh{stroke:var(--ink2);stroke-width:1.3}
+.toggle{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.toggle .lb{font:600 10px/1 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:.2rem}
+.toggle button{background:var(--card2);color:var(--ink2);border:1px solid var(--border);font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;
+  padding:.28rem .6rem;border-radius:999px;cursor:pointer}
+.toggle button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select{background:var(--card2);color:var(--ink);border:1px solid var(--border);border-radius:6px;
+  padding:.3rem .55rem;font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.6rem;font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+.mult{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.8rem}
+.htab-wrap{overflow-x:auto}
+.htab{width:100%;border-collapse:collapse;font:.72rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
+.htab th{font-weight:400;color:var(--muted);font-size:.64rem;padding:.5rem .6rem;border-bottom:1px solid var(--border);white-space:nowrap}
+.htab th.l,.htab td.l{text-align:left}.htab th:not(.l){text-align:center}
+.htab td{padding:.45rem .6rem;text-align:center;white-space:nowrap}
+.htab td.l{color:var(--ink)}
+.htab td s{display:block;font-size:.56rem;opacity:.7;text-decoration:none}
+.empty{color:var(--muted);font:.75rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;padding:.5rem 0}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:#f4f1ea;padding:.4rem .6rem;border-radius:6px;
+  font:.68rem/1.35 ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;box-shadow:0 8px 22px rgba(0,0,0,.28);transform:translate(-50%,-120%);opacity:0;
+  transition:opacity .12s;z-index:100;max-width:280px;white-space:pre-line}
+#tip.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<header>
+  <div>
+    <div class="kick">Experiment report</div>
+    <h1>Mulita<span>Miner</span></h1>
+  </div>
+  <div class="meta" id="meta"></div>
+</header>
+
+<div class="hero">
+  <div class="dark" id="verdict"></div>
+  <div class="lite"><div class="card-t">Overall recall by model · mean across reports (±std)</div>
+    <div id="verdictBars"></div></div>
+</div>
+
+<nav>
+  <a href="#coverage">Coverage</a><a href="#consistency">By report</a>
+  <a href="#fields">Field quality</a><a href="#omission">Omission</a>
+  <a href="#dist">Distribution</a><a href="#errors">Errors &amp; cost</a>
+</nav>
+
+<section id="coverage">
+  <div class="kick">Coverage</div>
+  <h2>Precision × recall — where each model sits</h2>
+  <p class="sub">Top-right = extracts everything (recall) without hallucinating (precision).
+     Whiskers = spread across runs. Averaged over reports and runs.</p>
+  <div class="card"><div class="card-t">Precision × Recall by model (±std)</div>
+    <div id="scatter"></div><div class="legend" id="scLegend"></div></div>
+</section>
+
+<section id="consistency">
+  <div class="kick">Consistency</div>
+  <h2>Does the winner hold across reports?</h2>
+  <p class="sub">One panel per report (recall by model). If the order changes panel to panel,
+     the overall mean is hiding it.</p>
+  <div class="mult" id="sm"></div>
+  <div class="legend" id="smLegend"></div>
+</section>
+
+<section id="fields">
+  <div class="kick">Field quality</div>
+  <h2>Where each model gets fields right</h2>
+  <p class="sub">Measured mean per field (empty×empty pairs excluded). Darker = better.
+     BERTScore saturates high: read the gap between cells, not the absolute value.</p>
+  <div class="card">
+    <div class="card-t">
+      <span class="toggle" id="fldFamily"><span class="lb">Family</span></span>
+      <span class="toggle" id="fldMetric"><span class="lb">Metric</span></span>
+      <span style="margin-left:auto;display:flex;gap:.4rem;align-items:center">
+        <span class="lb" style="font:600 10px/1 monospace;color:var(--muted)">Report</span><select id="fldTarget"></select></span>
+    </div>
+    <div class="htab-wrap"><table class="htab" id="heat"></table></div>
+    <div class="legend" id="heatLegend"></div>
+  </div>
+</section>
+
+<section id="omission">
+  <div class="kick">Omission</div>
+  <h2>Which fields each model leaves empty</h2>
+  <p class="sub">Proxy: fraction of pairs where the baseline fills the field and the extraction does not
+     (baseline-filled − extraction-filled). Redder = more omitted.</p>
+  <div class="card">
+    <div class="card-t">Field omission
+      <span style="margin-left:auto;display:flex;gap:.4rem;align-items:center">
+        <span class="lb" style="font:600 10px/1 monospace;color:var(--muted)">Report</span><select id="omTarget"></select></span>
+    </div>
+    <div class="htab-wrap"><table class="htab" id="omheat"></table></div>
+    <div class="legend" id="omLegend"></div>
+  </div>
+</section>
+
+<section id="dist">
+  <div class="kick">Distribution</div>
+  <h2>How per-pair scores spread</h2>
+  <p class="sub">Box plot: box = interquartile range, line = median, ticks = min/max. The stacked bar bins
+     the same per-pair scores into similarity bands (a presentation choice, thresholds shown), plus
+     Absent = baseline vulns never recovered.</p>
+  <div class="card"><div class="card-t"><span class="toggle" id="distMetric"><span class="lb">Metric</span></span></div>
+    <div id="distBox"></div>
+    <div style="margin-top:1.2rem"><div class="card-t" style="margin-bottom:.5rem">Similarity categories · share of baseline
+      <span style="text-transform:none;letter-spacing:0;color:var(--muted)">(High ≥0.90 · Moderate ≥0.80 · Slight ≥0.70 · Divergent &lt;0.70 · Absent = omitted)</span></div>
+      <div id="distCat"></div><div class="legend" id="catLegend"></div></div>
+  </div>
+</section>
+
+<section id="errors">
+  <div class="kick">Errors &amp; cost</div>
+  <h2>Where coverage fails, and at what cost</h2>
+  <p class="sub">Per run, against the baseline (the gold): missed = baseline vulns not recovered
+     (false negatives); false positives = extracted records with no baseline match.</p>
+  <div class="card"><div class="card-t">Missed vs false positives by model (mean/run)</div>
+    <div id="err"></div>
+    <div class="legend"><span><span class="sw" style="background:var(--accent)"></span>Missed (FN)</span>
+      <span><span class="sw" style="background:var(--muted)"></span>False positives (FP)</span></div></div>
+  <div class="grid2" id="cost" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"></div>
+</section>
+<div id="tip" role="tooltip"></div>
+<script>const DATA={"generated_at": "2026-07-22T11:43:39+00:00", "config": {"reports": ["openvas_artifactory-oss_5.11.0.pdf", "OpenVAS_bBWA.pdf", "OpenVAS_JuiceShop.pdf", "TenableWAS_bWAAP.pdf", "TenableWAS_JuiceShop.pdf"], "models": ["deepseek"], "runs": 3, "scanner": null, "metrics": "all"}, "totals": {"planned": 15, "done": 15, "failed": 0, "skipped_reports": 0, "active_seconds": 25601.74, "cost_usd": 1.0772}, "models": ["deepseek"], "targets": ["OpenVAS_JuiceShop", "OpenVAS_bBWA", "TenableWAS_JuiceShop", "TenableWAS_bWAAP", "openvas_artifactory-oss_5.11.0"], "scanners": {"openvas_artifactory-oss_5.11.0": "openvas", "OpenVAS_bBWA": "openvas", "OpenVAS_JuiceShop": "openvas", "TenableWAS_bWAAP": "tenable", "TenableWAS_JuiceShop": "tenable"}, "text_metrics": ["bertscore", "token_f1", "rouge_l"], "det_metrics": ["exact", "set_f1", "set_f1_ids", "structural"], "sem_fields": ["description", "detection_method", "detection_result", "impact", "insight", "instances", "log_method", "name", "product_detection_result", "solution"], "det_fields": ["cvss", "plugin", "plugin_details", "port", "protocol", "references", "severity"], "omit_fields": ["cvss", "description", "detection_method", "detection_result", "impact", "insight", "instances", "log_method", "name", "plugin", "plugin_details", "port", "product_detection_result", "protocol", "references", "severity", "solution"], "overall": {"deepseek": {"recall": {"m": 0.9977, "s": 0.0049}, "precision": {"m": 0.9955, "s": 0.0097}, "missed": {"m": 0.2, "s": 0.4}, "spurious": {"m": 0.2667, "s": 0.5735}, "cost": {"m": 0.0718, "s": 0.0386}, "duration": {"m": 1706.7827, "s": 1080.5902}}}, "by_target": {"OpenVAS_JuiceShop": {"deepseek": {"recall": {"m": 1.0, "s": 0.0}, "precision": {"m": 1.0, "s": 0.0}}}, "OpenVAS_bBWA": {"deepseek": {"recall": {"m": 0.9943, "s": 0.0081}, "precision": {"m": 0.9774, "s": 0.008}}}, "TenableWAS_JuiceShop": {"deepseek": {"recall": {"m": 1.0, "s": 0.0}, "precision": {"m": 1.0, "s": 0.0}}}, "TenableWAS_bWAAP": {"deepseek": {"recall": {"m": 1.0, "s": 0.0}, "precision": {"m": 1.0, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"deepseek": {"recall": {"m": 0.9943, "s": 0.0041}, "precision": {"m": 1.0, "s": 0.0}}}}, "text_fields": {"bertscore": {"OpenVAS_JuiceShop": {"description": {"deepseek": {"m": 0.9859, "s": 0.0007}}, "detection_method": {"deepseek": {"m": 0.8201, "s": 0.1359}}, "detection_result": {"deepseek": {"m": 0.988, "s": 0.0005}}, "impact": {"deepseek": {"m": 1.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.987, "s": 0.0015}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.988, "s": 0.001}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.9231, "s": 0.0005}}, "solution": {"deepseek": {"m": 0.9432, "s": 0.001}}}, "OpenVAS_bBWA": {"description": {"deepseek": {"m": 0.9867, "s": 0.0007}}, "detection_method": {"deepseek": {"m": 0.9726, "s": 0.0004}}, "detection_result": {"deepseek": {"m": 0.955, "s": 0.0006}}, "impact": {"deepseek": {"m": 0.9305, "s": 0.0008}}, "insight": {"deepseek": {"m": 0.8934, "s": 0.0011}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.8199, "s": 0.0008}}, "solution": {"deepseek": {"m": 0.9544, "s": 0.0015}}}, "TenableWAS_JuiceShop": {"description": {"deepseek": {"m": 0.977, "s": 0.0005}}, "detection_method": {"deepseek": {"m": null, "s": 0.0}}, "detection_result": {"deepseek": {"m": null, "s": 0.0}}, "impact": {"deepseek": {"m": null, "s": 0.0}}, "insight": {"deepseek": {"m": null, "s": 0.0}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": null, "s": 0.0}}, "solution": {"deepseek": {"m": 0.801, "s": 0.0001}}}, "TenableWAS_bWAAP": {"description": {"deepseek": {"m": 0.9895, "s": 0.0}}, "detection_method": {"deepseek": {"m": null, "s": 0.0}}, "detection_result": {"deepseek": {"m": null, "s": 0.0}}, "impact": {"deepseek": {"m": null, "s": 0.0}}, "insight": {"deepseek": {"m": null, "s": 0.0}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": null, "s": 0.0}}, "solution": {"deepseek": {"m": 0.992, "s": 0.0004}}}, "openvas_artifactory-oss_5.11.0": {"description": {"deepseek": {"m": 0.9523, "s": 0.0011}}, "detection_method": {"deepseek": {"m": 0.8963, "s": 0.0005}}, "detection_result": {"deepseek": {"m": 0.9318, "s": 0.0003}}, "impact": {"deepseek": {"m": 0.6491, "s": 0.0129}}, "insight": {"deepseek": {"m": 0.8638, "s": 0.0002}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.8945, "s": 0.0229}}, "name": {"deepseek": {"m": 0.9987, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.9544, "s": 0.0021}}, "solution": {"deepseek": {"m": 0.8812, "s": 0.0065}}}}, "token_f1": {"OpenVAS_JuiceShop": {"description": {"deepseek": {"m": 0.9688, "s": 0.0006}}, "detection_method": {"deepseek": {"m": 0.8146, "s": 0.1469}}, "detection_result": {"deepseek": {"m": 0.9865, "s": 0.0009}}, "impact": {"deepseek": {"m": 1.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.9535, "s": 0.0057}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.9819, "s": 0.0056}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.6667, "s": 0.0}}, "solution": {"deepseek": {"m": 0.7747, "s": 0.0}}}, "OpenVAS_bBWA": {"description": {"deepseek": {"m": 0.9694, "s": 0.0037}}, "detection_method": {"deepseek": {"m": 0.9344, "s": 0.0006}}, "detection_result": {"deepseek": {"m": 0.8901, "s": 0.0017}}, "impact": {"deepseek": {"m": 0.9125, "s": 0.0026}}, "insight": {"deepseek": {"m": 0.8837, "s": 0.0005}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.7795, "s": 0.0022}}, "solution": {"deepseek": {"m": 0.9097, "s": 0.0042}}}, "TenableWAS_JuiceShop": {"description": {"deepseek": {"m": 0.9531, "s": 0.0001}}, "detection_method": {"deepseek": {"m": null, "s": 0.0}}, "detection_result": {"deepseek": {"m": null, "s": 0.0}}, "impact": {"deepseek": {"m": null, "s": 0.0}}, "insight": {"deepseek": {"m": null, "s": 0.0}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": null, "s": 0.0}}, "solution": {"deepseek": {"m": 0.7949, "s": 0.0}}}, "TenableWAS_bWAAP": {"description": {"deepseek": {"m": 0.9811, "s": 0.0033}}, "detection_method": {"deepseek": {"m": null, "s": 0.0}}, "detection_result": {"deepseek": {"m": null, "s": 0.0}}, "impact": {"deepseek": {"m": null, "s": 0.0}}, "insight": {"deepseek": {"m": null, "s": 0.0}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": null, "s": 0.0}}, "solution": {"deepseek": {"m": 1.0, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"description": {"deepseek": {"m": 0.8256, "s": 0.0034}}, "detection_method": {"deepseek": {"m": 0.8487, "s": 0.0011}}, "detection_result": {"deepseek": {"m": 0.8878, "s": 0.0011}}, "impact": {"deepseek": {"m": 0.6467, "s": 0.0123}}, "insight": {"deepseek": {"m": 0.8104, "s": 0.0007}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.7562, "s": 0.0222}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.9127, "s": 0.0084}}, "solution": {"deepseek": {"m": 0.6779, "s": 0.0294}}}}, "rouge_l": {"OpenVAS_JuiceShop": {"description": {"deepseek": {"m": 0.9688, "s": 0.0006}}, "detection_method": {"deepseek": {"m": 0.8146, "s": 0.1469}}, "detection_result": {"deepseek": {"m": 0.9865, "s": 0.0009}}, "impact": {"deepseek": {"m": 1.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.9535, "s": 0.0057}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.9819, "s": 0.0056}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.6667, "s": 0.0}}, "solution": {"deepseek": {"m": 0.7747, "s": 0.0}}}, "OpenVAS_bBWA": {"description": {"deepseek": {"m": 0.9694, "s": 0.0037}}, "detection_method": {"deepseek": {"m": 0.9344, "s": 0.0006}}, "detection_result": {"deepseek": {"m": 0.8901, "s": 0.0017}}, "impact": {"deepseek": {"m": 0.9125, "s": 0.0026}}, "insight": {"deepseek": {"m": 0.8837, "s": 0.0005}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.7795, "s": 0.0022}}, "solution": {"deepseek": {"m": 0.9097, "s": 0.0042}}}, "TenableWAS_JuiceShop": {"description": {"deepseek": {"m": 0.9523, "s": 0.0001}}, "detection_method": {"deepseek": {"m": null, "s": 0.0}}, "detection_result": {"deepseek": {"m": null, "s": 0.0}}, "impact": {"deepseek": {"m": null, "s": 0.0}}, "insight": {"deepseek": {"m": null, "s": 0.0}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": null, "s": 0.0}}, "solution": {"deepseek": {"m": 0.7949, "s": 0.0}}}, "TenableWAS_bWAAP": {"description": {"deepseek": {"m": 0.9811, "s": 0.0033}}, "detection_method": {"deepseek": {"m": null, "s": 0.0}}, "detection_result": {"deepseek": {"m": null, "s": 0.0}}, "impact": {"deepseek": {"m": null, "s": 0.0}}, "insight": {"deepseek": {"m": null, "s": 0.0}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": null, "s": 0.0}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": null, "s": 0.0}}, "solution": {"deepseek": {"m": 1.0, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"description": {"deepseek": {"m": 0.8256, "s": 0.0034}}, "detection_method": {"deepseek": {"m": 0.848, "s": 0.0011}}, "detection_result": {"deepseek": {"m": 0.8878, "s": 0.0011}}, "impact": {"deepseek": {"m": 0.6467, "s": 0.0123}}, "insight": {"deepseek": {"m": 0.8099, "s": 0.0007}}, "instances": {"deepseek": {"m": null, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.7534, "s": 0.0222}}, "name": {"deepseek": {"m": 1.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.9127, "s": 0.0084}}, "solution": {"deepseek": {"m": 0.6779, "s": 0.0294}}}}}, "det_field_block": {"exact": {"OpenVAS_JuiceShop": {"cvss": {"deepseek": {"m": 0.9706, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": 0.9412, "s": 0.0}}, "protocol": {"deepseek": {"m": 0.9706, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": 1.0, "s": 0.0}}}, "OpenVAS_bBWA": {"cvss": {"deepseek": {"m": 1.0, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": 1.0, "s": 0.0}}, "protocol": {"deepseek": {"m": 1.0, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": 1.0, "s": 0.0}}}, "TenableWAS_JuiceShop": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": 1.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": 0.9737, "s": 0.0}}}, "TenableWAS_bWAAP": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": 1.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": 1.0, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"cvss": {"deepseek": {"m": 0.9162, "s": 0.0039}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": 0.896, "s": 0.0071}}, "protocol": {"deepseek": {"m": 0.9595, "s": 0.004}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": 0.9653, "s": 0.0001}}}}, "set_f1": {"OpenVAS_JuiceShop": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.375, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "OpenVAS_bBWA": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.8788, "s": 0.003}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "TenableWAS_JuiceShop": {"cvss": {"deepseek": {"m": 0.9941, "s": 0.0042}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.9989, "s": 0.0004}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "TenableWAS_bWAAP": {"cvss": {"deepseek": {"m": 1.0, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 1.0, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.0597, "s": 0.0072}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}}, "set_f1_ids": {"OpenVAS_JuiceShop": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.9688, "s": 0.0244}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "OpenVAS_bBWA": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.9426, "s": 0.003}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "TenableWAS_JuiceShop": {"cvss": {"deepseek": {"m": 0.9941, "s": 0.0042}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.997, "s": 0.0004}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "TenableWAS_bWAAP": {"cvss": {"deepseek": {"m": 1.0, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 1.0, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": 0.2946, "s": 0.0059}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}}, "structural": {"OpenVAS_JuiceShop": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "OpenVAS_bBWA": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "TenableWAS_JuiceShop": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.0, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "TenableWAS_bWAAP": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.9996, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"cvss": {"deepseek": {"m": null, "s": 0.0}}, "plugin": {"deepseek": {"m": null, "s": 0.0}}, "plugin_details": {"deepseek": {"m": null, "s": 0.0}}, "port": {"deepseek": {"m": null, "s": 0.0}}, "protocol": {"deepseek": {"m": null, "s": 0.0}}, "references": {"deepseek": {"m": null, "s": 0.0}}, "severity": {"deepseek": {"m": null, "s": 0.0}}}}}, "omission": {"OpenVAS_JuiceShop": {"cvss": {"deepseek": {"m": 0.0, "s": 0.0}}, "description": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "impact": {"deepseek": {"m": 0.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.0, "s": 0.0}}, "instances": {"deepseek": {"m": 0.0, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "name": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.0, "s": 0.0}}, "port": {"deepseek": {"m": 0.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "protocol": {"deepseek": {"m": 0.0294, "s": 0.0}}, "references": {"deepseek": {"m": 0.0, "s": 0.0}}, "severity": {"deepseek": {"m": 0.0, "s": 0.0}}, "solution": {"deepseek": {"m": 0.0, "s": 0.0}}}, "OpenVAS_bBWA": {"cvss": {"deepseek": {"m": 0.0, "s": 0.0}}, "description": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "impact": {"deepseek": {"m": 0.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.0, "s": 0.0}}, "instances": {"deepseek": {"m": 0.0, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "name": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.0, "s": 0.0}}, "port": {"deepseek": {"m": 0.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.052, "s": 0.0004}}, "protocol": {"deepseek": {"m": 0.0, "s": 0.0}}, "references": {"deepseek": {"m": 0.0173, "s": 0.0001}}, "severity": {"deepseek": {"m": 0.0, "s": 0.0}}, "solution": {"deepseek": {"m": 0.0, "s": 0.0}}}, "TenableWAS_JuiceShop": {"cvss": {"deepseek": {"m": 0.0, "s": 0.0}}, "description": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "impact": {"deepseek": {"m": 0.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.0, "s": 0.0}}, "instances": {"deepseek": {"m": 0.0176, "s": 0.0164}}, "log_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "name": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.0, "s": 0.0}}, "port": {"deepseek": {"m": 0.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "protocol": {"deepseek": {"m": 0.0, "s": 0.0}}, "references": {"deepseek": {"m": 0.0, "s": 0.0}}, "severity": {"deepseek": {"m": 0.0, "s": 0.0}}, "solution": {"deepseek": {"m": 0.1842, "s": 0.0}}}, "TenableWAS_bWAAP": {"cvss": {"deepseek": {"m": 0.0, "s": 0.0}}, "description": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "impact": {"deepseek": {"m": 0.0, "s": 0.0}}, "insight": {"deepseek": {"m": 0.0, "s": 0.0}}, "instances": {"deepseek": {"m": 0.0208, "s": 0.0074}}, "log_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "name": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.0, "s": 0.0}}, "port": {"deepseek": {"m": 0.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "protocol": {"deepseek": {"m": 0.0, "s": 0.0}}, "references": {"deepseek": {"m": 0.0, "s": 0.0}}, "severity": {"deepseek": {"m": 0.0, "s": 0.0}}, "solution": {"deepseek": {"m": 0.0, "s": 0.0}}}, "openvas_artifactory-oss_5.11.0": {"cvss": {"deepseek": {"m": 0.0, "s": 0.0}}, "description": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_method": {"deepseek": {"m": 0.0, "s": 0.0}}, "detection_result": {"deepseek": {"m": 0.0, "s": 0.0}}, "impact": {"deepseek": {"m": 0.0231, "s": 0.0042}}, "insight": {"deepseek": {"m": 0.0, "s": 0.0}}, "instances": {"deepseek": {"m": 0.0, "s": 0.0}}, "log_method": {"deepseek": {"m": 0.0058, "s": 0.0041}}, "name": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin": {"deepseek": {"m": 0.0, "s": 0.0}}, "plugin_details": {"deepseek": {"m": 0.0, "s": 0.0}}, "port": {"deepseek": {"m": 0.0, "s": 0.0}}, "product_detection_result": {"deepseek": {"m": 0.026, "s": 0.0001}}, "protocol": {"deepseek": {"m": 0.0058, "s": 0.0041}}, "references": {"deepseek": {"m": 0.0, "s": 0.0}}, "severity": {"deepseek": {"m": 0.0, "s": 0.0}}, "solution": {"deepseek": {"m": 0.0, "s": 0.0}}}}, "dist": {"bertscore": {"deepseek": {"min": 0.543, "q1": 0.9687, "med": 0.9841, "q3": 0.9932, "max": 1.0, "n": 1041}}, "token_f1": {"deepseek": {"min": 0.3915, "q1": 0.8656, "med": 0.9723, "q3": 1.0, "max": 1.0, "n": 1041}}, "rouge_l": {"deepseek": {"min": 0.3754, "q1": 0.8651, "med": 0.9723, "q3": 1.0, "max": 1.0, "n": 1041}}}, "dist_cat": {"bertscore": {"deepseek": [0.83, 0.07, 0.0393, 0.0585, 0.0023]}, "token_f1": {"deepseek": [0.6939, 0.1495, 0.0546, 0.0997, 0.0023]}, "rouge_l": {"deepseek": [0.6939, 0.1495, 0.0546, 0.0997, 0.0023]}}};
+const M=DATA.models,TGT=DATA.targets,OV=DATA.overall;
+const PAL=['#2a78d6','#008300','#a24bb0','#0f9d9d','#4a3aa7','#c81d54','#7a6a00','#946037'];
+const MC={};M.forEach((m,i)=>MC[m]=PAL[i%PAL.length]);
+const pct=v=>v==null?'—':(v*100).toFixed(1)+'%';
+const f3=v=>v==null?'—':v.toFixed(3);
+const avg=a=>{const x=a.filter(v=>v!=null);return x.length?x.reduce((s,v)=>s+v,0)/x.length:null;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el=id=>document.getElementById(id);
+const orec=m=>OV[m].recall.m;
+
+const tip=el('tip');
+document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(t){tip.textContent=t.getAttribute('data-tip');tip.classList.add('on');}});
+document.addEventListener('mousemove',e=>{if(tip.classList.contains('on')){tip.style.left=e.clientX+'px';tip.style.top=e.clientY+'px';}});
+document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]'))tip.classList.remove('on');});
+
+function axis(padL,plotW,top,bottom,min,max){let s='';[0,.25,.5,.75,1].forEach(t=>{
+  const v=min+(max-min)*t,x=padL+t*plotW;
+  s+=`<line class="grid" x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"/>`+
+     `<text class="tick" x="${x}" y="${top-7}" text-anchor="middle">${v.toFixed(2)}</text>`;});return s;}
+
+function hDot(rows,{W=760,rowH=28,padL=120,min=0,max=1,ticks=true}={}){
+  const padR=40,top=ticks?30:12,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
+  const X=v=>padL+((v-min)/(max-min))*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  if(ticks)s+=axis(padL,plotW,top,bottom,min,max);
+  else [0,.5,1].forEach(t=>{const x=padL+t*plotW;s+=`<line class="grid" x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"/>`;});
+  rows.forEach((r,i)=>{const y=top+i*rowH+rowH/2;
+    s+=`<text class="ylab" x="${padL-10}" y="${y+4}" text-anchor="end">${esc(r.label)}</text>`;
+    r.points.forEach(p=>{if(p.v==null)return;const cx=X(p.v);
+      if(p.err)s+=`<line class="err" x1="${X(Math.max(min,p.v-p.err))}" y1="${y}" x2="${X(Math.min(max,p.v+p.err))}" y2="${y}"/>`;
+      s+=`<circle cx="${cx}" cy="${y}" r="6" fill="${p.color}" data-tip="${esc(p.tip)}"/>`;});});
+  return s+'</svg>';
+}
+
+function hBox(rows,{W=760,rowH=38,padL=120}={}){
+  const padR=40,top=30,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
+  const X=v=>padL+v*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`+axis(padL,plotW,top,bottom,0,1);
+  rows.forEach((r,i)=>{const y=top+i*rowH+rowH/2;
+    s+=`<text class="ylab" x="${padL-10}" y="${y+4}" text-anchor="end">${esc(r.label)}</text>`;
+    const b=r.box;if(!b){s+=`<text class="tick" x="${padL+6}" y="${y+4}">no data</text>`;return;}
+    const bh=rowH*.46,tp=esc(`${r.label}\nmin ${b.min.toFixed(2)}  Q1 ${b.q1.toFixed(2)}  med ${b.med.toFixed(2)}  Q3 ${b.q3.toFixed(2)}  max ${b.max.toFixed(2)}\nn=${b.n} pairs`);
+    s+=`<line class="wh" x1="${X(b.min)}" y1="${y}" x2="${X(b.q1)}" y2="${y}"/>`+
+       `<line class="wh" x1="${X(b.q3)}" y1="${y}" x2="${X(b.max)}" y2="${y}"/>`+
+       `<line class="wh" x1="${X(b.min)}" y1="${y-4}" x2="${X(b.min)}" y2="${y+4}"/>`+
+       `<line class="wh" x1="${X(b.max)}" y1="${y-4}" x2="${X(b.max)}" y2="${y+4}"/>`+
+       `<rect x="${X(b.q1)}" y="${y-bh/2}" width="${Math.max(1,X(b.q3)-X(b.q1))}" height="${bh}" rx="2" fill="${r.color}" fill-opacity=".28" stroke="${r.color}" data-tip="${tp}"/>`+
+       `<line x1="${X(b.med)}" y1="${y-bh/2}" x2="${X(b.med)}" y2="${y+bh/2}" stroke="${r.color}" stroke-width="2.5"/>`;});
+  return s+'</svg>';
+}
+
+// stacked horizontal bar (each row sums to ~1). rows:[{label,vals:[...]}], cats colors
+function hStack(rows,cats,colors,{W=760,rowH=30,padL=120}={}){
+  const padR=20,top=30,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
+  const X=v=>padL+v*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  [0,.25,.5,.75,1].forEach(t=>{s+=`<line class="grid" x1="${X(t)}" y1="${top}" x2="${X(t)}" y2="${bottom}"/>`+
+    `<text class="tick" x="${X(t)}" y="${top-7}" text-anchor="middle">${(t*100).toFixed(0)}%</text>`;});
+  rows.forEach((r,i)=>{const y=top+i*rowH+rowH*.2,bh=rowH*.55;
+    s+=`<text class="ylab" x="${padL-10}" y="${y+bh/2+4}" text-anchor="end">${esc(r.label)}</text>`;
+    let cum=0;r.vals.forEach((v,ci)=>{if(v<=0){return;}const x=X(cum),w=X(cum+v)-x;
+      s+=`<rect x="${x}" y="${y}" width="${Math.max(0.5,w)}" height="${bh}" fill="${colors[ci]}" data-tip="${esc(r.label+' · '+cats[ci]+': '+(v*100).toFixed(1)+'%')}"/>`;cum+=v;});});
+  return s+'</svg>';
+}
+
+function hBars(rows,{W=760,rowH=40,padL=120}={}){
+  const padR=54,top=12,plotW=W-padL-padR,H=top+rows.length*rowH+12;
+  const max=Math.max(1,...rows.flatMap(r=>r.bars.map(b=>b.v)));const X=v=>(v/max)*plotW;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  rows.forEach((r,i)=>{const y0=top+i*rowH+6,n=r.bars.length,bh=(rowH-10)/n;
+    s+=`<text class="ylab" x="${padL-10}" y="${y0+rowH/2-4}" text-anchor="end">${esc(r.label)}</text>`;
+    r.bars.forEach((b,j)=>{const y=y0+j*bh,w=X(b.v);
+      s+=`<rect x="${padL}" y="${y}" width="${Math.max(0,w)}" height="${bh-2}" rx="2" fill="${b.color}" data-tip="${esc(b.tip)}"/>`+
+         `<text class="tick" x="${padL+w+5}" y="${y+bh/2+1}">${b.v.toFixed(1)}</text>`;});});
+  return s+'</svg>';
+}
+
+function scatter(pts,{W=760,H=520,min=0.5}={}){
+  const pad={t:16,r:20,b:48,l:56},plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
+  const X=v=>pad.l+((v-min)/(1-min))*plotW,Y=v=>pad.t+plotH-((v-min)/(1-min))*plotH;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  [0,.25,.5,.75,1].forEach(t=>{const v=min+(1-min)*t;
+    s+=`<line class="grid" x1="${X(v)}" y1="${pad.t}" x2="${X(v)}" y2="${pad.t+plotH}"/>`+
+       `<line class="grid" x1="${pad.l}" y1="${Y(v)}" x2="${pad.l+plotW}" y2="${Y(v)}"/>`+
+       `<text class="tick" x="${X(v)}" y="${pad.t+plotH+16}" text-anchor="middle">${v.toFixed(2)}</text>`+
+       `<text class="tick" x="${pad.l-8}" y="${Y(v)+3}" text-anchor="end">${v.toFixed(2)}</text>`;});
+  s+=`<text class="axt" x="${pad.l+plotW/2}" y="${H-8}" text-anchor="middle">Precision →</text>`+
+     `<text class="axt" x="${-(pad.t+plotH/2)}" y="14" text-anchor="middle" transform="rotate(-90)">Recall →</text>`;
+  pts.forEach(p=>{if(p.x==null||p.y==null)return;const cx=X(p.x),cy=Y(p.y);
+    if(p.ex)s+=`<line class="err" x1="${X(Math.max(min,p.x-p.ex))}" y1="${cy}" x2="${X(Math.min(1,p.x+p.ex))}" y2="${cy}"/>`;
+    if(p.ey)s+=`<line class="err" x1="${cx}" y1="${Y(Math.max(min,p.y-p.ey))}" x2="${cx}" y2="${Y(Math.min(1,p.y+p.ey))}"/>`;
+    s+=`<circle cx="${cx}" cy="${cy}" r="8" fill="${p.color}" fill-opacity=".85" stroke="${p.color}" data-tip="${esc(p.label+'\nprecision '+f3(p.x)+' · recall '+f3(p.y))}"/>`+
+       `<text x="${cx+11}" y="${cy+3}" class="ylab" style="font-size:10px">${esc(p.label)}</text>`;});
+  return s+'</svg>';
+}
+
+// sequential color: v mapped from [min,max] to cream -> deep hue (green good, red bad).
+function ramp(v,min,max,hue){const t=Math.max(0,Math.min(1,(v-min)/(max-min)));const L=(a,b)=>Math.round(a+(b-a)*t);
+  const to=hue==='red'?[176,26,69]:[26,94,99];
+  return{bg:`rgb(${L(244,to[0])},${L(241,to[1])},${L(234,to[2])})`,tx:t>0.5?'#faf8f2':'#1a1a17'};}
+
+function heatTable(tableId,fields,getCell,colorFn){
+  const tbl=el(tableId);
+  if(!fields.length){tbl.innerHTML='<tbody><tr><td class="empty">no data</td></tr></tbody>';return;}
+  let h=`<thead><tr><th class="l">Field</th>${M.map(m=>`<th><span class="dot" style="width:7px;height:7px;background:${MC[m]};margin-right:4px"></span>${esc(m)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>`;
+  fields.forEach(f=>{h+=`<tr><td class="l">${esc(f)}</td>`;const row=[];
+    M.forEach(m=>{const d=getCell(f,m),v=d.m;if(v==null){h+=`<td>—</td>`;return;}row.push(v);const c=colorFn(v);
+      h+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}<s>±${(d.s||0).toFixed(2)}</s></td>`;});
+    const a=avg(row),ac=a==null?null:colorFn(a);
+    h+=a==null?`<td>—</td></tr>`:`<td style="background:${ac.bg};color:${ac.tx};font-weight:700">${a.toFixed(2)}</td></tr>`;});
+  tbl.innerHTML=h+'</tbody>';
+}
+
+function legend(id,items){el(id).innerHTML=items.map(([l,c])=>
+  `<span><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('');}
+function toggle(id,opts,active,cb){const h=el(id);
+  h.querySelectorAll('button').forEach(b=>b.remove());
+  h.insertAdjacentHTML('beforeend',opts.map(o=>`<button data-v="${o}" aria-pressed="${o===active}">${o}</button>`).join(''));
+  h.querySelectorAll('button').forEach(b=>b.onclick=()=>{h.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});}
+function fillSel(id,opts,onch){const s=el(id);s.innerHTML=opts.map(o=>`<option value="${o}">${o}</option>`).join('');s.onchange=()=>onch(s.value);}
+
+// ---- meta ----
+const T=DATA.totals,C=DATA.config;
+el('meta').innerHTML=[['models',M.length],['reports',TGT.length],['runs',C.runs],
+  ['done',`${T.done}/${T.planned}`],['cost',`$${T.cost_usd.toFixed(4)}`],
+  ['time',`${Math.round(T.active_seconds)}s`]].map(([k,v])=>`<span>${k} <b>${v}</b></span>`).join('');
+
+// ---- verdict ----
+const ranked=[...M].filter(m=>orec(m)!=null).sort((a,b)=>orec(b)-orec(a));
+if(ranked.length){const win=ranked[0],c=MC[win],delta=ranked[1]?orec(win)-orec(ranked[1]):null;
+  el('verdict').innerHTML=`<div><div class="l">Best model · overall recall</div>
+    <div class="win"><span class="dot" style="background:${c}"></span>${esc(win)}</div></div>
+    <div><div class="big" style="color:${c}">${orec(win).toFixed(3)}</div>
+    <div class="sub">mean recall${delta!=null?` · +${delta.toFixed(3)} ahead of ${esc(ranked[1])}`:''}</div></div>`;
+  const maxV=orec(ranked[0]);
+  el('verdictBars').innerHTML=ranked.map(m=>{const v=orec(m),s=OV[m].recall.s||0;
+    return `<div class="brow"><span class="nm">${esc(m)}</span>
+      <div class="track"><div class="fill" style="width:${(v/maxV*100).toFixed(1)}%;background:${MC[m]}"></div></div>
+      <span class="vv">${v.toFixed(3)} <s>±${s.toFixed(3)}</s></span></div>`;}).join('');
+}else{el('verdict').innerHTML='<div class="l">no coverage evaluated</div>';}
+
+// ---- scatter ----
+(function(){const vals=M.flatMap(m=>[OV[m].recall.m,OV[m].precision.m]).filter(v=>v!=null);
+  const lo=vals.length?Math.max(0,Math.floor((Math.min(...vals)-0.06)*10)/10):0.5;
+  el('scatter').innerHTML=scatter(M.map(m=>({x:OV[m].precision.m,y:OV[m].recall.m,
+    ex:OV[m].precision.s,ey:OV[m].recall.s,color:MC[m],label:m})),{min:lo});
+  legend('scLegend',M.map(m=>[m,MC[m]]));})();
+
+// ---- small multiples ----
+el('sm').innerHTML=TGT.map(t=>{
+  const rows=[...M].sort((a,b)=>(DATA.by_target[t][b].recall.m??-1)-(DATA.by_target[t][a].recall.m??-1))
+    .map(m=>({label:m,points:[{v:DATA.by_target[t][m].recall.m,err:DATA.by_target[t][m].recall.s,color:MC[m],
+      tip:`${m} @ ${t}\nrecall ${pct(DATA.by_target[t][m].recall.m)} ±${((DATA.by_target[t][m].recall.s||0)*100).toFixed(1)}`}]}));
+  return `<div class="card"><div class="card-t">${esc(t)}</div>${hDot(rows,{W:520,padL:110,rowH:24,ticks:false})}</div>`;
+}).join('')||'<div class="empty">no reports evaluated</div>';
+legend('smLegend',M.map(m=>[m,MC[m]]));
+
+// ---- field quality heatmap ----
+(function(){let fam='text',metric=null,target=TGT[0]||null;
+  const block=()=>fam==='text'?DATA.text_fields:DATA.det_field_block;
+  const fields=()=>fam==='text'?DATA.sem_fields:DATA.det_fields;
+  const metrics=()=>fam==='text'?DATA.text_metrics:DATA.det_metrics;
+  function render(){const b=block(),cell=(metric&&target&&b[metric])?b[metric][target]:null;
+    const fs=cell?fields().filter(f=>M.some(m=>cell[f][m].m!=null)):[];
+    if(!fs.length){heatTable('heat',[],()=>({}),()=>({}));el('heatLegend').innerHTML='';return;}
+    heatTable('heat',fs,(f,m)=>cell[f][m],v=>ramp(v,0.5,1,'green'));
+    el('heatLegend').innerHTML=`<span style="color:var(--muted)">0.50</span>
+      <span style="width:150px;height:11px;border-radius:3px;background:linear-gradient(90deg,rgb(244,241,234),rgb(26,94,99));display:inline-block"></span>
+      <span style="color:var(--muted)">1.00 · darker = better</span>`;}
+  function setFam(f){fam=f;metric=metrics()[0]||null;toggle('fldMetric',metrics(),metric,v=>{metric=v;render();});render();}
+  fillSel('fldTarget',TGT,v=>{target=v;render();});
+  toggle('fldFamily',['text','exact'],'text',setFam);
+  setFam('text');})();
+
+// ---- omission heatmap ----
+(function(){let target=TGT[0]||null;
+  function render(){const cell=target?DATA.omission[target]:null;
+    heatTable('omheat',DATA.omit_fields,(f,m)=>(cell&&cell[f])?cell[f][m]:{m:null,s:0},v=>ramp(v,0,0.4,'red'));
+    el('omLegend').innerHTML=`<span style="color:var(--muted)">0.00</span>
+      <span style="width:150px;height:11px;border-radius:3px;background:linear-gradient(90deg,rgb(244,241,234),rgb(176,26,69));display:inline-block"></span>
+      <span style="color:var(--muted)">higher · redder = more omitted</span>`;}
+  fillSel('omTarget',TGT,v=>{target=v;render();});
+  render();})();
+
+// ---- distribution: box + category stack ----
+(function(){let metric=DATA.text_metrics[0]||null;
+  const CATS=['High','Moderate','Slight','Divergent','Absent'];
+  const CC=['#0a6b0a','#7a9a2f','#d9a200','#c81d54','#b8b4a8'];
+  function render(){if(!metric){el('distBox').innerHTML='<div class="empty">no per-pair scores</div>';el('distCat').innerHTML='';return;}
+    el('distBox').innerHTML=hBox(M.map(m=>({label:m,box:DATA.dist[metric][m],color:MC[m]})));
+    el('distCat').innerHTML=hStack(M.map(m=>({label:m,vals:DATA.dist_cat[metric][m]})),CATS,CC);
+    legend('catLegend',CATS.map((c,i)=>[c,CC[i]]));}
+  if(DATA.text_metrics.length)toggle('distMetric',DATA.text_metrics,metric,v=>{metric=v;render();});
+  render();})();
+
+// ---- errors + cost ----
+el('err').innerHTML=hBars(M.map(m=>({label:m,bars:[
+  {v:OV[m].missed.m??0,color:'var(--accent)',tip:`${m} · missed ${(OV[m].missed.m??0).toFixed(1)}/run`},
+  {v:OV[m].spurious.m??0,color:'var(--muted)',tip:`${m} · false positives ${(OV[m].spurious.m??0).toFixed(1)}/run`}]})));
+el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
+  return `<div class="card" style="margin:0"><div class="card-t" style="margin:0 0 .4rem">${esc(m)}</div>
+    <div style="font:700 1.05rem ui-monospace,monospace;color:${MC[m]}">${c?'$'+c.toFixed(4):'—'}</div>
+    <div style="font:.65rem ui-monospace,monospace;color:var(--muted)">${d!=null?Math.round(d)+'s/run':''}</div></div>`;}).join('');
+</script></html>
