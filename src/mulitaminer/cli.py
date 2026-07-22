@@ -265,6 +265,9 @@ def experiment(
     ),
     metrics: str = typer.Option("all", "--metrics", help="Metrics for per-run evaluation"),
     output_dir: Path = typer.Option(Path("output_experiments"), "--output-dir"),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v", help="Keep the full per-chunk log on the console"
+    ),
 ) -> None:
     """Run X extractions per (model, report), local and API models in parallel."""
     import json
@@ -285,6 +288,7 @@ def experiment(
         scanner=scanner,
         metrics=metrics,
         output_dir=output_dir,
+        verbose=verbose,
     )
     result = run_experiment(config)
     manifest = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))

@@ -23,6 +23,7 @@ import json
 import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,8 +32,29 @@ from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.pipeline import RunConfig, run
 from mulitaminer.scanner_engine import detect_scanner
 from mulitaminer.pdf_reader import extract_pdf
+from mulitaminer.ui import Unit, experiment_view
 
 log = logging.getLogger(__name__)
+
+
+@contextmanager
+def _quiet_console(verbose: bool):
+    """Silence the console log handler while the live view is up, so per-chunk
+    INFO/WARNING lines do not corrupt it. Per-run file logs keep everything;
+    --verbose leaves the console log untouched."""
+    if verbose:
+        yield
+        return
+    stream = [h for h in logging.getLogger().handlers
+              if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)]
+    saved = [(h, h.level) for h in stream]
+    for h, _ in saved:
+        h.setLevel(logging.ERROR)
+    try:
+        yield
+    finally:
+        for h, lvl in saved:
+            h.setLevel(lvl)
 
 
 def bucket_key(model_key: str) -> str:
@@ -50,6 +72,7 @@ class ExperimentConfig:
     metrics: str = "all"                # passed to evaluation
     output_dir: Path = Path("output_experiments")
     model_names: dict[str, str] = field(default_factory=dict)  # generic profile overrides
+    verbose: bool = False               # keep the full per-chunk log on the console
 
 
 @dataclass
@@ -115,6 +138,8 @@ def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
         outcome["duration_s"] = rj.get("duration_s", 0.0)
         outcome["cost_usd"] = rj.get("usage", {}).get("cost_usd", 0.0)
         outcome["records"] = rj.get("final_record_count")
+        outcome["block_count"] = rj.get("block_count")
+        outcome["warnings"] = len(rj.get("warnings", []))
     except (OSError, json.JSONDecodeError):
         pass
     eval_path = run_dir / "evaluation.json"
@@ -128,10 +153,12 @@ def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
     return outcome
 
 
-def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict, on_done) -> None:
+def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
+                on_start, on_done) -> None:
     """Run one bucket's tasks sequentially (shared rate limit / local server)."""
     clients: dict[str, LLMClient] = {}
     for task in tasks:
+        on_start(task)
         if _is_complete(task.run_dir):
             on_done(task, _cached_outcome(task.run_dir, task.report, config.metrics))
             continue
@@ -154,7 +181,8 @@ def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict, on_don
         coverage = _evaluate(task.run_dir, task.report, config.metrics)
         on_done(task, {"status": "ok", "duration_s": result.duration_s,
                        "cost_usd": result.usage.cost_usd,
-                       "records": len(result.records), "coverage": coverage})
+                       "records": len(result.records), "block_count": result.block_count,
+                       "warnings": len(result.warnings), "coverage": coverage})
 
 
 def run_experiment(config: ExperimentConfig) -> dict:
@@ -169,6 +197,15 @@ def run_experiment(config: ExperimentConfig) -> dict:
     records: list[dict] = []
     lock = threading.Lock()
 
+    units = [Unit(model=t.model, run=t.run_index, report=t.report.stem) for t in tasks]
+    header = (f"mulitaminer · experiment · {len(config.models)} model(s) · "
+              f"runs {config.runs} · reports {len({t.report for t in tasks})} · "
+              f"detailed log -> per-run *.log")
+    view = experiment_view(header, units)
+
+    def on_start(task: _Task) -> None:
+        view.start(task.model, task.run_index, task.report.stem)
+
     def on_done(task: _Task, outcome: dict) -> None:
         entry = {"scanner": task.scanner, "model": task.model,
                  "run": task.run_index, "report": task.report.name,
@@ -176,15 +213,22 @@ def run_experiment(config: ExperimentConfig) -> dict:
         with lock:
             records.append(entry)
             _write_manifest(manifest_path, config, records, skipped, complete=False)
-        label = outcome.get("status")
+        view.finish(task.model, task.run_index, task.report.stem,
+                    status=outcome.get("status", "failed"),
+                    blocks=outcome.get("records") or 0,
+                    total=outcome.get("block_count") or (outcome.get("records") or 0),
+                    warnings=outcome.get("warnings") or 0,
+                    duration=outcome.get("duration_s") or 0.0,
+                    cost=outcome.get("cost_usd") or 0.0)
         log.info("%s %s run_%d %s -> %s", task.scanner, task.model,
-                 task.run_index, task.report.stem, label)
+                 task.run_index, task.report.stem, outcome.get("status"))
 
-    with ThreadPoolExecutor(max_workers=len(buckets)) as pool:
-        futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_done)
-                   for bucket_tasks in buckets.values()]
-        for f in futures:
-            f.result()
+    with _quiet_console(config.verbose), view:
+        with ThreadPoolExecutor(max_workers=len(buckets)) as pool:
+            futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_start, on_done)
+                       for bucket_tasks in buckets.values()]
+            for f in futures:
+                f.result()
 
     _write_manifest(manifest_path, config, records, skipped, complete=True)
     report = None
