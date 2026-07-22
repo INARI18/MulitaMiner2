@@ -27,6 +27,7 @@ services:
       --served-model-name nuextract
       --max-model-len 8192
       --gpu-memory-utilization 0.90
+      --enforce-eager
       --host 0.0.0.0 --port 8000
     environment:
       HF_HOME: /hf
@@ -47,8 +48,8 @@ services:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
       interval: 15s
       timeout: 5s
-      retries: 60                # first run downloads the weights; give it time
-      start_period: 90s
+      retries: 80                # first run also downloads the weights (~8GB); give it room
+      start_period: 120s
 
   mulita:
     build:
