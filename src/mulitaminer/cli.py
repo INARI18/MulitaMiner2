@@ -7,6 +7,7 @@ from pathlib import Path
 import typer
 from dotenv import load_dotenv
 
+from mulitaminer import ui
 from mulitaminer.llm import FatalLLMError, all_models
 from mulitaminer.scanner_engine import all_scanners
 
@@ -70,18 +71,17 @@ def extract(
         try:
             summaries = run_directory(config)
         except (FatalLLMError, ValueError) as exc:
-            typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+            ui.error(exc)
             raise typer.Exit(code=1)
         ok = [s for s in summaries if s["status"] == "ok"]
         for s in summaries:
-            color = {"ok": typer.colors.GREEN, "skipped": typer.colors.YELLOW}.get(
-                s["status"], typer.colors.RED)
-            typer.secho(
+            style = {"ok": "green", "skipped": "yellow"}.get(s["status"], "red")
+            ui.echo(
                 f"{s['status']:<8} {s['file']:<45} {s['scanner'] or '-':<9} {s['detail']}",
-                fg=color,
+                style=style,
             )
         total_cost = sum(s.get("cost_usd", 0.0) for s in ok)
-        typer.echo(
+        ui.echo(
             f"\n{len(ok)} extracted, "
             f"{sum(s['status'] == 'skipped' for s in summaries)} skipped, "
             f"{sum(s['status'] == 'failed' for s in summaries)} failed; "
@@ -95,32 +95,31 @@ def extract(
 
         detected, counts = detect_scanner(extract_pdf(report).text)
         if detected is None:
-            typer.secho(
-                f"Error: could not identify the scanner for {report.name} "
-                f"(marker counts: {counts}). Pass --scanner explicitly.",
-                fg=typer.colors.RED, err=True,
+            ui.error(
+                f"could not identify the scanner for {report.name} "
+                f"(marker counts: {counts}). Pass --scanner explicitly."
             )
             raise typer.Exit(code=1)
-        typer.echo(f"Detected scanner: {detected} ({counts[detected]} markers)")
+        ui.echo(f"Detected scanner: {detected} ({counts[detected]} markers)")
         config.scanner = detected
 
     try:
         result, run_dir = run(config)
     except (FatalLLMError, ValueError) as exc:
-        typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+        ui.error(exc)
         raise typer.Exit(code=1)
 
-    typer.echo(
+    ui.echo(
         f"\n{len(result.records)} records ({result.block_count} blocks) in "
         f"{result.duration_s}s; ${result.usage.cost_usd:.4f} "
         f"({result.usage.prompt_tokens}+{result.usage.completion_tokens} tokens, "
         f"{result.usage.calls} calls)"
     )
     if result.warnings:
-        typer.secho(f"{len(result.warnings)} warning(s):", fg=typer.colors.YELLOW)
+        ui.warn(f"{len(result.warnings)} warning(s):")
         for w in result.warnings:
-            typer.secho(f"  - {w}", fg=typer.colors.YELLOW)
-    typer.echo(f"Artifacts: {run_dir}")
+            ui.warn(f"  - {w}")
+    ui.echo(f"Artifacts: {run_dir}")
 
 
 @app.command()
@@ -129,7 +128,7 @@ def models() -> None:
     for key, p in all_models().items():
         kind = "local " if p.is_local else "cloud "
         keys = p.api_key_env or "no key needed"
-        typer.echo(f"{key:<16} {kind} {p.model:<28} {keys}")
+        ui.echo(f"{key:<16} {kind} {p.model:<28} {keys}")
 
 
 @app.command()
@@ -151,7 +150,7 @@ def segment(
     profile = get_scanner(scanner)
     doc = extract_pdf(report)
     blocks = profile.segment(doc.text)
-    typer.secho(f"\n{len(blocks)} blocks found in {report.name}", bold=True)
+    ui.echo(f"\n{len(blocks)} blocks found in {report.name}", style="bold")
     for block in blocks[:show]:
         context = ", ".join(
             f"{k}={v}" for k, v in
@@ -159,12 +158,11 @@ def segment(
              ("protocol", block.protocol), ("severity", block.severity_hint))
             if v is not None
         )
-        typer.secho(f"\n--- BLOCK {block.id} ({context or 'no context'}) ---",
-                    fg=typer.colors.CYAN)
+        ui.echo(f"\n--- BLOCK {block.id} ({context or 'no context'}) ---", style="cyan")
         for line in block.text.splitlines()[:lines]:
-            typer.echo(f"  {line}")
+            ui.echo(f"  {line}")
     if len(blocks) > show:
-        typer.echo(f"\n... {len(blocks) - show} more blocks (use --show to see more)")
+        ui.echo(f"\n... {len(blocks) - show} more blocks (use --show to see more)")
 
 
 @app.command()
@@ -188,7 +186,7 @@ def export(
     records = [record_type.model_validate(r) for r in data]
     for fmt in formats:
         out = get_exporter(fmt)(records, record_type, path.parent)
-        typer.echo(f"{fmt}: {out}")
+        ui.echo(f"{fmt}: {out}")
 
 
 @app.command()
@@ -216,33 +214,32 @@ def evaluate(
 
     if list_metrics:
         for s in SCORERS.values():
-            status = "available" if s.available else f"UNAVAILABLE — {s.hint}"
-            typer.echo(f"{s.name:<10} {s.kind:<11} {status}")
+            status = "available" if s.available else f"UNAVAILABLE - {s.hint}"
+            ui.echo(f"{s.name:<10} {s.kind:<11} {status}")
         return
     if target is None:
-        typer.secho("Error: provide a run directory or results.json (or --list-metrics).",
-                    fg=typer.colors.RED, err=True)
+        ui.error("provide a run directory or results.json (or --list-metrics).")
         raise typer.Exit(code=1)
 
     try:
         result = evaluate_run(target, baseline=baseline, metrics=metrics,
                               threshold=threshold)
     except (ValueError, RuntimeError, FileNotFoundError) as exc:
-        typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+        ui.error(exc)
         raise typer.Exit(code=1)
 
     results_path = Path(result.meta["results"])
     paths = write_reports(result, results_path.parent)
     cov = result.coverage
-    typer.secho(
+    ui.echo(
         f"\nCoverage: {cov['matched']}/{cov['baseline_count']} matched "
         f"(recall {cov['recall']:.3f}, precision {cov['precision']:.3f}); "
         f"{len(cov['missed'])} missed, {len(cov['spurious'])} spurious",
-        bold=True,
+        style="bold",
     )
-    typer.echo(f"\n{summary_table(result)}\n")
+    ui.echo(f"\n{summary_table(result)}\n")
     for kind, path in paths.items():
-        typer.echo(f"{kind}: {path}")
+        ui.echo(f"{kind}: {path}")
 
 
 @app.command()
@@ -270,7 +267,7 @@ def experiment(
 
     pdfs = sorted(reports.rglob("*.pdf")) if reports.is_dir() else [reports]
     if not pdfs:
-        typer.secho(f"No PDFs under {reports}", fg=typer.colors.RED, err=True)
+        ui.error(f"No PDFs under {reports}")
         raise typer.Exit(code=1)
 
     config = ExperimentConfig(
@@ -285,15 +282,15 @@ def experiment(
     result = run_experiment(config)
     manifest = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
     t = manifest["totals"]
-    typer.secho(
+    ui.echo(
         f"\n{t['done']}/{t['planned']} runs done, {t['failed']} failed, "
         f"{t['skipped_reports']} reports skipped; "
         f"{t['active_seconds']}s active, ${t['cost_usd']:.4f}",
-        bold=True,
+        style="bold",
     )
-    typer.echo(f"Manifest: {result['manifest']}")
+    ui.echo(f"Manifest: {result['manifest']}")
     if result.get("report"):
-        typer.echo(f"Report:   {result['report']}")
+        ui.echo(f"Report:   {result['report']}")
 
 
 @app.command()
@@ -306,7 +303,7 @@ def report(
     from mulitaminer.experiment_report import build_report
 
     out = build_report(experiment_dir)
-    typer.echo(f"Report: {out}")
+    ui.echo(f"Report: {out}")
 
 
 @app.command("sync-feeds")
@@ -316,8 +313,8 @@ def sync_feeds_cmd() -> None:
     from mulitaminer.settings import FEEDS_DIR
 
     meta = sync_feeds()
-    typer.echo(f"Synced to {FEEDS_DIR.resolve()}: {meta['kev_count']} KEV entries, "
-               f"{meta['epss_count']} EPSS scores (score date {meta['epss_score_date']})")
+    ui.echo(f"Synced to {FEEDS_DIR.resolve()}: {meta['kev_count']} KEV entries, "
+            f"{meta['epss_count']} EPSS scores (score date {meta['epss_score_date']})")
 
 
 @app.command()
@@ -332,10 +329,10 @@ def prioritize(
     try:
         paths = prioritize_run(results)
     except ValueError as exc:
-        typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+        ui.error(exc)
         raise typer.Exit(code=1)
     for kind, path in paths.items():
-        typer.echo(f"{kind}: {path}")
+        ui.echo(f"{kind}: {path}")
 
 
 @app.command()
@@ -344,14 +341,14 @@ def formats() -> None:
     from mulitaminer.exporters import DESCRIPTIONS, EXPORTERS
 
     for name in sorted(EXPORTERS):
-        typer.echo(f"{name:<9} {DESCRIPTIONS.get(name, '')}")
+        ui.echo(f"{name:<9} {DESCRIPTIONS.get(name, '')}")
 
 
 @app.command()
 def scanners() -> None:
     """List available scanner profiles (built-in + MULITAMINER_SCANNERS_DIR)."""
     for key, p in all_scanners().items():
-        typer.echo(f"{key:<10} source={p.source:<11} max_vulns_per_chunk={p.max_vulns_per_chunk}")
+        ui.echo(f"{key:<10} source={p.source:<11} max_vulns_per_chunk={p.max_vulns_per_chunk}")
 
 
 if __name__ == "__main__":

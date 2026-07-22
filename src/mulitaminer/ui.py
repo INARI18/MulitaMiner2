@@ -17,6 +17,21 @@ from rich.table import Table
 from rich.text import Text
 
 console = Console()
+err_console = Console(stderr=True)
+
+
+def echo(msg: object = "", *, style: str | None = None) -> None:
+    """Centralized stdout line: all CLI text goes through here, not typer.echo."""
+    console.print(msg, style=style, markup=False, highlight=False, soft_wrap=True)
+
+
+def warn(msg: object) -> None:
+    echo(msg, style="yellow")
+
+
+def error(msg: object) -> None:
+    """Red 'Error: ...' to stderr; pair with a non-zero exit."""
+    err_console.print(f"Error: {msg}", style="red", markup=False, highlight=False)
 
 
 def _encodable(s: str) -> bool:
