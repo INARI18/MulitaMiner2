@@ -10,7 +10,7 @@
       "token_f1"
     ],
     "unavailable_metrics": {},
-    "generated_at": "2026-07-22T20:00:27+00:00",
+    "generated_at": "2026-07-22T20:09:47+00:00",
     "tool_version": "2.0.0a1"
   },
   "coverage": {
@@ -28,22 +28,23 @@
     ],
     "spurious_kinds": {
       "name_mismatch": 1,
-      "baseline_gap": 1
+      "surplus": 1
     },
     "spurious_detail": [
       {
         "extraction_index": 2,
         "name": "phpinfo() output Reporting 2 RESULTS PER HOST 7",
-        "category": "name_mismatch",
         "best_baseline": "phpinfo() output Reporting",
-        "best_similarity": 0.6411
+        "best_similarity": 0.6411,
+        "category": "name_mismatch"
       },
       {
         "extraction_index": 44,
         "name": "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm",
-        "category": "baseline_gap",
         "best_baseline": "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm",
-        "best_similarity": 0.9
+        "best_similarity": 0.9,
+        "category": "surplus",
+        "same_key": false
       }
     ]
   },

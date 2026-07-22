@@ -222,22 +222,26 @@ def test_classify_spurious_name_mismatch():
     assert _cat(ext, base, ()) == {0: "name_mismatch"}
 
 
-def test_classify_spurious_baseline_gap():
-    # Two report instances on different ports, one baseline row: the extra is a
-    # real finding the baseline never recorded.
+def test_classify_spurious_surplus_distinct_instance():
+    # Two report instances on different ports, one baseline row: surplus, but a
+    # distinct instance (different key), not a true duplicate.
     ext = [{"Name": "Weak Sig", "port": 25, "protocol": "tcp"},
            {"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
     base = [{"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
-    assert _cat(ext, base) == {0: "baseline_gap"}
+    res = align(ext, base, OV_PARTS)
+    d = {s["extraction_index"]: s for s in classify_spurious(ext, base, res, OV_PARTS)}
+    assert d[0]["category"] == "surplus" and d[0]["same_key"] is False
 
 
-def test_classify_spurious_duplicate():
-    # Two extractions with the SAME key: a genuine duplicate.
+def test_classify_spurious_surplus_true_duplicate():
+    # Two extractions with the SAME key: surplus flagged as a true duplicate.
     ext = [{"Name": "X", "port": 80, "protocol": "tcp"},
            {"Name": "X", "port": 80, "protocol": "tcp"}]
     base = [{"Name": "X", "port": 80, "protocol": "tcp"}]
-    cats = _cat(ext, base)
-    assert list(cats.values()) == ["duplicate"]
+    res = align(ext, base, OV_PARTS)
+    surplus = [s for s in classify_spurious(ext, base, res, OV_PARTS)
+               if s["category"] == "surplus"]
+    assert len(surplus) == 1 and surplus[0]["same_key"] is True
 
 
 def test_align_empty_sides():

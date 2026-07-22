@@ -178,15 +178,18 @@ def classify_spurious(
     alignment: AlignmentResult,
     key_parts: tuple[str, ...] = (),
 ) -> list[dict]:
-    """Explain each unmatched extraction ('spurious') by its best baseline twin:
+    """Explain each unmatched extraction ('spurious') by its best baseline twin.
 
-    - invention:    no baseline row is even name-similar (best < INVENTION_FLOOR).
+    These are structural, tool-knowable facts, not verdicts on who is right:
+
+    - invention:     no baseline row is even name-similar (best < INVENTION_FLOOR).
     - name_mismatch: a still-free baseline twin scored below the match threshold
                      (its identifying text diverged, e.g. segmentation noise).
-    - baseline_gap:  the twin is taken by another extraction with a DIFFERENT key,
-                     so the report has an instance the baseline never recorded.
-    - duplicate:     the twin is taken by another extraction with the SAME key,
-                     so this is a second copy of the same finding.
+    - surplus:       the twin is already matched to another extraction, so the
+                     finding IS in the baseline and this record is an extra copy
+                     or instance. ``same_key`` distinguishes a true duplicate
+                     (identical key) from a distinct instance (different
+                     port/key); which side is right is a human call.
     """
     ext_names = [normalize_name(str(_get(r, "Name") or "")) for r in ext_rows]
     base_names = [normalize_name(str(_get(r, "Name") or "")) for r in base_rows]
@@ -201,21 +204,20 @@ def classify_spurious(
              for k in range(len(base_rows))),
             default=(0.0, None),
         )
-        if j is None or best < INVENTION_FLOOR:
-            category = "invention"
-        elif j not in base_claimed_by:
-            category = "name_mismatch"
-        elif ext_keys[base_claimed_by[j]] == ext_keys[i]:
-            category = "duplicate"
-        else:
-            category = "baseline_gap"
-        out.append({
+        entry = {
             "extraction_index": i,
             "name": str(_get(ext_rows[i], "Name") or ""),
-            "category": category,
             "best_baseline": str(_get(base_rows[j], "Name") or "") if j is not None else None,
             "best_similarity": round(best, 4),
-        })
+        }
+        if j is None or best < INVENTION_FLOOR:
+            entry["category"] = "invention"
+        elif j not in base_claimed_by:
+            entry["category"] = "name_mismatch"
+        else:
+            entry["category"] = "surplus"
+            entry["same_key"] = ext_keys[base_claimed_by[j]] == ext_keys[i]
+        out.append(entry)
     return out
 
 
