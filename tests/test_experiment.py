@@ -46,7 +46,7 @@ def test_experiment_layout_and_manifest(tmp_path):
         reports=[OPENVAS_PDF], models=["deepseek"], runs=2,
         scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
     )
-    result = run_experiment(config)
+    run_experiment(config)
     # Layout: <out>/<scanner>/<model>/run_<n>/<stem>/
     for n in (1, 2):
         d = tmp_path / "exp" / "openvas" / "deepseek" / f"run_{n}" / OPENVAS_PDF.stem
