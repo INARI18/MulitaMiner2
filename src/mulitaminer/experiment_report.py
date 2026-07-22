@@ -15,8 +15,12 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-_TEXT = ("bertscore", "token_f1", "rouge_l")
-_DET = ("exact", "set_f1", "set_f1_ids", "structural")
+from mulitaminer.evaluation.scorers import SCORERS
+
+# Metric families derived from the scorer registry so a new scorer shows up here
+# with no edit. "structural" is the extra label nested/dict fields carry.
+_TEXT = tuple(n for n, s in SCORERS.items() if s.kind == "text")
+_DET = tuple(n for n, s in SCORERS.items() if s.kind == "structural") + ("structural",)
 
 
 def _ms(values: list[float]) -> dict:

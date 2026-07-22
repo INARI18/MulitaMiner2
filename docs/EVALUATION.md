@@ -70,8 +70,12 @@ record schema:
 - **structural** (always on): `exact` for numeric/categorical fields, `set_f1`
   for reference lists (`set_f1_ids` normalizes id prefixes first).
 - **text** (select with `--metrics`, list with `--list-metrics`): `token_f1`,
-  `rouge_l`, and the heavy optional `bertscore` and NLI contradiction check
-  (`uv sync --group eval`).
+  `rouge_l`, and the heavy optional `bertscore` and `nli` (a contradiction check
+  that flags an extraction stating the opposite of the baseline). The last two
+  need `uv sync --group eval`.
+
+The HTML report lists whichever of these a run actually scored, so `bertscore`
+and `nli` appear once you evaluate with them.
 
 Empty-vs-empty scores a vacuous 1.0 (flagged so reports can count it apart);
 present-vs-absent scores 0.0.

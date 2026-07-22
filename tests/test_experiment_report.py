@@ -19,9 +19,12 @@ def _fabricate(root: Path) -> None:
             (rd / "run.json").write_text("{}", encoding="utf-8")
             (rd / "evaluation.json").write_text(json.dumps({
                 "fields": {
-                    "description": {"token_f1": {"measured_mean": field_mean[model] + 0.01 * n,
-                                                 "mean": 0.9, "n_measured": 30,
-                                                 "fill_rate_baseline": 1.0, "fill_rate_extraction": 0.9}},
+                    "description": {
+                        "token_f1": {"measured_mean": field_mean[model] + 0.01 * n,
+                                     "mean": 0.9, "n_measured": 30,
+                                     "fill_rate_baseline": 1.0, "fill_rate_extraction": 0.9},
+                        "nli": {"measured_mean": 0.95, "mean": 0.95, "n_measured": 30,
+                                "fill_rate_baseline": 1.0, "fill_rate_extraction": 0.9}},
                     "severity": {"exact": {"measured_mean": 0.97, "mean": 0.97, "n_measured": 30,
                                            "fill_rate_baseline": 1.0, "fill_rate_extraction": 1.0}},
                     "references": {"set_f1": {"measured_mean": 0.8, "mean": 0.9, "n_measured": 20,
@@ -66,6 +69,18 @@ def test_report_builds_and_is_self_contained(tmp_path):
     # Self-contained: no external resource loads and no chart library.
     for bad in ("<script src", "<link", "@import", "cdnjs", "googleapis", "chart.js"):
         assert bad not in doc
+
+    # A scored metric beyond the common ones (nli) is carried through, not dropped.
+    assert "nli" in doc
+
+
+def test_metric_families_track_the_scorer_registry():
+    from mulitaminer.evaluation.scorers import SCORERS
+    from mulitaminer.experiment_report import _DET, _TEXT
+
+    assert set(_TEXT) == {n for n, s in SCORERS.items() if s.kind == "text"}
+    assert "nli" in _TEXT
+    assert set(_DET) == {n for n, s in SCORERS.items() if s.kind == "structural"} | {"structural"}
 
 
 def test_report_handles_missing_coverage(tmp_path):
