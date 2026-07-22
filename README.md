@@ -18,12 +18,11 @@ _Block-anchored · Multi-scanner · Multi-LLM_
 
 # MulitaMiner
 
-MulitaMiner turns the PDF reports that security scanners produce — each in its
-own layout and vocabulary — into a single, structured, analysis-ready
-vulnerability schema. Its LLM pipeline is **block-anchored**: the report is
-split deterministically into findings *before* any model call, so the model
-fills the fields of each finding instead of "discovering" vulnerabilities, and
-the output count always matches the report.
+Security scanners like OpenVAS/Greenbone and Tenable WAS export their findings
+as PDFs, each in its own layout and vocabulary. MulitaMiner reads those PDFs and
+turns them into a single, structured, analysis-ready vulnerability schema, using
+an LLM to fill the fields while a deterministic pass keeps every finding
+accounted for.
 
 Beyond extraction it unifies heterogeneous scanners (OpenVAS/Greenbone,
 Tenable WAS, or your own via a JSON config) under one record model, exports to
@@ -38,7 +37,7 @@ ground-truth baselines.
 
 1. **PDF**: the scanner report goes in.
 2. **Extract text**: pull clean text out of the PDF.
-3. **Split blocks**: cut the text into one block per finding, deterministically, so the finding count is known before any LLM call.
+3. **Split blocks** (block-anchored): cut the text into one block per finding, deterministically, so the finding count is fixed before any LLM call. The model fills each block's fields instead of "discovering" vulnerabilities, and the output count always matches the report.
 4. **Pack chunks**: group whole blocks into token-budgeted chunks (blocks are never split).
 5. **LLM extract**: each chunk is sent to the model with the scanner's prompt, which fills the fields of every block; block ids keep one record per finding. Blocks that fail loop back to step 4 in smaller chunks.
 6. **Consolidate**: pair base and instances, normalize severity, merge identical records.
@@ -98,7 +97,7 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-Then fill in the keys for the providers you use (`.env` is gitignored — never
+Then fill in the keys for the providers you use (`.env` is gitignored, never
 commit it):
 
 ```env
@@ -140,26 +139,12 @@ Windows. Each run creates `outputs/runs/<timestamp>_<input>_<model>/` with
 `results.json` (the records), `run.json` (config, tokens, cost, warnings) and
 one file per requested export.
 
-## Evaluation
+## Evaluation and experiments
 
-`mulitaminer evaluate <run_dir>` aligns a run's records to a baseline XLSX
-(auto-discovered next to the source PDF, or `--baseline`) and writes
-`evaluation.json` + `evaluation.md` into the run directory: coverage
-(recall/precision, missed/spurious findings) and per-field scores. Metrics are
-derived from the record schema — exact match for numeric/categorical fields,
-set F1 for reference lists, token F1 + ROUGE-L for text (select with
-`--metrics`, list with `--list-metrics`). BERTScore and an NLI contradiction
-check are optional and heavy: `uv sync --group eval`.
-
-## Experiments
-
-`mulitaminer experiment <dir> --models deepseek,ollama --runs 5` runs X
-extractions per (model, report) over a directory of PDFs (scanner
-auto-detected per file), evaluating each against its baseline. Local and
-cloud models run **in parallel** (grouped by the credential/server that
-enforces rate limits); completed runs are checkpointed so an interrupted
-batch resumes where it stopped. Output lands under
-`output_experiments/<scanner>/<model>/run_<n>/`.
+Score a finished run against a ground-truth baseline with `evaluate`, or run
+repeated multi-model batches with automatic scoring and an HTML report with
+`experiment`. Scoring is offline. Both are documented in
+[docs/USAGE.md](docs/USAGE.md).
 
 ## Security Concerns
 

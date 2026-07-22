@@ -35,6 +35,35 @@ uv run mulitaminer extract report.pdf --scanner openvas --model deepseek
 | `--output-dir` | Run artifacts root, default `outputs/runs/` |
 | `--debug` | Also dump layout, blocks and raw LLM traffic |
 
+## evaluate
+
+```bash
+uv run mulitaminer evaluate outputs/runs/<run_dir>
+```
+
+Aligns a run's records to a baseline XLSX (auto-discovered next to the source
+PDF, or `--baseline`) and writes `evaluation.json` + `evaluation.md` into the
+run directory: coverage (recall/precision, missed/spurious findings) and
+per-field scores. Metrics are derived from the record schema: exact match for
+numeric/categorical fields, set F1 for reference lists, token F1 and ROUGE-L for
+text. Select with `--metrics`, list them with `--list-metrics`. BERTScore and an
+NLI contradiction check are optional and heavy: `uv sync --group eval`.
+
+## experiment
+
+```bash
+uv run mulitaminer experiment <dir> --models deepseek,ollama --runs 5
+```
+
+Runs X extractions per (model, report) over a directory of PDFs (scanner
+auto-detected per file), evaluating each against its baseline. Local and cloud
+models run **in parallel** (grouped by the credential or server that enforces
+rate limits). Completed runs are checkpointed, so an interrupted batch resumes
+where it stopped, and a model run on another machine can be dropped into the
+same tree and merged by re-invoking with both model keys (every run cached, no
+API calls). Output lands under `output_experiments/<scanner>/<model>/run_<n>/`,
+plus an auto-generated `report.html`.
+
 ## Run artifacts
 
 Each run creates `outputs/runs/<timestamp>_<input>_<model>/`:

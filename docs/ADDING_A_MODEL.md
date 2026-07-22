@@ -1,7 +1,7 @@
 # Adding a Model
 
 Every provider MulitaMiner talks to speaks the OpenAI-compatible chat API, so
-adding a model means **dropping one JSON file** — no Python. Built-in profiles
+adding a model means **dropping one JSON file**, no Python. Built-in profiles
 live in `src/mulitaminer/configs/llms/`; your own profiles go in any directory
 pointed to by the `MULITAMINER2_LLMS_DIR` environment variable (same plug-in
 mechanism as scanners).
@@ -33,14 +33,14 @@ mechanism as scanners).
 
 Then `uv run mulitaminer extract report.pdf -s openvas -m mistral-large`.
 
-Anthropic's Claude works through its OpenAI-compatible endpoint — see the
+Anthropic's Claude works through its OpenAI-compatible endpoint, see the
 built-in `haiku.json` (`base_url` `https://api.anthropic.com/v1/`, key in
 `CLAUDE_API_KEY`).
 
 ## Local model
 
 Ollama and LM Studio expose an OpenAI-compatible server on localhost and need
-no key — their configs simply **have no `api_key_env` field**. The two
+no key: their configs simply **have no `api_key_env` field**. The two
 built-in profiles (`ollama`, `lmstudio`) are generic: pick the actual model at
 runtime with `--model-name`.
 
@@ -54,7 +54,7 @@ uv run mulitaminer extract report.pdf -s openvas -m lmstudio --model-name my-mod
 
 **The generic profiles are for quick experiments.** They carry one-size
 metadata (32k context, 8k output), and `max_output_tokens` drives chunk
-sizing — so for serious use of a specific local model, give it its own
+sizing, so for serious use of a specific local model, give it its own
 profile with that model's honest numbers. `qwen3.json`:
 
 ```json
@@ -68,7 +68,7 @@ profile with that model's honest numbers. `qwen3.json`:
 }
 ```
 
-The registry is per-model by design — `ollama`/`lmstudio` are deliberate
+The registry is per-model by design: `ollama`/`lmstudio` are deliberate
 catch-alls, not the pattern to follow. Any other OpenAI-compatible server
 works by setting `base_url` to its address.
 
