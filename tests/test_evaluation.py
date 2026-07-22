@@ -134,14 +134,19 @@ def test_fields_unknown_override_rejected():
         field_plans(OpenVASRecord, overrides={"references": "bogus_metric"})
 
 
+def test_fields_references_defaults_to_set_f1_ids_by_name():
+    # No config override: references falls to the by-name default (a set of ids),
+    # not the plain "text" its list[str] type would infer.
+    by_name = {p.name: p.metric for p in field_plans(OpenVASRecord)}
+    assert by_name["references"] == "set_f1_ids"
+
+
 def test_fields_builtin_configs_carry_overrides():
     from mulitaminer.scanner_engine import get_scanner
 
-    assert dict(get_scanner("openvas").field_metric_overrides) == {"references": "set_f1"}
-    assert dict(get_scanner("tenable").field_metric_overrides) == {
-        "references": "set_f1",
-        "cvss": "set_f1",
-    }
+    # references is now a by-name default, not a per-scanner override.
+    assert dict(get_scanner("openvas").field_metric_overrides) == {}
+    assert dict(get_scanner("tenable").field_metric_overrides) == {"cvss": "set_f1"}
 
 
 # --- align -------------------------------------------------------------------

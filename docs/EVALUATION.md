@@ -73,11 +73,14 @@ fits its shape.
 | Fields | Metric | Why |
 | --- | --- | --- |
 | `severity`, `port`, `protocol`, `plugin`, `cvss` (OpenVAS) | `exact` | one correct value; partial credit is meaningless. Case- and format-insensitive (`TCP` = `tcp`, `8019` = `8019.0`). |
-| `references`, `cvss` (Tenable, a list of vectors) | `set_f1` | an unordered list: score precision and recall over the set. `set_f1_ids` normalizes id prefixes (`cve:` / `url:`) first, so formatting alone does not cost points. |
+| `references` | `set_f1_ids` | an unordered set of ids: `set_f1_ids` canonicalizes each item to its identifier (`CVE-...`, `CWE-N`, `BID-N`) and scores the sets, so `cve: CVE-1` vs `CVE-1` is not a miss. The strict `set_f1` (format-sensitive) is recorded alongside so the report shows whether a gap is content or just formatting. |
+| `cvss` (Tenable, a list of vectors) | `set_f1` | an unordered list of vector strings, scored as a set. |
 | `plugin_details`, `instances` (Tenable) | `structural` | a nested object / list of objects: recurse and score each sub-field. |
 | `name`, `description`, `solution`, `impact`, `insight`, `detection_result`, `detection_method`, `product_detection_result`, `log_method`, `instances` (OpenVAS) | `text` | free prose: no single right string, so measure with the text metrics below. |
 
-`exact`, `set_f1`, and `structural` are structural metrics: they always run.
+`exact`, `set_f1`, `set_f1_ids`, and `structural` are structural metrics: they
+always run. `references` gets `set_f1_ids` as a by-name default (a set of ids)
+that a scanner config can still override.
 
 ### What each text metric measures, and why more than one
 

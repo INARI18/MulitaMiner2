@@ -12,7 +12,7 @@
   },
   "severity_map": { "INFO": "LOG" },
   "evaluation": {
-    "field_metrics": { "references": "set_f1", "cvss": "set_f1" },
+    "field_metrics": { "cvss": "set_f1" },
     "key_parts": ["severity", "plugin"]
   }
 }

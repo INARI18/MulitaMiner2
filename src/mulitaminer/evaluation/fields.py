@@ -1,9 +1,10 @@
 """Schema-driven field -> metric mapping.
 
-The evaluator never hardcodes field names: it walks the record model's
-LLM-produced fields and infers the metric kind from each type annotation
-(design spec §5). Per-field overrides come from the scanner config JSON
-("evaluation": {"field_metrics": {...}}) — a scorer name, or "skip".
+The evaluator walks the record model's LLM-produced fields and infers the metric
+kind from each type annotation (design spec §5). Precedence: a scanner config
+override ("evaluation": {"field_metrics": {...}}, a scorer name or "skip") wins,
+then a by-name default (semantic fields whose type does not reveal their intent,
+e.g. references is a set of ids), then type inference.
 
 FieldPlan.metric values:
     "text"        — scored by every selected text scorer (token_f1, ...)
@@ -22,6 +23,10 @@ from pydantic import BaseModel
 
 from mulitaminer.evaluation.scorers import SCORERS
 from mulitaminer.models import VulnRecord, _is_llm_produced
+
+# Defaults by field name for fields whose type does not reveal their semantics.
+# A config override still wins; this only beats plain type inference.
+_NAME_DEFAULTS = {"references": "set_f1_ids"}
 
 
 @dataclass(frozen=True)
@@ -98,6 +103,8 @@ def field_plans(
             continue
         if name in overrides:
             plans.append(FieldPlan(name, overrides[name]))
+        elif name in _NAME_DEFAULTS:
+            plans.append(FieldPlan(name, _NAME_DEFAULTS[name]))
         else:
             plans.append(_plan_for(name, f.annotation))
     return [p for p in plans if p.metric != "skip"]

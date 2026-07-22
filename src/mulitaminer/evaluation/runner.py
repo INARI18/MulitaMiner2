@@ -286,17 +286,17 @@ def _score_pair(
             }
         elif plan.metric == "structural":
             out[plan.name] = {"structural": _structural_score(plan, ext_val, base_val)}
-        else:  # a single scorer name (exact, set_f1, or an override)
+        else:  # a single scorer name (exact, set_f1, set_f1_ids, or an override)
             out[plan.name] = {
                 plan.metric: pair_score(SCORERS[plan.metric], ext_val, base_val)
             }
-            if plan.metric == "set_f1":
-                # Companion content-only view: strict set_f1 measures prompt
-                # formatting adherence; the canonicalized variant answers
-                # "were the right references captured?" regardless of format.
-                out[plan.name]["set_f1_ids"] = pair_score(
-                    SCORERS["set_f1_ids"], ext_val, base_val
-                )
+            if plan.metric in ("set_f1", "set_f1_ids"):
+                # Record both set views for a reference-like field: strict set_f1
+                # measures prompt formatting adherence, the canonical set_f1_ids
+                # answers "were the right references captured?" regardless of
+                # format. The report shows whether a gap is real or just format.
+                for m in ("set_f1", "set_f1_ids"):
+                    out[plan.name][m] = pair_score(SCORERS[m], ext_val, base_val)
     return out
 
 

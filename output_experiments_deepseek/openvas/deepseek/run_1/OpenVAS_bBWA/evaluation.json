@@ -10,7 +10,7 @@
       "token_f1"
     ],
     "unavailable_metrics": {},
-    "generated_at": "2026-07-22T23:13:48+00:00",
+    "generated_at": "2026-07-22T23:19:22+00:00",
     "tool_version": "2.0.0a1"
   },
   "coverage": {
@@ -113,17 +113,6 @@
       }
     },
     "references": {
-      "set_f1": {
-        "mean": 0.8993,
-        "measured_mean": 0.8752,
-        "n_measured": 46,
-        "min": 0.0,
-        "std": 0.2256,
-        "n": 57,
-        "vacuous_n": 11,
-        "fill_rate_extraction": 0.7895,
-        "fill_rate_baseline": 0.807
-      },
       "set_f1_ids": {
         "mean": 0.9508,
         "measured_mean": 0.939,
@@ -317,10 +306,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -430,10 +415,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -543,10 +524,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.6957,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.6957,
             "vacuous": false
@@ -656,10 +633,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.9091,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.9091,
             "vacuous": false
@@ -769,10 +742,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.5,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.5,
             "vacuous": false
@@ -882,10 +851,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -995,10 +960,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -1108,10 +1069,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -1221,10 +1178,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -1334,10 +1287,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -1447,10 +1396,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -1560,10 +1505,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -1673,10 +1614,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -1786,10 +1723,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.6667,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.6667,
             "vacuous": false
@@ -1899,10 +1832,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -2012,10 +1941,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.0,
             "vacuous": false
@@ -2125,10 +2050,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -2238,10 +2159,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -2351,10 +2268,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -2464,10 +2377,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -2577,10 +2486,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -2690,10 +2595,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.75,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.75,
             "vacuous": false
@@ -2803,10 +2704,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -2916,10 +2813,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3029,10 +2922,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3142,10 +3031,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.25,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3255,10 +3140,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3368,10 +3249,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.6667,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3481,10 +3358,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.75,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.875,
             "vacuous": false
@@ -3594,10 +3467,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.6667,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3707,10 +3576,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.8571,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3820,10 +3685,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -3933,10 +3794,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -4046,10 +3903,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.75,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -4159,10 +4012,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -4272,10 +4121,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -4385,10 +4230,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.9412,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.9412,
             "vacuous": false
@@ -4498,10 +4339,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -4611,10 +4448,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -4724,10 +4557,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 0.8571,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 0.8571,
             "vacuous": false
@@ -4837,10 +4666,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -4950,10 +4775,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5063,10 +4884,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5176,10 +4993,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5289,10 +5102,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5402,10 +5211,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5515,10 +5320,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -5628,10 +5429,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5741,10 +5538,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5854,10 +5647,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -5967,10 +5756,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -6080,10 +5865,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -6193,10 +5974,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -6306,10 +6083,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -6419,10 +6192,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
@@ -6532,10 +6301,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": true
@@ -6645,10 +6410,6 @@
           }
         },
         "references": {
-          "set_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
           "set_f1_ids": {
             "score": 1.0,
             "vacuous": false
