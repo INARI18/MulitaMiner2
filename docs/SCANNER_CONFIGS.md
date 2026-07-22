@@ -57,6 +57,7 @@ untouched and keep one worked example.
 | `marker_pattern` | Regex; one match line = one block. Capture group 1 becomes the severity hint. Prefix `(?i)` for case-insensitive |
 | `name_above_marker` | The finding name is the single line above the marker and is pulled into the block |
 | `name_stop_pattern` | A line matching it is never taken as the name |
+| `discard_patterns` | Regexes (case-insensitive); a line the pattern fully matches is dropped before segmentation. For pure report noise (e.g. a `2 Results per Host 7` table cell) that would otherwise pollute a block or its name. Never matches a marker, so block count is unchanged |
 | `context.header_patterns` | Regexes with named groups `sev`/`port`/`proto`; the latest match above a marker becomes that block's context |
 | `context.host_anchor` / `host_line` | Host recovery: `host_line` group 1, matched on the nearest non-blank line above the anchor |
 | `pair` | Structural pairing: `strip_name_suffix`, `by` (fields), `merge_instances`. Always runs |
@@ -80,6 +81,11 @@ headers (`general/CPE-T`); those stay LLM context but never enter the typed
 `context.host_anchor` / `host_line`: the scanned IP sits on the nearest
 non-blank line above `Host scan start`, in the report preamble before any
 marker. Context tracking is the only way to recover it.
+
+`discard_patterns`: OpenVAS PDFs carry a `2 Results per Host <page>` table cell
+that wraps onto the line right after some `NVT:` names; the name-continuation
+rule would otherwise append it to the finding name. The pattern drops that whole
+line so the name stays clean.
 
 `max_vulns_per_chunk: 4`, empirical calibration.
 

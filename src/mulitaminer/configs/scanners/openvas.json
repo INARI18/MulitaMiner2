@@ -3,6 +3,7 @@
   "source": "OPENVAS",
   "max_vulns_per_chunk": 4,
   "marker_pattern": "^\\s*(Critical|High|Medium|Low|Log)\\s+\\(CVSS:",
+  "discard_patterns": ["(?:\\d+\\s+)?Results\\s+per\\s+Host(?:\\s+\\d+)?"],
   "context": {
     "header_patterns": [
       "^(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?(?P<sev>Critical|High|Medium|Low|Log)\\s+(?P<port>\\d+|general)/(?P<proto>[a-zA-Z0-9_-]+)",

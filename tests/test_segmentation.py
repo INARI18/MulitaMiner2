@@ -69,6 +69,25 @@ def test_openvas_preamble_yields_no_block():
     assert "Scan Report" not in blocks[0].text
 
 
+def test_openvas_discard_patterns_strip_noise_lines():
+    # A "Results per Host" table cell wraps between the name and the first
+    # section; discard_patterns drops it so it never pollutes the extracted name.
+    fixture = """\
+1.2.3.4
+Host scan start Tue Jul 15 10:00:00 2026
+High 80/tcp
+High (CVSS: 7.5)
+NVT: phpinfo() output Reporting
+2 RESULTS PER HOST 7
+Summary:
+The file discloses info.
+"""
+    blocks = get_scanner("openvas").segment(fixture)
+    assert len(blocks) == 1  # the noise line neither adds nor removes a block
+    assert "RESULTS PER HOST" not in blocks[0].text.upper()
+    assert blocks[0].text.splitlines()[1] == "NVT: phpinfo() output Reporting"
+
+
 def test_tenable_name_walkback_pulls_name_into_block():
     blocks = get_scanner("tenable").segment(TENABLE_FIXTURE)
     assert len(blocks) == 2

@@ -64,9 +64,15 @@ def _build_segmenter(cfg: dict):
     host_line = re.compile(context["host_line"]) if "host_line" in context else None
     walkback = 1 if cfg.get("name_above_marker") else 0
     name_stop = re.compile(cfg["name_stop_pattern"], re.IGNORECASE) if "name_stop_pattern" in cfg else None
+    # Whole lines that are pure report noise (e.g. a "2 Results per Host 7" table
+    # cell that wraps between the finding name and its first section), dropped
+    # before segmentation so they never pollute a block or its extracted name.
+    discard = [re.compile(p, re.IGNORECASE) for p in cfg.get("discard_patterns", [])]
 
     def segment(text: str) -> list[Block]:
         lines = text.splitlines()
+        if discard:
+            lines = [ln for ln in lines if not any(p.fullmatch(ln.strip()) for p in discard)]
         host = port = proto = None
         last_nonblank: str | None = None
         markers: list[tuple[int, dict]] = []
