@@ -7,10 +7,10 @@ these are cases where the report (and the extraction) carry an instance the
 baseline does not.
 
 To reproduce: run `evaluate` and read `coverage.spurious_detail` in
-`evaluation.json`; entries with `category: "surplus"` and `same_key: false` are
-extraction instances (distinct composite key) of a finding whose other instance
-already matched the baseline. Confirm each against the report by segmenting it
-(`mulitaminer segment <report> -s <scanner>`).
+`evaluation.json`; an `invention` entry with a high `best_similarity` is a
+finding the report has but the baseline does not (often another port/instance of
+a finding the baseline already lists once). Confirm each against the report by
+segmenting it (`mulitaminer segment <report> -s <scanner>`).
 
 ## Open items
 

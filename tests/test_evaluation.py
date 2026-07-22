@@ -208,40 +208,33 @@ def _cat(ext, base, parts=OV_PARTS):
             for d in classify_spurious(ext, base, res, parts)}
 
 
-def test_classify_spurious_invention():
+def test_classify_spurious_invention_novel():
+    # A finding with no baseline counterpart of its own.
     ext = [{"Name": "A thing"}, {"Name": "Ghost finding xyz"}]
     base = [{"Name": "A thing"}]
     assert _cat(ext, base, ()) == {1: "invention"}
 
 
-def test_classify_spurious_name_mismatch():
-    # Same finding, extracted name polluted by segmentation noise: its free
-    # baseline twin scores below threshold.
-    ext = [{"Name": "phpinfo output reporting 2 results per host 7"}]
-    base = [{"Name": "phpinfo output reporting"}]
-    assert _cat(ext, base, ()) == {0: "name_mismatch"}
-
-
-def test_classify_spurious_surplus_distinct_instance():
-    # Two report instances on different ports, one baseline row: surplus, but a
-    # distinct instance (different key), not a true duplicate.
+def test_classify_spurious_invention_distinct_instance():
+    # A second port of a finding the baseline has once: relative to the baseline
+    # it is an extra the baseline lacks (a different key, so not a duplicate).
     ext = [{"Name": "Weak Sig", "port": 25, "protocol": "tcp"},
            {"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
     base = [{"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
-    res = align(ext, base, OV_PARTS)
-    d = {s["extraction_index"]: s for s in classify_spurious(ext, base, res, OV_PARTS)}
-    assert d[0]["category"] == "surplus" and d[0]["same_key"] is False
+    d = {s["extraction_index"]: s for s in
+         classify_spurious(ext, base, align(ext, base, OV_PARTS), OV_PARTS)}
+    assert d[0]["category"] == "invention"
+    assert d[0]["best_similarity"] >= 0.8  # high: same finding, other port
 
 
-def test_classify_spurious_surplus_true_duplicate():
-    # Two extractions with the SAME key: surplus flagged as a true duplicate.
+def test_classify_spurious_duplicate():
+    # Same key extracted twice, baseline has it once: the extra is a duplicate.
     ext = [{"Name": "X", "port": 80, "protocol": "tcp"},
            {"Name": "X", "port": 80, "protocol": "tcp"}]
     base = [{"Name": "X", "port": 80, "protocol": "tcp"}]
-    res = align(ext, base, OV_PARTS)
-    surplus = [s for s in classify_spurious(ext, base, res, OV_PARTS)
-               if s["category"] == "surplus"]
-    assert len(surplus) == 1 and surplus[0]["same_key"] is True
+    cats = [s["category"] for s in
+            classify_spurious(ext, base, align(ext, base, OV_PARTS), OV_PARTS)]
+    assert cats == ["duplicate"]
 
 
 def test_align_empty_sides():
