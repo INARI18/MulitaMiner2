@@ -1,4 +1,4 @@
-"""HTML report builds from a fabricated experiment tree, offline and self-contained."""
+"""Interactive HTML report builds from a fabricated experiment tree, self-contained."""
 import json
 from pathlib import Path
 
@@ -20,9 +20,13 @@ def _fabricate(root: Path) -> None:
             (rd / "evaluation.json").write_text(json.dumps({
                 "fields": {
                     "description": {"token_f1": {"measured_mean": field_mean[model] + 0.01 * n,
-                                                 "mean": 0.9, "n_measured": 30}},
-                    "severity": {"exact": {"measured_mean": 0.97, "mean": 0.97, "n_measured": 30}},
-                    "references": {"set_f1": {"measured_mean": 0.8, "mean": 0.9, "n_measured": 20}},
+                                                 "mean": 0.9, "n_measured": 30,
+                                                 "fill_rate_baseline": 1.0,
+                                                 "fill_rate_extraction": 0.95}},
+                    "severity": {"exact": {"measured_mean": 0.97, "mean": 0.97, "n_measured": 30,
+                                           "fill_rate_baseline": 1.0, "fill_rate_extraction": 1.0}},
+                    "references": {"set_f1": {"measured_mean": 0.8, "mean": 0.9, "n_measured": 20,
+                                              "fill_rate_baseline": 0.9, "fill_rate_extraction": 0.6}},
                 }
             }), encoding="utf-8")
             runs.append({
@@ -30,7 +34,7 @@ def _fabricate(root: Path) -> None:
                 "run_dir": str(rd), "status": "ok",
                 "duration_s": 300.0 + 10 * n, "cost_usd": 0.015,
                 "coverage": {"recall": rec, "precision": prec, "matched": 34,
-                             "baseline_count": 34},
+                             "baseline_count": 34, "missed": [], "spurious": []},
             })
     manifest = {
         "config": {"reports": ["Report.pdf"], "models": ["deepseek", "ollama"],
@@ -49,17 +53,15 @@ def test_report_builds_and_is_self_contained(tmp_path):
     assert out == tmp_path / "report.html"
     doc = out.read_text(encoding="utf-8")
 
-    # Structure and content.
+    # Interactive dashboard: embedded data + inline renderers + the key views.
     assert "MulitaMiner" in doc and "Experiment report" in doc
-    assert "Recall per model" in doc and "Measured mean per field" in doc
-    assert "Cost per run" in doc and "Active seconds" in doc
+    assert "const DATA=" in doc and "<script>" in doc
+    assert "Hallucination × Omission" in doc and "Qualidade por campo" in doc
     assert "deepseek" in doc and "ollama" in doc
-    assert "<svg" in doc and "<circle" in doc  # dot plot rendered
 
-    # Self-contained: no external resource references, no scripts.
-    assert "http://" not in doc and "https://" not in doc
-    assert "<script" not in doc.lower()
-    assert "src=" not in doc  # no external images/assets
+    # Self-contained: no external resource loads (SVG namespace URI is fine).
+    for bad in ("src=", "<link", "@import", "cdn.", "googleapis", "http://localhost"):
+        assert bad not in doc
 
 
 def test_report_handles_missing_coverage(tmp_path):
