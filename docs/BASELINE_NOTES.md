@@ -6,7 +6,7 @@ block-anchored, so a record only exists when the report has a matching block;
 these are cases where the report (and the extraction) carry an instance the
 baseline does not.
 
-To reproduce: run `evaluate` and read `coverage.spurious_detail` in
+To reproduce: run `evaluate` and read `coverage.false_positive_detail` in
 `evaluation.json`; an `invention` entry with a high `best_similarity` is a
 finding the report has but the baseline does not (often another port/instance of
 a finding the baseline already lists once). Confirm each against the report by

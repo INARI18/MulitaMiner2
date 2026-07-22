@@ -47,11 +47,11 @@ protocol                  1.000  -       -           -           -
 - **detection_method**: SSL/TLS: Certificate Expired (0.14); SSL/TLS: SSLv3 Protocol CBC Cipher Suites Information Disclosure Vulnerability (POODLE) (0.35); Telnet Unencrypted Cleartext Login (0.4); SSL/TLS: Deprecated SSLv2 and SSLv3 Protocol Detection (0.478); SSL/TLS: Report Weak Cipher Suites (0.483)
 - **product_detection_result**: Distributed Ruby (dRuby/DRb) Multiple Remote Code Execution Vulnerabilities (0.0); vsftpd Compromised Source Packages Backdoor Vulnerability (0.0); vsftpd Compromised Source Packages Backdoor Vulnerability (0.0); MySQL / MariaDB weak password (0.667); TWiki Cross-Site Request Forgery Vulnerability - Sep10 (0.667)
 
-## Missed (in baseline, not extracted)
+## False negatives (in baseline, not extracted)
 
 - phpinfo() output Reporting
 
-## Spurious (extracted, not in baseline)
+## False positives (extracted, not in baseline)
 
 - phpinfo() output Reporting 2 RESULTS PER HOST 7
 - SSL/TLS: Certificate Signed Using A Weak Signature Algorithm

@@ -104,8 +104,8 @@ def cell_score(ek: str, en: str, bk: str, bn: str) -> float:
 @dataclass
 class AlignmentResult:
     pairs: list[tuple[int, int]]  # (extraction_index, baseline_index)
-    unmatched_extraction: list[int]  # spurious findings
-    unmatched_baseline: list[int]  # missed findings
+    unmatched_extraction: list[int]  # false-positive findings
+    unmatched_baseline: list[int]  # false-negative findings
     debug_rows: list[dict]
 
 
@@ -168,16 +168,16 @@ def align(
     )
 
 
-def classify_spurious(
+def classify_false_positives(
     ext_rows: list[dict],
     base_rows: list[dict],
     alignment: AlignmentResult,
     key_parts: tuple[str, ...] = (),
 ) -> list[dict]:
-    """Classify each unmatched extraction ('spurious'):
+    """Classify each unmatched extraction (a 'false positive'):
 
-    - duplicate: shares its composite key with an already-matched extraction (or
-      an earlier spurious), i.e. the same finding extracted more than once.
+    - duplicate: shares its composite key with an already-matched extraction, so
+      a finding that IS in the baseline was extracted more than once.
     - invention: any other unmatched extraction, a finding the baseline has no
       counterpart for (relative to the baseline, not a claim it was fabricated).
 
@@ -190,7 +190,6 @@ def classify_spurious(
     ext_keys = [composite_key(r, key_parts) for r in ext_rows]
     base_keys = [composite_key(r, key_parts) for r in base_rows]
     matched_keys = {ext_keys[i] for i, _ in alignment.pairs}
-    seen_invention_keys: set[str] = set()
 
     out: list[dict] = []
     for i in sorted(alignment.unmatched_extraction):
@@ -199,11 +198,7 @@ def classify_spurious(
              for k in range(len(base_rows))),
             default=(0.0, None),
         )
-        if ext_keys[i] in matched_keys or ext_keys[i] in seen_invention_keys:
-            category = "duplicate"
-        else:
-            category = "invention"
-            seen_invention_keys.add(ext_keys[i])
+        category = "duplicate" if ext_keys[i] in matched_keys else "invention"
         out.append({
             "extraction_index": i,
             "name": str(_get(ext_rows[i], "Name") or ""),

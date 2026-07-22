@@ -238,15 +238,16 @@ def evaluate(
     results_path = Path(result.meta["results"])
     paths = write_reports(result, results_path.parent)
     cov = result.coverage
+    fn, fp = len(cov["false_negatives"]), len(cov["false_positives"])
     ui.echo(
         f"\nCoverage: {cov['matched']}/{cov['baseline_count']} matched "
         f"(recall {cov['recall']:.3f}, precision {cov['precision']:.3f}); "
-        f"{len(cov['missed'])} missed, {len(cov['spurious'])} spurious",
+        f"{fn} false negative{'s' * (fn != 1)}, {fp} false positive{'s' * (fp != 1)}",
         style="bold",
     )
-    if cov.get("spurious_kinds"):
-        kinds = ", ".join(f"{n} {k}" for k, n in sorted(cov["spurious_kinds"].items()))
-        ui.echo(f"  spurious breakdown: {kinds}")
+    if cov.get("false_positive_kinds"):
+        kinds = ", ".join(f"{n} {k}" for k, n in sorted(cov["false_positive_kinds"].items()))
+        ui.echo(f"  false-positive breakdown: {kinds}")
     ui.echo(f"\n{summary_table(result)}\n")
     for kind, path in paths.items():
         ui.echo(f"{kind}: {path}")

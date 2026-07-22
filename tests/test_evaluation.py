@@ -2,7 +2,7 @@
 import pytest
 
 from mulitaminer.evaluation.align import (
-    align, classify_spurious, composite_key, key_parts_for_source,
+    align, classify_false_positives, composite_key, key_parts_for_source,
 )
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
@@ -179,7 +179,7 @@ def test_align_duplicate_names_resolved_by_composite():
     assert sorted(res.pairs) == [(0, 1), (1, 0)]
 
 
-def test_align_surplus_extraction_is_spurious():
+def test_align_surplus_extraction_unmatched():
     ext = [{"Name": "A thing here"}, {"Name": "Ghost finding xyz"}]
     base = [{"Name": "A thing here"}]
     res = align(ext, base)
@@ -205,35 +205,35 @@ def test_align_services_no_special_case():
 def _cat(ext, base, parts=OV_PARTS):
     res = align(ext, base, parts)
     return {d["extraction_index"]: d["category"]
-            for d in classify_spurious(ext, base, res, parts)}
+            for d in classify_false_positives(ext, base, res, parts)}
 
 
-def test_classify_spurious_invention_novel():
+def test_classify_false_positives_invention_novel():
     # A finding with no baseline counterpart of its own.
     ext = [{"Name": "A thing"}, {"Name": "Ghost finding xyz"}]
     base = [{"Name": "A thing"}]
     assert _cat(ext, base, ()) == {1: "invention"}
 
 
-def test_classify_spurious_invention_distinct_instance():
+def test_classify_false_positives_invention_distinct_instance():
     # A second port of a finding the baseline has once: relative to the baseline
     # it is an extra the baseline lacks (a different key, so not a duplicate).
     ext = [{"Name": "Weak Sig", "port": 25, "protocol": "tcp"},
            {"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
     base = [{"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
     d = {s["extraction_index"]: s for s in
-         classify_spurious(ext, base, align(ext, base, OV_PARTS), OV_PARTS)}
+         classify_false_positives(ext, base, align(ext, base, OV_PARTS), OV_PARTS)}
     assert d[0]["category"] == "invention"
     assert d[0]["best_similarity"] >= 0.8  # high: same finding, other port
 
 
-def test_classify_spurious_duplicate():
+def test_classify_false_positives_duplicate():
     # Same key extracted twice, baseline has it once: the extra is a duplicate.
     ext = [{"Name": "X", "port": 80, "protocol": "tcp"},
            {"Name": "X", "port": 80, "protocol": "tcp"}]
     base = [{"Name": "X", "port": 80, "protocol": "tcp"}]
     cats = [s["category"] for s in
-            classify_spurious(ext, base, align(ext, base, OV_PARTS), OV_PARTS)]
+            classify_false_positives(ext, base, align(ext, base, OV_PARTS), OV_PARTS)]
     assert cats == ["duplicate"]
 
 
@@ -262,7 +262,7 @@ def mini_run(tmp_path):
             name="Weak Cipher Suites", severity="MEDIUM", cvss=5.3, port=443, protocol="tcp",
             description=["Server accepts weak TLS ciphers."],
         ),
-        OpenVASRecord(  # spurious: not in the baseline
+        OpenVASRecord(  # false positive: not in the baseline
             name="Ghost Finding", severity="LOW", cvss=2.0, port=21, protocol="tcp",
         ),
     ]
@@ -301,8 +301,8 @@ def test_orchestration_end_to_end(mini_run):
 
     res = evaluate_run(mini_run)
     assert res.coverage["matched"] == 2
-    assert res.coverage["missed"] == ["Missed Finding"]
-    assert res.coverage["spurious"] == ["Ghost Finding"]
+    assert res.coverage["false_negatives"] == ["Missed Finding"]
+    assert res.coverage["false_positives"] == ["Ghost Finding"]
     assert res.coverage["recall"] == pytest.approx(2 / 3, abs=1e-4)
     assert res.coverage["precision"] == pytest.approx(2 / 3, abs=1e-4)
     # exact fields perfect on the matched pairs

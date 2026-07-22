@@ -59,10 +59,12 @@ def _aggregate(experiment_dir: Path) -> dict:
         if cv:
             cov[key]["recall"].append(cv["recall"])
             cov[key]["precision"].append(cv["precision"])
-            cov[key]["missed"].append(len(cv.get("missed", [])))
-            cov[key]["spurious"].append(len(cv.get("spurious", [])))
+            fn = len(cv.get("false_negatives", cv.get("missed", [])))
+            fp = len(cv.get("false_positives", cv.get("spurious", [])))
+            cov[key]["false_negatives"].append(fn)
+            cov[key]["false_positives"].append(fp)
             bc = cv.get("baseline_count") or 0
-            cov[key]["absent"].append(len(cv.get("missed", [])) / bc if bc else 0.0)
+            cov[key]["absent"].append(fn / bc if bc else 0.0)
         if "cost_usd" in r:
             cov[key]["cost"].append(r["cost_usd"])
         if "duration_s" in r:
@@ -100,7 +102,8 @@ def _aggregate(experiment_dir: Path) -> dict:
         return [v for (t, m), c in cov.items() if m == model for v in c[key]]
 
     overall = {m: {k: _ms(pooled(m, k)) for k in
-                   ("recall", "precision", "missed", "spurious", "cost", "duration")}
+                   ("recall", "precision", "false_negatives", "false_positives",
+                    "cost", "duration")}
                for m in models}
     by_target = {t: {m: {"recall": _ms(cov[(t, m)]["recall"]),
                          "precision": _ms(cov[(t, m)]["precision"])}
@@ -366,13 +369,13 @@ _BODY = r"""
 <section id="errors">
   <div class="kick">Errors &amp; cost</div>
   <h2>Where coverage fails, and at what cost</h2>
-  <p class="sub">Per run, against the baseline (the gold): missed = baseline vulns not recovered
-     (false negatives); false positives = extracted records with no baseline match.</p>
+  <p class="sub">Per run, against the baseline (the gold): false negatives = baseline vulns not
+     recovered; false positives = extracted records with no baseline match.</p>
   <div class="card" id="paretoCard" style="display:none"><div class="card-t">Cost vs recall · Pareto (mean/run)</div>
     <div id="pareto"></div><div class="legend" id="paretoLegend"></div></div>
-  <div class="card"><div class="card-t">Missed vs false positives by model (mean/run)</div>
+  <div class="card"><div class="card-t">False negatives vs false positives by model (mean/run)</div>
     <div id="err"></div>
-    <div class="legend"><span><span class="sw" style="background:var(--accent)"></span>Missed (FN)</span>
+    <div class="legend"><span><span class="sw" style="background:var(--accent)"></span>False negatives (FN)</span>
       <span><span class="sw" style="background:var(--muted)"></span>False positives (FP)</span></div></div>
   <div class="grid2" id="cost" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"></div>
 </section>
@@ -515,8 +518,8 @@ else if(M.length===1){const m=ranked[0],o=OV[m],c=MC[m];
     <div class="sub">mean recall · ranking view appears with 2+ models</div></div>`;
   el('vbTitle').textContent='Model summary · mean across reports (±std)';
   const rows=[['recall',pct(o.recall.m),'±'+pct(o.recall.s)],['precision',pct(o.precision.m),'±'+pct(o.precision.s)],
-    ['missed / run',(o.missed.m??0).toFixed(1),'±'+(o.missed.s??0).toFixed(1)],
-    ['false pos / run',(o.spurious.m??0).toFixed(1),'±'+(o.spurious.s??0).toFixed(1)],
+    ['false neg / run',(o.false_negatives.m??0).toFixed(1),'±'+(o.false_negatives.s??0).toFixed(1)],
+    ['false pos / run',(o.false_positives.m??0).toFixed(1),'±'+(o.false_positives.s??0).toFixed(1)],
     ['cost / run',o.cost.m!=null?'$'+o.cost.m.toFixed(4):'-',''],
     ['time / run',o.duration.m!=null?fmtDur(o.duration.m):'-','']];
   el('verdictBars').innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:.7rem .9rem">'+
@@ -632,8 +635,8 @@ if(M.length>1){el('paretoCard').style.display='';
     s+=`<circle cx="${X(c)}" cy="${Y(r)}" r="8" fill="${MC[m]}" fill-opacity=".85" stroke="${MC[m]}" data-tip="${esc(m+'\ncost $'+c.toFixed(4)+'/run · recall '+f3(r))}"/><text x="${X(c)+11}" y="${Y(r)+3}" class="ylab" style="font-size:10px">${esc(m)}</text>`;});
   el('pareto').innerHTML=s+'</svg>';legend('paretoLegend',M.map(m=>[m,MC[m]]));}
 el('err').innerHTML=hBars(M.map(m=>({label:m,bars:[
-  {v:OV[m].missed.m??0,color:'var(--accent)',tip:`${m} · missed ${(OV[m].missed.m??0).toFixed(1)}/run`},
-  {v:OV[m].spurious.m??0,color:'var(--muted)',tip:`${m} · false positives ${(OV[m].spurious.m??0).toFixed(1)}/run`}]})));
+  {v:OV[m].false_negatives.m??0,color:'var(--accent)',tip:`${m} · false negatives ${(OV[m].false_negatives.m??0).toFixed(1)}/run`},
+  {v:OV[m].false_positives.m??0,color:'var(--muted)',tip:`${m} · false positives ${(OV[m].false_positives.m??0).toFixed(1)}/run`}]})));
 el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
   return `<div class="card" style="margin:0"><div class="card-t" style="margin:0 0 .4rem">${esc(m)}</div>
     <div style="font:700 1.05rem ui-monospace,monospace;color:${MC[m]}">${c?'$'+c.toFixed(4):'-'}</div>

@@ -19,7 +19,7 @@ import pandas as pd
 from rapidfuzz import fuzz
 
 from mulitaminer.evaluation.align import (
-    AlignmentResult, align, classify_spurious, key_parts_for_source,
+    AlignmentResult, align, classify_false_positives, key_parts_for_source,
 )
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import (
@@ -412,10 +412,10 @@ def evaluate_run(
         {c for c in (base_rows[0] if base_rows else {}) if c.lower() not in model_fields}
     )
 
-    spurious_detail = classify_spurious(ext_rows, base_rows, alignment, key_parts)
-    spurious_kinds: dict[str, int] = {}
-    for s in spurious_detail:
-        spurious_kinds[s["category"]] = spurious_kinds.get(s["category"], 0) + 1
+    fp_detail = classify_false_positives(ext_rows, base_rows, alignment, key_parts)
+    fp_kinds: dict[str, int] = {}
+    for s in fp_detail:
+        fp_kinds[s["category"]] = fp_kinds.get(s["category"], 0) + 1
 
     coverage = {
         "baseline_count": len(base_rows),
@@ -423,10 +423,10 @@ def evaluate_run(
         "matched": len(alignment.pairs),
         "recall": round(len(alignment.pairs) / len(base_rows), 4) if base_rows else 0.0,
         "precision": round(len(alignment.pairs) / len(ext_rows), 4) if ext_rows else 0.0,
-        "missed": [_name(base_rows[j]) for j in alignment.unmatched_baseline],
-        "spurious": [_name(ext_rows[i]) for i in alignment.unmatched_extraction],
-        "spurious_kinds": spurious_kinds,
-        "spurious_detail": spurious_detail,
+        "false_negatives": [_name(base_rows[j]) for j in alignment.unmatched_baseline],
+        "false_positives": [_name(ext_rows[i]) for i in alignment.unmatched_extraction],
+        "false_positive_kinds": fp_kinds,
+        "false_positive_detail": fp_detail,
     }
 
     meta = {

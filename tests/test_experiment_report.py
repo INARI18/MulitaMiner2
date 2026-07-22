@@ -37,7 +37,8 @@ def _fabricate(root: Path) -> None:
                 "run_dir": str(rd), "status": "ok",
                 "duration_s": 300.0 + 10 * n, "cost_usd": 0.015,
                 "coverage": {"recall": rec, "precision": prec, "matched": 34,
-                             "baseline_count": 34, "missed": [], "spurious": []},
+                             "baseline_count": 34, "false_negatives": [],
+                             "false_positives": []},
             })
     manifest = {
         "config": {"reports": ["Report.pdf"], "models": ["deepseek", "ollama"],

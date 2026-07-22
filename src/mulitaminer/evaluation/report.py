@@ -112,12 +112,12 @@ def render_markdown(result: EvalResult) -> str:
     if worst_sections:
         lines += ["## Worst pairs per field", "", *worst_sections, ""]
 
-    if cov["missed"]:
-        lines += ["## Missed (in baseline, not extracted)", ""]
-        lines += [f"- {n}" for n in cov["missed"]] + [""]
-    if cov["spurious"]:
-        lines += ["## Spurious (extracted, not in baseline)", ""]
-        lines += [f"- {n}" for n in cov["spurious"]] + [""]
+    if cov["false_negatives"]:
+        lines += ["## False negatives (in baseline, not extracted)", ""]
+        lines += [f"- {n}" for n in cov["false_negatives"]] + [""]
+    if cov["false_positives"]:
+        lines += ["## False positives (extracted, not in baseline)", ""]
+        lines += [f"- {n}" for n in cov["false_positives"]] + [""]
 
     notes = []
     if result.meta.get("reannotated_from"):

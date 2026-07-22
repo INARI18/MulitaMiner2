@@ -43,7 +43,7 @@ uv run mulitaminer evaluate outputs/runs/<run_dir>
 
 Aligns a run's records to a baseline XLSX (auto-discovered next to the source
 PDF, or `--baseline`) and writes `evaluation.json` + `evaluation.md` into the
-run directory: coverage (recall/precision, missed/spurious findings) and
+run directory: coverage (recall/precision, false negatives/false positives) and
 per-field scores. Metrics are derived from the record schema: exact match for
 numeric/categorical fields, set F1 for reference lists, token F1 and ROUGE-L for
 text. Select with `--metrics`, list them with `--list-metrics`. BERTScore and an
