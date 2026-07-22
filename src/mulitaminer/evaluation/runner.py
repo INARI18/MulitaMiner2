@@ -373,16 +373,6 @@ def evaluate_run(
     )
     selected_text = resolve_metrics(metrics)
 
-    # Apply the scanner's severity normalization (e.g. INFO->LOG) to both
-    # sides: pipeline output is already mapped; the baseline is not. Scoring
-    # the by-design tier rename as a mismatch would be unfair, and it would
-    # also perturb the tenable composite key (which includes severity).
-    if profile and profile.severity_map:
-        sev_map = {k.upper(): v for k, v in profile.severity_map}
-        for row in (*ext_rows, *base_rows):
-            sev = row.get("severity")
-            if isinstance(sev, str) and sev.upper() in sev_map:
-                row["severity"] = sev_map[sev.upper()]
     key_parts = profile.key_parts if profile else ()
     alignment = align(ext_rows, base_rows, key_parts, threshold)
 

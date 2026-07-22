@@ -61,8 +61,8 @@ def test_tenable_base_and_instances_blocks_pair_up_always():
     assert merged[0].name == "HSTS Missing"
 
 
-def test_tenable_info_normalizes_to_log_after_pairing():
+def test_tenable_keeps_native_info_severity():
     rec = _tn("Info finding")
     rec.severity = "INFO"
     merged, _ = consolidate_tenable([rec])
-    assert merged[0].severity == "LOG"
+    assert merged[0].severity == "INFO"  # each scanner keeps its own tier

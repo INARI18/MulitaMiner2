@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
-# Informational tier: OpenVAS emits LOG, Tenable INFO; consolidation maps INFO->LOG.
+# Informational tier: OpenVAS emits LOG, Tenable INFO; each scanner keeps its own.
 Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO"]
 
 # Marks fields the LLM is NOT responsible for producing; the pipeline fills

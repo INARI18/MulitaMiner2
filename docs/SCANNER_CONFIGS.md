@@ -61,7 +61,6 @@ untouched and keep one worked example.
 | `context.header_patterns` | Regexes with named groups `sev`/`port`/`proto`; the latest match above a marker becomes that block's context |
 | `context.host_anchor` / `host_line` | Host recovery: `host_line` group 1, matched on the nearest non-blank line above the anchor |
 | `pair` | Structural pairing: `strip_name_suffix`, `by` (fields), `merge_instances`. Always runs |
-| `severity_map` | Post-pairing normalization, e.g. `{"INFO": "LOG"}` |
 
 ## OpenVAS (`openvas.json`)
 
@@ -108,9 +107,6 @@ climbs past a lone `(1)` or `Instances` fragment to the real name.
 `Instances (N)` suffix stripped) and the fields in `by` (`plugin`, Tenable's
 stable numeric ID). Pairing is structure, not deduplication; it always runs.
 Without it every finding is two broken halves.
-
-`severity_map INFO to LOG`: both scanners share one informational tier. A
-Tenable record is INFO before pairing, LOG after.
 
 `max_vulns_per_chunk: 3`, empirical calibration.
 

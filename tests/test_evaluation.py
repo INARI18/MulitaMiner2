@@ -456,7 +456,7 @@ def test_cli_evaluate_list_metrics():
         assert name in result.output
 
 
-def test_orchestration_severity_map_applied_to_baseline(tmp_path):
+def test_orchestration_tenable_info_severity_matches_baseline(tmp_path):
     import json as _json
 
     import pandas as pd
@@ -464,7 +464,7 @@ def test_orchestration_severity_map_applied_to_baseline(tmp_path):
     from mulitaminer.evaluation import evaluate_run
 
     records = [
-        TenableRecord(name="Some Info Finding", severity="LOG", plugin=1234).model_dump(
+        TenableRecord(name="Some Info Finding", severity="INFO", plugin=1234).model_dump(
             mode="json", by_alias=True
         )
     ]
@@ -474,7 +474,7 @@ def test_orchestration_severity_map_applied_to_baseline(tmp_path):
     ).to_excel(tmp_path / "base.xlsx", index=False)
 
     res = evaluate_run(tmp_path / "results.json", baseline=tmp_path / "base.xlsx")
-    # INFO->LOG is the scanner's by-design normalization, not a mismatch.
+    # Tenable keeps its native INFO tier on both sides; no normalization needed.
     assert res.fields["severity"]["exact"]["mean"] == 1.0
 
 

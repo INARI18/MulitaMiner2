@@ -10,7 +10,6 @@
     "by": ["plugin"],
     "merge_instances": true
   },
-  "severity_map": { "INFO": "LOG" },
   "evaluation": {
     "field_metrics": { "cvss": "set_f1" },
     "key_parts": ["severity", "plugin"]

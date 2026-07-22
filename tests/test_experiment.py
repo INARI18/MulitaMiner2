@@ -36,10 +36,10 @@ def _inject_fake_client(monkeypatch):
 
 
 def test_bucket_key_separates_local_and_api():
-    # deepseek keyed by its API env; ollama (local) keyed by its base_url.
+    # deepseek keyed by its API env; nuextract (local) keyed by its base_url.
     assert bucket_key("deepseek") == "DEEPSEEK_API_KEY"
-    assert bucket_key("ollama").startswith("http")
-    assert bucket_key("deepseek") != bucket_key("ollama")
+    assert bucket_key("nuextract").startswith("http")
+    assert bucket_key("deepseek") != bucket_key("nuextract")
 
 
 def test_experiment_layout_and_manifest(tmp_path):
@@ -80,22 +80,22 @@ def test_experiment_skips_keyless_model(tmp_path, monkeypatch):
     # model in the same batch still runs.
     monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
     config = ExperimentConfig(
-        reports=[OPENVAS_PDF], models=["deepseek", "ollama"], runs=1,
+        reports=[OPENVAS_PDF], models=["deepseek", "nuextract"], runs=1,
         scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
     )
     result = run_experiment(config)
     assert [s["model"] for s in result["skipped_models"]] == ["deepseek"]
-    assert {r["model"] for r in result["records"]} == {"ollama"}
+    assert {r["model"] for r in result["records"]} == {"nuextract"}
 
 
 def test_experiment_parallel_buckets_and_active_time(tmp_path):
     config = ExperimentConfig(
-        reports=[OPENVAS_PDF], models=["deepseek", "ollama"], runs=1,
+        reports=[OPENVAS_PDF], models=["deepseek", "nuextract"], runs=1,
         scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
     )
     result = run_experiment(config)
     models_done = {r["model"] for r in result["records"] if r["status"] == "ok"}
-    assert models_done == {"deepseek", "ollama"}
+    assert models_done == {"deepseek", "nuextract"}
     # active_seconds is the sum of run durations, not wall clock.
     manifest = json.loads((tmp_path / "exp" / "experiment.json").read_text(encoding="utf-8"))
     per_run = [r["duration_s"] for r in manifest["runs"] if r["status"] == "ok"]

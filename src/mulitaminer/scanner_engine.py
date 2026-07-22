@@ -49,11 +49,6 @@ class ScannerProfile:
     # Alignment composite-key parts beyond the name (config "evaluation.key_parts",
     # e.g. ("port", "protocol")); how this scanner's findings are disambiguated.
     key_parts: tuple[str, ...] = ()
-    # Severity tier normalization (config "severity_map", e.g. INFO->LOG).
-    # Exposed so evaluation can apply the same mapping to baseline rows —
-    # the pipeline output is already mapped, and scoring INFO vs LOG as a
-    # mismatch would penalize a by-design normalization.
-    severity_map: tuple[tuple[str, str], ...] = ()
 
     def prompt(self) -> str:
         return self.prompt_path.read_text(encoding="utf-8")
@@ -136,7 +131,6 @@ def _build_segmenter(cfg: dict):
 def _build_consolidator(cfg: dict):
     pair = cfg.get("pair")
     strip_suffix = re.compile(pair["strip_name_suffix"], re.IGNORECASE) if pair and "strip_name_suffix" in pair else None
-    severity_map = cfg.get("severity_map") or {}
 
     def _pair_key(record: VulnRecord):
         name = record.name or ""
@@ -158,10 +152,6 @@ def _build_consolidator(cfg: dict):
             records, lines = dedupe(records, _pair_key,
                                     merge_instances=bool(pair.get("merge_instances")))
             log_lines += lines
-        for record in records:
-            mapped = severity_map.get(record.severity)
-            if mapped:
-                record.severity = mapped
         records, lines = dedupe(records, _identity_key)
         return records, log_lines + lines
 
@@ -202,7 +192,6 @@ def load_profile(config_path: Path) -> ScannerProfile:
                 (cfg.get("evaluation") or {}).get("field_metrics", {}).items()
             ),
             key_parts=tuple((cfg.get("evaluation") or {}).get("key_parts", [])),
-            severity_map=tuple((cfg.get("severity_map") or {}).items()),
         )
     except KeyError as exc:
         raise ValueError(f"Scanner config {config_path} is missing field {exc}") from exc
