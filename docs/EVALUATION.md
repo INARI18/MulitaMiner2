@@ -64,18 +64,44 @@ recover (or recovered under a name too different to align).
 
 ## Per-field metrics
 
-Only matched pairs are scored per field. Each field's metric is derived from the
-record schema:
+Only matched pairs are scored, field by field. Each field's metric is derived
+from its type in the record schema, so a field is measured with the tool that
+fits its shape.
 
-- **structural** (always on): `exact` for numeric/categorical fields, `set_f1`
-  for reference lists (`set_f1_ids` normalizes id prefixes first).
-- **text** (select with `--metrics`, list with `--list-metrics`): `token_f1`,
-  `rouge_l`, and the heavy optional `bertscore` and `nli` (a contradiction check
-  that flags an extraction stating the opposite of the baseline). The last two
-  need `uv sync --group eval`.
+### Which metric each field gets
 
-The HTML report lists whichever of these a run actually scored, so `bertscore`
-and `nli` appear once you evaluate with them.
+| Fields | Metric | Why |
+| --- | --- | --- |
+| `severity`, `port`, `protocol`, `plugin`, `cvss` (OpenVAS) | `exact` | one correct value; partial credit is meaningless. Case- and format-insensitive (`TCP` = `tcp`, `8019` = `8019.0`). |
+| `references`, `cvss` (Tenable, a list of vectors) | `set_f1` | an unordered list: score precision and recall over the set. `set_f1_ids` normalizes id prefixes (`cve:` / `url:`) first, so formatting alone does not cost points. |
+| `plugin_details`, `instances` (Tenable) | `structural` | a nested object / list of objects: recurse and score each sub-field. |
+| `name`, `description`, `solution`, `impact`, `insight`, `detection_result`, `detection_method`, `product_detection_result`, `log_method`, `instances` (OpenVAS) | `text` | free prose: no single right string, so measure with the text metrics below. |
+
+`exact`, `set_f1`, and `structural` are structural metrics: they always run.
+
+### What each text metric measures, and why more than one
+
+Prose fields are judged from several angles because each metric has a blind spot:
+
+- **`token_f1`**: bag-of-words overlap (precision/recall/F1 over tokens). Cheap
+  and order-insensitive; a floor that says "roughly the same words".
+- **`rouge_l`**: longest common subsequence, so it rewards preserved word
+  **order** and phrasing, which `token_f1` ignores.
+- **`bertscore`**: semantic similarity from contextual embeddings, so it credits
+  a paraphrase (same meaning, different words) that token overlap would miss.
+  Optional and heavy (`uv sync --group eval`).
+- **`nli`**: a contradiction check. It is the safety net for `bertscore`'s blind
+  spot: an extraction that negates the baseline ("does not use a weak
+  algorithm") shares almost every token, so `bertscore` scores it very high, yet
+  the meaning is the opposite. `nli` flags it. Optional and heavy.
+
+So `bertscore` measures fidelity of wording; `nli` guards against a fluent,
+similar-looking record that flipped the meaning. They are complementary, not
+interchangeable (see the negation blind spot documented for embedding metrics,
+e.g. [arXiv:2307.13989](https://arxiv.org/abs/2307.13989)).
+
+The HTML report lists whichever text metrics a run actually scored, so
+`bertscore` and `nli` appear once you evaluate with them.
 
 Empty-vs-empty scores a vacuous 1.0 (flagged so reports can count it apart);
 present-vs-absent scores 0.0.
