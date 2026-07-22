@@ -2,9 +2,8 @@
 
 Every scorer is a pure ``(value_a, value_b) -> float in [0, 1]`` over raw
 field values (lists are rendered to text or item sets as each scorer needs).
-``pair_score`` wraps a scorer with the presence rules kept from v1:
-empty x empty = 1.0 (vacuous match, flagged so reports can count it apart),
-present x absent = 0.0.
+``pair_score`` wraps a scorer with the presence rules: empty x empty = 1.0
+(vacuous match, flagged so reports can count it apart), present x absent = 0.0.
 
 Kinds: "text" scorers are CLI-selectable (--metrics); "structural" scorers
 (exact, set_f1) are the only meaningful metric for their fields and always

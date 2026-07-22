@@ -2,9 +2,7 @@
 
 Similarity per (extraction, baseline) cell = max(composite-key score, fuzzy
 normalized-name score); the globally optimal assignment is solved with
-``scipy.optimize.linear_sum_assignment`` and cut at a threshold. Composite-key
-construction is ported from v1 ``metrics/common/aligner.py``, including its
-two hard-won special cases (see the docstrings below).
+``scipy.optimize.linear_sum_assignment`` and cut at a threshold.
 """
 from __future__ import annotations
 
@@ -18,7 +16,7 @@ from scipy.optimize import linear_sum_assignment
 
 from mulitaminer.consolidate import normalize_name
 
-# Minimum similarity to accept an assignment (v1 FUZZY_THRESHOLD).
+# Minimum similarity to accept an assignment.
 FUZZY_THRESHOLD = 0.7
 
 # When composite keys CONFLICT (a concrete part differs on both sides — e.g.
@@ -50,10 +48,10 @@ def _get(row: dict, name: str) -> Any:
 def _normalize_part(name: str, value: Any) -> str:
     """One composite-key part; '*' is the wildcard for absent values.
 
-    Float guard (v1 lesson): pandas coerces int columns to float64 as soon as
-    a null appears, so port 8019 arrives as 8019.0 — stripping the dot naively
-    would produce "80190" and silently break every key. Collapse
-    integer-valued floats first.
+    Float guard: pandas coerces int columns to float64 as soon as a null
+    appears, so port 8019 arrives as 8019.0; stripping the dot naively would
+    produce "80190" and silently break every key. Collapse integer-valued
+    floats first.
     """
     if isinstance(value, float):
         if value != value:  # NaN
@@ -73,9 +71,9 @@ def _normalize_part(name: str, value: Any) -> str:
 def composite_key(row: dict, key_parts: tuple[str, ...]) -> str:
     """``<name>|<part>|...``.
 
-    Special case (v1 lesson): OpenVAS emits many findings all named
-    "Services" with different content. Keying them by name would collapse
-    them; hash the full row so each instance stays distinguishable.
+    Special case: OpenVAS emits many findings all named "Services" with
+    different content. Keying them by name would collapse them; hash the full
+    row so each instance stays distinguishable.
     """
     name = normalize_name(str(_get(row, "Name") or ""))
     if name == "services":
@@ -94,7 +92,7 @@ def keys_match(key1: str, key2: str) -> bool:
 
 
 def key_match_score(key1: str, key2: str) -> float:
-    """Concrete equal parts score 1.0, wildcard positions 0.3 (v1 weights)."""
+    """Concrete equal parts score 1.0, wildcard positions 0.3."""
     parts1, parts2 = key1.split("|"), key2.split("|")
     if len(parts1) != len(parts2) or not parts1:
         return 0.0
