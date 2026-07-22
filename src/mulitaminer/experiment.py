@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
@@ -123,10 +124,12 @@ def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
 
 
 def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
-                on_start, on_done) -> None:
+                on_start, on_done, cancel: threading.Event) -> None:
     """Run one bucket's tasks sequentially (shared rate limit / local server)."""
     clients: dict[str, LLMClient] = {}
     for task in tasks:
+        if cancel.is_set():
+            return
         on_start(task)
         if _is_complete(task.run_dir):
             on_done(task, _cached_outcome(task.run_dir, task.report, config.metrics))
@@ -155,7 +158,8 @@ def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
 
 
 def run_experiment(config: ExperimentConfig) -> dict:
-    tasks, skipped, docs = _plan(config)
+    with quiet_logging(config.verbose):  # keep PDF-read logs off the live view
+        tasks, skipped, docs = _plan(config)
     config.output_dir.mkdir(parents=True, exist_ok=True)
     manifest_path = config.output_dir / "experiment.json"
 
@@ -192,12 +196,29 @@ def run_experiment(config: ExperimentConfig) -> dict:
         log.info("%s %s run_%d %s -> %s", task.scanner, task.model,
                  task.run_index, task.report.stem, outcome.get("status"))
 
+    cancel = threading.Event()
+    pool = ThreadPoolExecutor(max_workers=len(buckets))
+    futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_start, on_done, cancel)
+               for bucket_tasks in buckets.values()]
+    interrupted = False
     with quiet_logging(config.verbose), view:
-        with ThreadPoolExecutor(max_workers=len(buckets)) as pool:
-            futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_start, on_done)
-                       for bucket_tasks in buckets.values()]
+        try:
             for f in futures:
                 f.result()
+        except KeyboardInterrupt:
+            # Buckets stop before their next report; the in-flight LLM call cannot
+            # be interrupted, so exit hard once the view is restored. Finished runs
+            # are already checkpointed on disk (on_done), so nothing is lost.
+            interrupted = True
+            cancel.set()
+            for f in futures:
+                f.cancel()
+    pool.shutdown(wait=False, cancel_futures=True)
+    if interrupted:
+        from mulitaminer.ui import console
+        console.print("\nInterrupted. Finished runs are checkpointed; re-run to resume.",
+                      style="yellow")
+        os._exit(130)
 
     _write_manifest(manifest_path, config, records, skipped, complete=True)
     report = None
