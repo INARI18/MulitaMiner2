@@ -2,8 +2,7 @@
 
 **Date:** 2026-07-21
 **Audited:** `src/mulitaminer/evaluation/` (scorers, fields, align, runner,
-report) and the 5-baseline sweep recorded in
-`docs/superpowers/plans/2026-07-21-native-evaluation-plan.md`.
+report) and the 5-baseline evaluation sweep.
 **Artifacts examined:** input data (`results.json` per run, baseline XLSX +
 `*_instances_generated.xlsx`), metric outputs (`evaluation.json`/`.md` in the
 five run dirs), computation code (all five evaluation modules, plus the

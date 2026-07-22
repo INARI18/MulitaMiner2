@@ -19,8 +19,10 @@ touched only for final run artifacts and optional `--debug` dumps.
 | `consolidate.py` | Pairing, severity normalization, merge of fully identical records |
 | `models.py` | VulnRecord and subclasses; the LLM contract is derived from them |
 | `writers.py` / `exporters/` | results.json plus the `--export` formats |
+| `evaluation/` | Schema-driven scoring of a run against a baseline (align, scorers, fields, report) |
 | `prioritization.py` | KEV/EPSS/SSVC remediation queue over a run's results.json |
-| `pipeline.py` | Composes the stages into one run and writes the artifacts |
+| `pipeline.py` | Composes the stages into one run; directory mode auto-detects the scanner |
+| `experiment.py` | X runs per (model, report); parallel by capacity bucket, checkpointed |
 | `cli.py` | Typer commands; thin consumer of the library |
 | `settings.py` | Calibrated tunables |
 
@@ -37,7 +39,12 @@ touched only for final run artifacts and optional `--debug` dumps.
 - **Failures are declared, never silent**: dropped blocks, truncated oversized
   blocks and merges all land in `run.json` warnings and merge log.
 - **Scanner knowledge lives in one place**: the JSON config. The engine
-  interprets it; no scanner-specific Python.
+  interprets it; no scanner-specific Python. The same marker patterns that
+  segment a report also identify its scanner (directory-mode auto-detection).
+- **Metrics are derived from the schema, not hardcoded**: the evaluation
+  subsystem reads the record model's fields and infers the metric per field
+  (exact for numeric/categorical, text scorers for prose, structural for
+  nested), so a new schema field is scored without touching evaluator code.
 
 ## Data flow objects
 
