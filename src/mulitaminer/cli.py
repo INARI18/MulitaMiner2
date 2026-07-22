@@ -296,6 +296,21 @@ def experiment(
         bold=True,
     )
     typer.echo(f"Manifest: {result['manifest']}")
+    if result.get("report"):
+        typer.echo(f"Report:   {result['report']}")
+
+
+@app.command()
+def report(
+    experiment_dir: Path = typer.Argument(
+        ..., exists=True, help="An experiment directory (containing experiment.json)"
+    ),
+) -> None:
+    """Build the self-contained HTML report from an experiment tree."""
+    from mulitaminer.experiment_report import build_report
+
+    out = build_report(experiment_dir)
+    typer.echo(f"Report: {out}")
 
 
 @app.command("sync-feeds")

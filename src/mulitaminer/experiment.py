@@ -161,7 +161,14 @@ def run_experiment(config: ExperimentConfig) -> dict:
             f.result()
 
     _write_manifest(manifest_path, config, records, skipped, complete=True)
-    return {"manifest": str(manifest_path), "records": records, "skipped": skipped}
+    report = None
+    try:
+        from mulitaminer.experiment_report import build_report
+        report = str(build_report(config.output_dir))
+    except Exception as exc:  # noqa: BLE001 - a report failure must not fail the batch
+        log.warning("report generation failed: %s", exc)
+    return {"manifest": str(manifest_path), "records": records,
+            "skipped": skipped, "report": report}
 
 
 def _write_manifest(path: Path, config: ExperimentConfig, records: list[dict],
