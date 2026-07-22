@@ -67,7 +67,7 @@ services:
       - ./resources:/app/resources               # input PDFs (+ baseline xlsx)
       - ./output_experiments:/app/output_experiments
     command: >
-      experiment resources
+      experiment ${REPORTS:-resources}
       --models ${MODELS:-deepseek,nuextract}
       --runs ${RUNS:-3}
       --metrics ${METRICS:-all}
