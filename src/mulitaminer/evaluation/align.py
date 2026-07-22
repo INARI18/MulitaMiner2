@@ -17,21 +17,14 @@ from mulitaminer.consolidate import normalize_name
 # Minimum similarity to accept an assignment.
 FUZZY_THRESHOLD = 0.7
 
-# When composite keys CONFLICT (a concrete part differs on both sides — e.g.
-# same finding name on two different ports), the name-only similarity is
-# scaled down so the assignment prefers the composite-compatible pairing.
-# Without this, identical names tie at 1.0 and the assignment is arbitrary.
+# When composite keys CONFLICT (a concrete part differs on both sides, e.g. the
+# same finding name on two different ports), the name-only similarity is scaled
+# down so the assignment prefers the composite-compatible pairing. Without this,
+# identical names tie at 1.0 and the assignment is arbitrary.
 KEY_CONFLICT_PENALTY = 0.9
 
-# Composite-key layout per record source: name plus these fields.
-KEY_PARTS_BY_SOURCE: dict[str, tuple[str, ...]] = {
-    "OPENVAS": ("port", "protocol"),
-    "TENABLEWAS": ("severity", "plugin"),
-}
-
-
-def key_parts_for_source(source: str | None) -> tuple[str, ...]:
-    return KEY_PARTS_BY_SOURCE.get((source or "").upper(), ())
+# The composite key is the finding name plus a scanner's ``evaluation.key_parts``
+# (see ScannerProfile.key_parts); align() takes those parts as a parameter.
 
 
 def _get(row: dict, name: str) -> Any:

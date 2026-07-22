@@ -46,6 +46,9 @@ class ScannerProfile:
     # Per-field metric overrides for evaluation (config "evaluation.field_metrics");
     # frozen dataclass needs a hashable default, hence tuple of pairs.
     field_metric_overrides: tuple[tuple[str, str], ...] = ()
+    # Alignment composite-key parts beyond the name (config "evaluation.key_parts",
+    # e.g. ("port", "protocol")); how this scanner's findings are disambiguated.
+    key_parts: tuple[str, ...] = ()
     # Severity tier normalization (config "severity_map", e.g. INFO->LOG).
     # Exposed so evaluation can apply the same mapping to baseline rows —
     # the pipeline output is already mapped, and scoring INFO vs LOG as a
@@ -198,6 +201,7 @@ def load_profile(config_path: Path) -> ScannerProfile:
             field_metric_overrides=tuple(
                 (cfg.get("evaluation") or {}).get("field_metrics", {}).items()
             ),
+            key_parts=tuple((cfg.get("evaluation") or {}).get("key_parts", [])),
             severity_map=tuple((cfg.get("severity_map") or {}).items()),
         )
     except KeyError as exc:

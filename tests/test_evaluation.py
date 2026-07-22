@@ -1,12 +1,11 @@
 """Evaluation subsystem: scorers, field mapping, alignment, orchestration."""
 import pytest
 
-from mulitaminer.evaluation.align import (
-    align, classify_false_positives, composite_key, key_parts_for_source,
-)
+from mulitaminer.evaluation.align import align, classify_false_positives, composite_key
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
 from mulitaminer.models import Instance, OpenVASRecord, PluginDetails, TenableRecord
+from mulitaminer.scanner_engine import get_scanner
 
 
 # --- scorers -----------------------------------------------------------------
@@ -147,7 +146,7 @@ def test_fields_builtin_configs_carry_overrides():
 
 # --- align -------------------------------------------------------------------
 
-OV_PARTS = key_parts_for_source("OPENVAS")
+OV_PARTS = get_scanner("openvas").key_parts
 
 
 def test_align_known_pairs_all_found():

@@ -19,7 +19,7 @@ import pandas as pd
 from rapidfuzz import fuzz
 
 from mulitaminer.evaluation.align import (
-    AlignmentResult, align, classify_false_positives, key_parts_for_source,
+    AlignmentResult, align, classify_false_positives,
 )
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import (
@@ -383,7 +383,7 @@ def evaluate_run(
             sev = row.get("severity")
             if isinstance(sev, str) and sev.upper() in sev_map:
                 row["severity"] = sev_map[sev.upper()]
-    key_parts = key_parts_for_source(source)
+    key_parts = profile.key_parts if profile else ()
     alignment = align(ext_rows, base_rows, key_parts, threshold)
 
     pair_scores = [
