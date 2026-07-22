@@ -8,7 +8,6 @@ import typer
 from dotenv import load_dotenv
 
 from mulitaminer.llm import FatalLLMError, all_models
-from mulitaminer.pdf_reader import BACKENDS, DEFAULT_BACKEND
 from mulitaminer.scanner_engine import all_scanners
 
 app = typer.Typer(
@@ -41,9 +40,6 @@ def extract(
     model_name: str | None = typer.Option(
         None, "--model-name", help="Provider model id override (for ollama/lmstudio)"
     ),
-    pdf_backend: str = typer.Option(
-        DEFAULT_BACKEND, "--pdf-backend", help=f"One of: {sorted(BACKENDS)}"
-    ),
     export: list[str] = typer.Option(
         [], "--export", "-e",
         help="Extra output formats (repeatable). See `mulitaminer formats`.",
@@ -63,7 +59,6 @@ def extract(
         scanner=scanner,
         model=model,
         model_name=model_name,
-        pdf_backend=pdf_backend,
         formats=tuple(dict.fromkeys(
             list(export) + (["xlsx"] if xlsx else []) + (["csv"] if csv else [])
         )),
@@ -98,7 +93,7 @@ def extract(
         from mulitaminer.pdf_reader import extract_pdf
         from mulitaminer.scanner_engine import detect_scanner
 
-        detected, counts = detect_scanner(extract_pdf(report, backend=pdf_backend).text)
+        detected, counts = detect_scanner(extract_pdf(report).text)
         if detected is None:
             typer.secho(
                 f"Error: could not identify the scanner for {report.name} "
@@ -141,9 +136,6 @@ def models() -> None:
 def segment(
     report: Path = typer.Argument(..., exists=True, readable=True, help="Scanner PDF report"),
     scanner: str = typer.Option(..., "--scanner", "-s", help="See `mulitaminer scanners`"),
-    pdf_backend: str = typer.Option(
-        DEFAULT_BACKEND, "--pdf-backend", help=f"One of: {sorted(BACKENDS)}"
-    ),
     show: int = typer.Option(3, "--show", help="How many blocks to preview"),
     lines: int = typer.Option(6, "--lines", help="Preview lines per block"),
 ) -> None:
@@ -157,7 +149,7 @@ def segment(
     from mulitaminer.scanner_engine import get_scanner
 
     profile = get_scanner(scanner)
-    doc = extract_pdf(report, backend=pdf_backend)
+    doc = extract_pdf(report)
     blocks = profile.segment(doc.text)
     typer.secho(f"\n{len(blocks)} blocks found in {report.name}", bold=True)
     for block in blocks[:show]:

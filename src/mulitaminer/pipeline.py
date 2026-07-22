@@ -18,7 +18,7 @@ from mulitaminer import settings
 from mulitaminer.extraction import extract_blocks
 from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.models import RunResult, TokenUsage
-from mulitaminer.pdf_reader import DEFAULT_BACKEND, extract_pdf
+from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanner_engine import detect_scanner, get_scanner
 from mulitaminer.exporters import get_exporter
 from mulitaminer.writers import write_json
@@ -32,7 +32,6 @@ class RunConfig:
     scanner: str | None                # None = auto-detect (directory mode)
     model: str
     model_name: str | None = None      # override for generic local profiles
-    pdf_backend: str = DEFAULT_BACKEND
     formats: tuple[str, ...] = ()      # extra exports (see exporters registry)
     output_dir: Path | None = None     # default: settings.OUTPUTS_DIR
     debug: bool = False
@@ -43,7 +42,6 @@ class RunConfig:
             "scanner": self.scanner,
             "model": self.model,
             "model_name": self.model_name,
-            "pdf_backend": self.pdf_backend,
             "formats": list(self.formats),
             "debug": self.debug,
         }
@@ -86,7 +84,7 @@ def run_directory(config: RunConfig, client: LLMClient | None = None) -> list[di
         try:
             scanner_name = config.scanner
             if scanner_name is None:
-                doc = extract_pdf(pdf, backend=config.pdf_backend)
+                doc = extract_pdf(pdf)
                 scanner_name, counts = detect_scanner(doc.text)
                 if scanner_name is None:
                     positive = {k: v for k, v in counts.items() if v}
@@ -141,7 +139,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
 
     try:
         if doc is None:
-            doc = extract_pdf(config.input_path, backend=config.pdf_backend)
+            doc = extract_pdf(config.input_path)
         blocks = profile.segment(doc.text)
         if not blocks:
             raise ValueError(
