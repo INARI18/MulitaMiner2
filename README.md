@@ -143,8 +143,9 @@ one file per requested export.
 
 Score a finished run against a ground-truth baseline with `evaluate`, or run
 repeated multi-model batches with automatic scoring and an HTML report with
-`experiment`. Scoring is offline. Both are documented in
-[docs/USAGE.md](docs/USAGE.md).
+`experiment`. Scoring is offline. The commands are in
+[docs/USAGE.md](docs/USAGE.md); what the metrics mean, the false-positive
+taxonomy and the HTML report are in [docs/EVALUATION.md](docs/EVALUATION.md).
 
 ## Security Concerns
 
@@ -164,6 +165,7 @@ repeated multi-model batches with automatic scoring and an HTML report with
 | Document | Description |
 | --- | --- |
 | [docs/USAGE.md](docs/USAGE.md) | All commands, flags, run artifacts and examples |
+| [docs/EVALUATION.md](docs/EVALUATION.md) | Coverage, metrics, false-positive taxonomy, HTML report |
 | [docs/CONFIG.md](docs/CONFIG.md) | API keys, model profiles and tunables |
 | [docs/ADDING_A_MODEL.md](docs/ADDING_A_MODEL.md) | Plug a new LLM, cloud or local |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline stages, modules and design rules |

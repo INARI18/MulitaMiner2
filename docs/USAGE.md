@@ -49,6 +49,9 @@ numeric/categorical fields, set F1 for reference lists, token F1 and ROUGE-L for
 text. Select with `--metrics`, list them with `--list-metrics`. BERTScore and an
 NLI contradiction check are optional and heavy: `uv sync --group eval`.
 
+See [EVALUATION.md](EVALUATION.md) for what the numbers mean, the false-positive
+taxonomy (invention vs duplicate), and the HTML report.
+
 ## experiment
 
 ```bash
@@ -62,7 +65,7 @@ rate limits). Completed runs are checkpointed, so an interrupted batch resumes
 where it stopped, and a model run on another machine can be dropped into the
 same tree and merged by re-invoking with both model keys (every run cached, no
 API calls). Output lands under `output_experiments/<scanner>/<model>/run_<n>/`,
-plus an auto-generated `report.html`.
+plus an auto-generated `report.html` (see [EVALUATION.md](EVALUATION.md)).
 
 ## Run artifacts
 
@@ -74,6 +77,7 @@ Each run creates `outputs/runs/<timestamp>_<input>_<model>/`:
 | `run.json` | Config snapshot, tokens, cost, duration, warnings, merge log |
 | `results.raw.json` | Pre-consolidation records, only when merges happened |
 | `results.<format>.*` | One file per `--export` |
+| `run.log` | The per-run detailed log (always written; `debug.log` at DEBUG with `--debug`) |
 | `layout.txt`, `blocks.txt`, `llm_traffic.jsonl`, `debug.log` | Only with `--debug` |
 
 ## Examples
