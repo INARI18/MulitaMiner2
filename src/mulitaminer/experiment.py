@@ -13,7 +13,7 @@ import json
 import logging
 import os
 import threading
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -203,8 +203,11 @@ def run_experiment(config: ExperimentConfig) -> dict:
     interrupted = False
     with quiet_logging(config.verbose), view:
         try:
-            for f in futures:
-                f.result()
+            # Poll with a timeout so Ctrl-C reaches the main thread: on Windows a
+            # no-timeout wait blocks in a C lock and never sees the signal.
+            pending = set(futures)
+            while pending:
+                _, pending = wait(pending, timeout=0.3)
         except KeyboardInterrupt:
             # Buckets stop before their next report; the in-flight LLM call cannot
             # be interrupted, so exit hard once the view is restored. Finished runs
@@ -219,6 +222,8 @@ def run_experiment(config: ExperimentConfig) -> dict:
         console.print("\nInterrupted. Finished runs are checkpointed; re-run to resume.",
                       style="yellow")
         os._exit(130)
+    for f in futures:
+        f.result()  # all finished: surface any bucket-level exception
 
     _write_manifest(manifest_path, config, records, skipped, complete=True)
     report = None
