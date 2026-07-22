@@ -1,7 +1,9 @@
 """Evaluation subsystem: scorers, field mapping, alignment, orchestration."""
 import pytest
 
-from mulitaminer.evaluation.align import align, composite_key, key_parts_for_source
+from mulitaminer.evaluation.align import (
+    align, classify_spurious, composite_key, key_parts_for_source,
+)
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
 from mulitaminer.models import Instance, OpenVASRecord, PluginDetails, TenableRecord
@@ -193,10 +195,49 @@ def test_align_float_port_guard():
     assert key == "x|8019|tcp"
 
 
-def test_align_services_sentinel_keeps_rows_apart():
-    a = composite_key({"Name": "Services", "detail": "one"}, OV_PARTS)
-    b = composite_key({"Name": "Services", "detail": "two"}, OV_PARTS)
-    assert a != b and a.startswith("services_exact|")
+def test_align_services_no_special_case():
+    # 'Services' is keyed like any other name now; the composite key carries the
+    # port/protocol that actually distinguishes instances.
+    key = composite_key({"Name": "Services", "port": 80, "protocol": "tcp"}, OV_PARTS)
+    assert key == "services|80|tcp"
+
+
+def _cat(ext, base, parts=OV_PARTS):
+    res = align(ext, base, parts)
+    return {d["extraction_index"]: d["category"]
+            for d in classify_spurious(ext, base, res, parts)}
+
+
+def test_classify_spurious_invention():
+    ext = [{"Name": "A thing"}, {"Name": "Ghost finding xyz"}]
+    base = [{"Name": "A thing"}]
+    assert _cat(ext, base, ()) == {1: "invention"}
+
+
+def test_classify_spurious_name_mismatch():
+    # Same finding, extracted name polluted by segmentation noise: its free
+    # baseline twin scores below threshold.
+    ext = [{"Name": "phpinfo output reporting 2 results per host 7"}]
+    base = [{"Name": "phpinfo output reporting"}]
+    assert _cat(ext, base, ()) == {0: "name_mismatch"}
+
+
+def test_classify_spurious_baseline_gap():
+    # Two report instances on different ports, one baseline row: the extra is a
+    # real finding the baseline never recorded.
+    ext = [{"Name": "Weak Sig", "port": 25, "protocol": "tcp"},
+           {"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
+    base = [{"Name": "Weak Sig", "port": 5432, "protocol": "tcp"}]
+    assert _cat(ext, base) == {0: "baseline_gap"}
+
+
+def test_classify_spurious_duplicate():
+    # Two extractions with the SAME key: a genuine duplicate.
+    ext = [{"Name": "X", "port": 80, "protocol": "tcp"},
+           {"Name": "X", "port": 80, "protocol": "tcp"}]
+    base = [{"Name": "X", "port": 80, "protocol": "tcp"}]
+    cats = _cat(ext, base)
+    assert list(cats.values()) == ["duplicate"]
 
 
 def test_align_empty_sides():

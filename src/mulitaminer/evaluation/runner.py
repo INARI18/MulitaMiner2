@@ -18,7 +18,9 @@ from typing import Any
 import pandas as pd
 from rapidfuzz import fuzz
 
-from mulitaminer.evaluation.align import AlignmentResult, align, key_parts_for_source
+from mulitaminer.evaluation.align import (
+    AlignmentResult, align, classify_spurious, key_parts_for_source,
+)
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import (
     SCORERS,
@@ -381,7 +383,8 @@ def evaluate_run(
             sev = row.get("severity")
             if isinstance(sev, str) and sev.upper() in sev_map:
                 row["severity"] = sev_map[sev.upper()]
-    alignment = align(ext_rows, base_rows, key_parts_for_source(source), threshold)
+    key_parts = key_parts_for_source(source)
+    alignment = align(ext_rows, base_rows, key_parts, threshold)
 
     pair_scores = [
         _score_pair(plans, selected_text, ext_rows[i], base_rows[j])
@@ -409,6 +412,11 @@ def evaluate_run(
         {c for c in (base_rows[0] if base_rows else {}) if c.lower() not in model_fields}
     )
 
+    spurious_detail = classify_spurious(ext_rows, base_rows, alignment, key_parts)
+    spurious_kinds: dict[str, int] = {}
+    for s in spurious_detail:
+        spurious_kinds[s["category"]] = spurious_kinds.get(s["category"], 0) + 1
+
     coverage = {
         "baseline_count": len(base_rows),
         "extraction_count": len(ext_rows),
@@ -417,6 +425,8 @@ def evaluate_run(
         "precision": round(len(alignment.pairs) / len(ext_rows), 4) if ext_rows else 0.0,
         "missed": [_name(base_rows[j]) for j in alignment.unmatched_baseline],
         "spurious": [_name(ext_rows[i]) for i in alignment.unmatched_extraction],
+        "spurious_kinds": spurious_kinds,
+        "spurious_detail": spurious_detail,
     }
 
     meta = {

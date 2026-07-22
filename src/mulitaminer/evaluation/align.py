@@ -6,8 +6,6 @@ normalized-name score); the globally optimal assignment is solved with
 """
 from __future__ import annotations
 
-import hashlib
-import json
 from dataclasses import dataclass
 from typing import Any
 
@@ -69,18 +67,8 @@ def _normalize_part(name: str, value: Any) -> str:
 
 
 def composite_key(row: dict, key_parts: tuple[str, ...]) -> str:
-    """``<name>|<part>|...``.
-
-    Special case: OpenVAS emits many findings all named "Services" with
-    different content. Keying them by name would collapse them; hash the full
-    row so each instance stays distinguishable.
-    """
+    """``<name>|<part>|...`` over the normalized name plus each key part."""
     name = normalize_name(str(_get(row, "Name") or ""))
-    if name == "services":
-        digest = hashlib.md5(
-            json.dumps(row, sort_keys=True, default=str).encode()
-        ).hexdigest()
-        return f"services_exact|{digest}"
     return "|".join([name, *(_normalize_part(p, _get(row, p)) for p in key_parts)])
 
 
@@ -103,6 +91,18 @@ def key_match_score(key1: str, key2: str) -> float:
         elif a == b:
             score += 1.0
     return score / len(parts1)
+
+
+# Below this name similarity an unmatched extraction has no baseline twin at all.
+INVENTION_FLOOR = 0.5
+
+
+def cell_score(ek: str, en: str, bk: str, bn: str) -> float:
+    """One similarity-matrix cell: composite-key score, else penalized name."""
+    name_sim = (fuzz.ratio(en, bn) / 100.0) if en and bn else 0.0
+    if keys_match(ek, bk):
+        return max(key_match_score(ek, bk), name_sim)
+    return name_sim * KEY_CONFLICT_PENALTY
 
 
 @dataclass
@@ -136,14 +136,8 @@ def align(
     ext_keys = [composite_key(r, key_parts) for r in ext_rows]
     base_keys = [composite_key(r, key_parts) for r in base_rows]
 
-    def _cell(ek: str, en: str, bk: str, bn: str) -> float:
-        name_sim = (fuzz.ratio(en, bn) / 100.0) if en and bn else 0.0
-        if keys_match(ek, bk):
-            return max(key_match_score(ek, bk), name_sim)
-        return name_sim * KEY_CONFLICT_PENALTY
-
     sim = [
-        [_cell(ek, en, bk, bn) for bk, bn in zip(base_keys, base_names)]
+        [cell_score(ek, en, bk, bn) for bk, bn in zip(base_keys, base_names)]
         for ek, en in zip(ext_keys, ext_names)
     ]
 
@@ -176,6 +170,53 @@ def align(
         unmatched_baseline=[j for j in range(len(base_rows)) if j not in matched_base],
         debug_rows=debug_rows,
     )
+
+
+def classify_spurious(
+    ext_rows: list[dict],
+    base_rows: list[dict],
+    alignment: AlignmentResult,
+    key_parts: tuple[str, ...] = (),
+) -> list[dict]:
+    """Explain each unmatched extraction ('spurious') by its best baseline twin:
+
+    - invention:    no baseline row is even name-similar (best < INVENTION_FLOOR).
+    - name_mismatch: a still-free baseline twin scored below the match threshold
+                     (its identifying text diverged, e.g. segmentation noise).
+    - baseline_gap:  the twin is taken by another extraction with a DIFFERENT key,
+                     so the report has an instance the baseline never recorded.
+    - duplicate:     the twin is taken by another extraction with the SAME key,
+                     so this is a second copy of the same finding.
+    """
+    ext_names = [normalize_name(str(_get(r, "Name") or "")) for r in ext_rows]
+    base_names = [normalize_name(str(_get(r, "Name") or "")) for r in base_rows]
+    ext_keys = [composite_key(r, key_parts) for r in ext_rows]
+    base_keys = [composite_key(r, key_parts) for r in base_rows]
+    base_claimed_by = {j: i for i, j in alignment.pairs}
+
+    out: list[dict] = []
+    for i in alignment.unmatched_extraction:
+        best, j = max(
+            ((cell_score(ext_keys[i], ext_names[i], base_keys[k], base_names[k]), k)
+             for k in range(len(base_rows))),
+            default=(0.0, None),
+        )
+        if j is None or best < INVENTION_FLOOR:
+            category = "invention"
+        elif j not in base_claimed_by:
+            category = "name_mismatch"
+        elif ext_keys[base_claimed_by[j]] == ext_keys[i]:
+            category = "duplicate"
+        else:
+            category = "baseline_gap"
+        out.append({
+            "extraction_index": i,
+            "name": str(_get(ext_rows[i], "Name") or ""),
+            "category": category,
+            "best_baseline": str(_get(base_rows[j], "Name") or "") if j is not None else None,
+            "best_similarity": round(best, 4),
+        })
+    return out
 
 
 def _debug(

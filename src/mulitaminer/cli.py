@@ -244,6 +244,9 @@ def evaluate(
         f"{len(cov['missed'])} missed, {len(cov['spurious'])} spurious",
         style="bold",
     )
+    if cov.get("spurious_kinds"):
+        kinds = ", ".join(f"{n} {k}" for k, n in sorted(cov["spurious_kinds"].items()))
+        ui.echo(f"  spurious breakdown: {kinds}")
     ui.echo(f"\n{summary_table(result)}\n")
     for kind, path in paths.items():
         ui.echo(f"{kind}: {path}")

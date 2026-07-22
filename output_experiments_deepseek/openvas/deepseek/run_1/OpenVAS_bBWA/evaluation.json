@@ -1,18 +1,16 @@
 {
   "meta": {
-    "results": "output_experiments\\openvas\\deepseek\\run_1\\OpenVAS_bBWA\\results.json",
+    "results": "output_experiments_deepseek\\openvas\\deepseek\\run_1\\OpenVAS_bBWA\\results.json",
     "baseline": "resources\\openvas\\OpenVAS_bBWA.xlsx",
     "reannotated_from": null,
     "reannotated_columns": [],
     "source": "OPENVAS",
     "threshold": 0.7,
     "text_metrics": [
-      "token_f1",
-      "rouge_l",
-      "bertscore"
+      "token_f1"
     ],
     "unavailable_metrics": {},
-    "generated_at": "2026-07-22T05:48:17+00:00",
+    "generated_at": "2026-07-22T20:00:27+00:00",
     "tool_version": "2.0.0a1"
   },
   "coverage": {
@@ -27,32 +25,30 @@
     "spurious": [
       "phpinfo() output Reporting 2 RESULTS PER HOST 7",
       "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm"
+    ],
+    "spurious_kinds": {
+      "name_mismatch": 1,
+      "baseline_gap": 1
+    },
+    "spurious_detail": [
+      {
+        "extraction_index": 2,
+        "name": "phpinfo() output Reporting 2 RESULTS PER HOST 7",
+        "category": "name_mismatch",
+        "best_baseline": "phpinfo() output Reporting",
+        "best_similarity": 0.6411
+      },
+      {
+        "extraction_index": 44,
+        "name": "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm",
+        "category": "baseline_gap",
+        "best_baseline": "SSL/TLS: Certificate Signed Using A Weak Signature Algorithm",
+        "best_similarity": 0.9
+      }
     ]
   },
   "fields": {
     "name": {
-      "bertscore": {
-        "mean": 1.0,
-        "measured_mean": 1.0,
-        "n_measured": 57,
-        "min": 1.0,
-        "std": 0.0,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 1.0
-      },
-      "rouge_l": {
-        "mean": 1.0,
-        "measured_mean": 1.0,
-        "n_measured": 57,
-        "min": 1.0,
-        "std": 0.0,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 1.0
-      },
       "token_f1": {
         "mean": 1.0,
         "measured_mean": 1.0,
@@ -66,28 +62,6 @@
       }
     },
     "description": {
-      "bertscore": {
-        "mean": 0.9868,
-        "measured_mean": 0.9868,
-        "n_measured": 57,
-        "min": 0.9096,
-        "std": 0.0198,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 1.0
-      },
-      "rouge_l": {
-        "mean": 0.9685,
-        "measured_mean": 0.9685,
-        "n_measured": 57,
-        "min": 0.75,
-        "std": 0.0617,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 1.0
-      },
       "token_f1": {
         "mean": 0.9685,
         "measured_mean": 0.9685,
@@ -101,28 +75,6 @@
       }
     },
     "solution": {
-      "bertscore": {
-        "mean": 0.9545,
-        "measured_mean": 0.9545,
-        "n_measured": 57,
-        "min": 0.0,
-        "std": 0.1307,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 0.9825
-      },
-      "rouge_l": {
-        "mean": 0.9151,
-        "measured_mean": 0.9151,
-        "n_measured": 57,
-        "min": 0.0,
-        "std": 0.167,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 0.9825
-      },
       "token_f1": {
         "mean": 0.9151,
         "measured_mean": 0.9151,
@@ -136,28 +88,6 @@
       }
     },
     "impact": {
-      "bertscore": {
-        "mean": 0.9543,
-        "measured_mean": 0.9295,
-        "n_measured": 37,
-        "min": 0.0,
-        "std": 0.1826,
-        "n": 57,
-        "vacuous_n": 20,
-        "fill_rate_extraction": 0.6491,
-        "fill_rate_baseline": 0.614
-      },
-      "rouge_l": {
-        "mean": 0.9415,
-        "measured_mean": 0.9098,
-        "n_measured": 37,
-        "min": 0.0,
-        "std": 0.1838,
-        "n": 57,
-        "vacuous_n": 20,
-        "fill_rate_extraction": 0.6491,
-        "fill_rate_baseline": 0.614
-      },
       "token_f1": {
         "mean": 0.9415,
         "measured_mean": 0.9098,
@@ -171,28 +101,6 @@
       }
     },
     "insight": {
-      "bertscore": {
-        "mean": 0.9377,
-        "measured_mean": 0.8923,
-        "n_measured": 33,
-        "min": 0.0,
-        "std": 0.2214,
-        "n": 57,
-        "vacuous_n": 24,
-        "fill_rate_extraction": 0.5789,
-        "fill_rate_baseline": 0.5263
-      },
-      "rouge_l": {
-        "mean": 0.9324,
-        "measured_mean": 0.8833,
-        "n_measured": 33,
-        "min": 0.0,
-        "std": 0.2216,
-        "n": 57,
-        "vacuous_n": 24,
-        "fill_rate_extraction": 0.5789,
-        "fill_rate_baseline": 0.5263
-      },
       "token_f1": {
         "mean": 0.9324,
         "measured_mean": 0.8833,
@@ -230,28 +138,6 @@
       }
     },
     "detection_result": {
-      "bertscore": {
-        "mean": 0.9543,
-        "measured_mean": 0.9543,
-        "n_measured": 57,
-        "min": 0.0,
-        "std": 0.136,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 0.9825
-      },
-      "rouge_l": {
-        "mean": 0.889,
-        "measured_mean": 0.889,
-        "n_measured": 57,
-        "min": 0.0,
-        "std": 0.2695,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 0.9825
-      },
       "token_f1": {
         "mean": 0.889,
         "measured_mean": 0.889,
@@ -265,28 +151,6 @@
       }
     },
     "detection_method": {
-      "bertscore": {
-        "mean": 0.9721,
-        "measured_mean": 0.9721,
-        "n_measured": 57,
-        "min": 0.8234,
-        "std": 0.0365,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 1.0
-      },
-      "rouge_l": {
-        "mean": 0.934,
-        "measured_mean": 0.934,
-        "n_measured": 57,
-        "min": 0.1395,
-        "std": 0.1851,
-        "n": 57,
-        "vacuous_n": 0,
-        "fill_rate_extraction": 1.0,
-        "fill_rate_baseline": 1.0
-      },
       "token_f1": {
         "mean": 0.934,
         "measured_mean": 0.934,
@@ -300,28 +164,6 @@
       }
     },
     "product_detection_result": {
-      "bertscore": {
-        "mean": 0.9397,
-        "measured_mean": 0.819,
-        "n_measured": 19,
-        "min": 0.0,
-        "std": 0.2222,
-        "n": 57,
-        "vacuous_n": 38,
-        "fill_rate_extraction": 0.2807,
-        "fill_rate_baseline": 0.3333
-      },
-      "rouge_l": {
-        "mean": 0.9259,
-        "measured_mean": 0.7778,
-        "n_measured": 19,
-        "min": 0.0,
-        "std": 0.2281,
-        "n": 57,
-        "vacuous_n": 38,
-        "fill_rate_extraction": 0.2807,
-        "fill_rate_baseline": 0.3333
-      },
       "token_f1": {
         "mean": 0.9259,
         "measured_mean": 0.7778,
@@ -335,28 +177,6 @@
       }
     },
     "log_method": {
-      "bertscore": {
-        "mean": 1.0,
-        "measured_mean": null,
-        "n_measured": 0,
-        "min": 1.0,
-        "std": 0.0,
-        "n": 57,
-        "vacuous_n": 57,
-        "fill_rate_extraction": 0.0,
-        "fill_rate_baseline": 0.0
-      },
-      "rouge_l": {
-        "mean": 1.0,
-        "measured_mean": null,
-        "n_measured": 0,
-        "min": 1.0,
-        "std": 0.0,
-        "n": 57,
-        "vacuous_n": 57,
-        "fill_rate_extraction": 0.0,
-        "fill_rate_baseline": 0.0
-      },
       "token_f1": {
         "mean": 1.0,
         "measured_mean": null,
@@ -396,28 +216,6 @@
       }
     },
     "instances": {
-      "bertscore": {
-        "mean": 1.0,
-        "measured_mean": null,
-        "n_measured": 0,
-        "min": 1.0,
-        "std": 0.0,
-        "n": 57,
-        "vacuous_n": 57,
-        "fill_rate_extraction": 0.0,
-        "fill_rate_baseline": 0.0
-      },
-      "rouge_l": {
-        "mean": 1.0,
-        "measured_mean": null,
-        "n_measured": 0,
-        "min": 1.0,
-        "std": 0.0,
-        "n": 57,
-        "vacuous_n": 57,
-        "fill_rate_extraction": 0.0,
-        "fill_rate_baseline": 0.0
-      },
       "token_f1": {
         "mean": 1.0,
         "measured_mean": null,
@@ -493,26 +291,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -521,40 +303,16 @@
           "token_f1": {
             "score": 0.9756,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9756,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9744,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -573,27 +331,11 @@
           "token_f1": {
             "score": 0.9901,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9901,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9541,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9861,
             "vacuous": false
           }
         },
@@ -601,26 +343,10 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -639,14 +365,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -686,27 +404,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.8718,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8718,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9696,
             "vacuous": false
           }
         },
@@ -714,41 +416,17 @@
           "token_f1": {
             "score": 0.8421,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8421,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9398,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.96,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.96,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9781,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9767,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9767,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9915,
             "vacuous": false
           }
         },
@@ -766,26 +444,10 @@
           "token_f1": {
             "score": 0.303,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.303,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8733,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -794,26 +456,10 @@
           "token_f1": {
             "score": 0.913,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.913,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9586,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -832,14 +478,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -879,40 +517,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9832,
-            "vacuous": false
           }
         },
         "solution": {
           "token_f1": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 0.0,
             "vacuous": false
           }
@@ -921,26 +535,10 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -959,26 +557,10 @@
           "token_f1": {
             "score": 0.2703,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.2703,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8577,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -987,26 +569,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1025,14 +591,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1072,26 +630,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1100,41 +642,17 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9545,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9545,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9737,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9813,
             "vacuous": false
           }
         },
@@ -1152,27 +670,11 @@
           "token_f1": {
             "score": 0.8,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.959,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9771,
             "vacuous": false
           }
         },
@@ -1180,26 +682,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1218,14 +704,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1265,40 +743,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9375,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9375,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9712,
-            "vacuous": false
           }
         },
         "solution": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1307,26 +761,10 @@
           "token_f1": {
             "score": 0.9706,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9706,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9836,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1345,26 +783,10 @@
           "token_f1": {
             "score": 0.9462,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9462,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9828,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1373,26 +795,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1411,14 +817,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1458,27 +856,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9829,
             "vacuous": false
           }
         },
@@ -1486,40 +868,16 @@
           "token_f1": {
             "score": 0.6364,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.6364,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9081,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1538,26 +896,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1566,26 +908,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1604,14 +930,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1651,26 +969,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1679,40 +981,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9545,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9545,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9824,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1731,26 +1009,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9427,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1759,26 +1021,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1797,14 +1043,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1844,27 +1082,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.7619,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7619,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9436,
             "vacuous": false
           }
         },
@@ -1872,40 +1094,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9824,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1924,26 +1122,10 @@
           "token_f1": {
             "score": 0.9474,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9474,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9815,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -1952,26 +1134,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -1990,14 +1156,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2037,26 +1195,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2065,40 +1207,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9918,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9545,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9545,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9754,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2117,26 +1235,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2145,26 +1247,10 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2183,14 +1269,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2230,26 +1308,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2258,40 +1320,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9788,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2310,26 +1348,10 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8257,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2338,26 +1360,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9759,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2376,14 +1382,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2423,26 +1421,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2451,26 +1433,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9532,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2478,14 +1444,6 @@
         "insight": {
           "token_f1": {
             "score": 0.9032,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9032,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.968,
             "vacuous": false
           }
         },
@@ -2503,26 +1461,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2531,26 +1473,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2569,14 +1495,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2616,40 +1534,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.7619,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7619,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9435,
-            "vacuous": false
           }
         },
         "solution": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2658,27 +1552,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9367,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9367,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9524,
             "vacuous": false
           }
         },
@@ -2696,26 +1574,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2724,26 +1586,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2762,14 +1608,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2809,26 +1647,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2837,40 +1659,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2889,26 +1687,10 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8228,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -2917,26 +1699,10 @@
           "token_f1": {
             "score": 0.6667,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.6667,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9276,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -2955,14 +1721,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3002,26 +1760,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3030,40 +1772,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9545,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9545,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9715,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3082,26 +1800,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3110,26 +1812,10 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3148,14 +1834,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3195,26 +1873,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3223,26 +1885,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3250,14 +1896,6 @@
         "insight": {
           "token_f1": {
             "score": 0.9655,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9655,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9835,
             "vacuous": false
           }
         },
@@ -3275,26 +1913,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3303,26 +1925,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3341,14 +1947,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3388,40 +1986,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9829,
-            "vacuous": false
           }
         },
         "solution": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3430,26 +2004,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3468,27 +2026,11 @@
           "token_f1": {
             "score": 0.2121,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.2121,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8479,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9756,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9756,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9849,
             "vacuous": false
           }
         },
@@ -3496,26 +2038,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3534,14 +2060,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3581,27 +2099,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.975,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.975,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9864,
             "vacuous": false
           }
         },
@@ -3609,40 +2111,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9383,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3661,27 +2139,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9902,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9756,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9756,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9874,
             "vacuous": false
           }
         },
@@ -3689,26 +2151,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3727,14 +2173,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3774,26 +2212,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3802,26 +2224,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3829,14 +2235,6 @@
         "insight": {
           "token_f1": {
             "score": 0.9873,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9873,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9913,
             "vacuous": false
           }
         },
@@ -3854,27 +2252,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9744,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9744,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9901,
             "vacuous": false
           }
         },
@@ -3882,26 +2264,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3920,14 +2286,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -3967,26 +2325,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -3995,26 +2337,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4022,14 +2348,6 @@
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9737,
             "vacuous": false
           }
         },
@@ -4047,27 +2365,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9778,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9778,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9819,
             "vacuous": false
           }
         },
@@ -4075,26 +2377,10 @@
           "token_f1": {
             "score": 0.6667,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.6667,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9269,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4113,14 +2399,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4160,26 +2438,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4188,40 +2450,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9701,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4240,27 +2478,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9859,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9859,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9878,
             "vacuous": false
           }
         },
@@ -4268,26 +2490,10 @@
           "token_f1": {
             "score": 0.8525,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8525,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9516,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4306,14 +2512,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4353,26 +2551,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4381,40 +2563,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9775,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4433,27 +2591,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9767,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9767,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9802,
             "vacuous": false
           }
         },
@@ -4461,26 +2603,10 @@
           "token_f1": {
             "score": 0.913,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.913,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9586,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4499,14 +2625,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4546,26 +2664,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4574,40 +2676,16 @@
           "token_f1": {
             "score": 0.9643,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9643,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9744,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9412,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9412,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9743,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4626,27 +2704,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9767,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9767,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9892,
             "vacuous": false
           }
         },
@@ -4654,26 +2716,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4692,14 +2738,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4739,26 +2777,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4767,40 +2789,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9919,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4819,27 +2817,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.973,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.973,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9886,
             "vacuous": false
           }
         },
@@ -4847,26 +2829,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4885,14 +2851,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -4932,40 +2890,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9444,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9444,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9696,
-            "vacuous": false
           }
         },
         "solution": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -4974,27 +2908,11 @@
           "token_f1": {
             "score": 0.9565,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9565,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9809,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.95,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.95,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9711,
             "vacuous": false
           }
         },
@@ -5012,27 +2930,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9859,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9859,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9476,
             "vacuous": false
           }
         },
@@ -5040,26 +2942,10 @@
           "token_f1": {
             "score": 0.9286,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9286,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9673,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5078,14 +2964,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5125,26 +3003,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5153,40 +3015,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9286,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9286,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9603,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5205,27 +3043,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9787,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9787,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9907,
             "vacuous": false
           }
         },
@@ -5233,26 +3055,10 @@
           "token_f1": {
             "score": 0.9286,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9286,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9673,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5271,14 +3077,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5318,27 +3116,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9444,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9444,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9815,
             "vacuous": false
           }
         },
@@ -5346,40 +3128,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.979,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5398,27 +3156,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9738,
             "vacuous": false
           }
         },
@@ -5426,26 +3168,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5464,14 +3190,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5511,26 +3229,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5539,40 +3241,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5591,27 +3269,11 @@
           "token_f1": {
             "score": 0.9505,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9505,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.982,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9552,
             "vacuous": false
           }
         },
@@ -5619,26 +3281,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5657,14 +3303,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5704,26 +3342,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5732,40 +3354,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5784,26 +3382,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5812,26 +3394,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5850,14 +3416,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -5897,26 +3455,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5925,26 +3467,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -5952,14 +3478,6 @@
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9789,
             "vacuous": false
           }
         },
@@ -5977,27 +3495,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9478,
             "vacuous": false
           }
         },
@@ -6005,26 +3507,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6043,14 +3529,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6090,26 +3568,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6118,26 +3580,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6145,14 +3591,6 @@
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9853,
             "vacuous": false
           }
         },
@@ -6170,27 +3608,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9494,
             "vacuous": false
           }
         },
@@ -6198,26 +3620,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6236,14 +3642,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6283,26 +3681,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6311,41 +3693,17 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9759,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9825,
             "vacuous": false
           }
         },
@@ -6363,27 +3721,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9488,
             "vacuous": false
           }
         },
@@ -6391,26 +3733,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6429,14 +3755,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6476,26 +3794,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6504,26 +3806,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6531,14 +3817,6 @@
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9919,
             "vacuous": false
           }
         },
@@ -6556,26 +3834,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6584,26 +3846,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6622,14 +3868,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6669,26 +3907,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6697,40 +3919,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9654,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6749,27 +3947,11 @@
           "token_f1": {
             "score": 0.7273,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7273,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8974,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.961,
             "vacuous": false
           }
         },
@@ -6777,26 +3959,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6815,14 +3981,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6862,26 +4020,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6890,40 +4032,16 @@
           "token_f1": {
             "score": 0.6316,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.6316,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.924,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -6942,26 +4060,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -6970,26 +4072,10 @@
           "token_f1": {
             "score": 0.9091,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9091,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9606,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7008,14 +4094,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7055,26 +4133,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -7083,26 +4145,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -7110,14 +4156,6 @@
         "insight": {
           "token_f1": {
             "score": 0.9677,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9677,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9837,
             "vacuous": false
           }
         },
@@ -7135,27 +4173,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9848,
             "vacuous": false
           }
         },
@@ -7163,26 +4185,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7201,14 +4207,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7248,26 +4246,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -7276,40 +4258,16 @@
           "token_f1": {
             "score": 0.9362,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9362,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.951,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.8667,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8667,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9548,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7328,27 +4286,11 @@
           "token_f1": {
             "score": 0.7458,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7458,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9072,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.961,
             "vacuous": false
           }
         },
@@ -7356,26 +4298,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7394,14 +4320,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7441,27 +4359,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9778,
             "vacuous": false
           }
         },
@@ -7469,40 +4371,16 @@
           "token_f1": {
             "score": 0.8696,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8696,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9302,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7521,27 +4399,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9491,
             "vacuous": false
           }
         },
@@ -7549,26 +4411,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7587,14 +4433,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7634,27 +4472,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9501,
             "vacuous": false
           }
         },
@@ -7662,40 +4484,16 @@
           "token_f1": {
             "score": 0.7619,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7619,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9416,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 0.0,
             "vacuous": false
           }
@@ -7714,27 +4512,11 @@
           "token_f1": {
             "score": 0.9388,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9388,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9526,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.6349,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.6349,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9468,
             "vacuous": false
           }
         },
@@ -7742,26 +4524,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7780,14 +4546,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7827,26 +4585,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -7855,26 +4597,10 @@
           "token_f1": {
             "score": 0.9558,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9558,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9557,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7882,14 +4608,6 @@
         "insight": {
           "token_f1": {
             "score": 0.96,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.96,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9907,
             "vacuous": false
           }
         },
@@ -7907,26 +4625,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9563,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -7935,26 +4637,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -7973,14 +4659,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8020,40 +4698,16 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9772,
-            "vacuous": false
           }
         },
         "solution": {
           "token_f1": {
-            "score": 0.9412,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9412,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 0.9412,
             "vacuous": false
           }
@@ -8062,27 +4716,11 @@
           "token_f1": {
             "score": 0.9778,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9778,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9903,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.875,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.875,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9423,
             "vacuous": false
           }
         },
@@ -8100,27 +4738,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9141,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9507,
             "vacuous": false
           }
         },
@@ -8128,26 +4750,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8166,14 +4772,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8213,26 +4811,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -8241,41 +4823,17 @@
           "token_f1": {
             "score": 0.9434,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9434,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9765,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9677,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9677,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9816,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9677,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9677,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9888,
             "vacuous": false
           }
         },
@@ -8293,26 +4851,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9891,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -8321,26 +4863,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8359,14 +4885,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8406,27 +4924,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9766,
             "vacuous": false
           }
         },
@@ -8434,40 +4936,16 @@
           "token_f1": {
             "score": 0.9508,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9508,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.951,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9346,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9346,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9688,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -8486,27 +4964,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9181,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9585,
             "vacuous": false
           }
         },
@@ -8514,26 +4976,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8552,14 +4998,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8599,26 +5037,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -8627,40 +5049,16 @@
           "token_f1": {
             "score": 0.9388,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9388,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9809,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.878,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.878,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9654,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -8679,27 +5077,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9779,
             "vacuous": false
           }
         },
@@ -8707,26 +5089,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8745,14 +5111,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8792,27 +5150,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.913,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.913,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9785,
             "vacuous": false
           }
         },
@@ -8820,26 +5162,10 @@
           "token_f1": {
             "score": 0.8831,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8831,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9719,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8847,14 +5173,6 @@
         "insight": {
           "token_f1": {
             "score": 0.9474,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9474,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9663,
             "vacuous": false
           }
         },
@@ -8872,27 +5190,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.9737,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9737,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.979,
             "vacuous": false
           }
         },
@@ -8900,26 +5202,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8938,14 +5224,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -8985,27 +5263,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.8571,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8571,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9446,
             "vacuous": false
           }
         },
@@ -9013,41 +5275,17 @@
           "token_f1": {
             "score": 0.9263,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9263,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9692,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.96,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.96,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9477,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9492,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9492,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.979,
             "vacuous": false
           }
         },
@@ -9065,27 +5303,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9641,
             "vacuous": false
           }
         },
@@ -9093,26 +5315,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9131,14 +5337,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9178,26 +5376,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -9206,26 +5388,10 @@
           "token_f1": {
             "score": 0.4348,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.4348,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8772,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -9233,14 +5399,6 @@
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9826,
             "vacuous": false
           }
         },
@@ -9258,27 +5416,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9871,
             "vacuous": false
           }
         },
@@ -9286,26 +5428,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9324,14 +5450,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9371,27 +5489,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9501,
             "vacuous": false
           }
         },
@@ -9399,40 +5501,16 @@
           "token_f1": {
             "score": 0.7619,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7619,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9416,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 0.0,
             "vacuous": false
           }
@@ -9451,27 +5529,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9742,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.1395,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.1395,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8234,
             "vacuous": false
           }
         },
@@ -9479,26 +5541,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9517,14 +5563,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9564,26 +5602,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -9592,41 +5614,17 @@
           "token_f1": {
             "score": 0.9434,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9434,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9784,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9677,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9677,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9816,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9677,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9677,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.974,
             "vacuous": false
           }
         },
@@ -9644,27 +5642,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9876,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.4783,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.4783,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.88,
             "vacuous": false
           }
         },
@@ -9672,26 +5654,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9710,14 +5676,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9757,27 +5715,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9821,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9821,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9727,
             "vacuous": false
           }
         },
@@ -9785,26 +5727,10 @@
           "token_f1": {
             "score": 0.9254,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9254,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9733,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9812,14 +5738,6 @@
         "insight": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.977,
             "vacuous": false
           }
         },
@@ -9837,27 +5755,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.945,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.4828,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.4828,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.887,
             "vacuous": false
           }
         },
@@ -9865,26 +5767,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9903,14 +5789,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -9950,26 +5828,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -9978,26 +5840,10 @@
           "token_f1": {
             "score": 0.9388,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9388,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9602,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -10005,14 +5851,6 @@
         "insight": {
           "token_f1": {
             "score": 0.95,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.95,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9769,
             "vacuous": false
           }
         },
@@ -10030,27 +5868,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.35,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.35,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8746,
             "vacuous": false
           }
         },
@@ -10058,26 +5880,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10096,14 +5902,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10143,27 +5941,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.75,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.75,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9096,
             "vacuous": false
           }
         },
@@ -10171,40 +5953,16 @@
           "token_f1": {
             "score": 0.6933,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.6933,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.919,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.0,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 0.0,
             "vacuous": false
           }
@@ -10223,27 +5981,11 @@
           "token_f1": {
             "score": 0.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9726,
             "vacuous": false
           }
         },
@@ -10251,26 +5993,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10289,14 +6015,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10336,27 +6054,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9231,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9231,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9644,
             "vacuous": false
           }
         },
@@ -10364,41 +6066,17 @@
           "token_f1": {
             "score": 0.8966,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8966,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.953,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.878,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.878,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9698,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9444,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9444,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9659,
             "vacuous": false
           }
         },
@@ -10416,27 +6094,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9824,
             "vacuous": false
           }
         },
@@ -10444,26 +6106,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9788,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10482,14 +6128,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10529,27 +6167,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9032,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9032,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9785,
             "vacuous": false
           }
         },
@@ -10557,40 +6179,16 @@
           "token_f1": {
             "score": 0.88,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.88,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9631,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.8667,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8667,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9546,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10609,27 +6207,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 0.4,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.4,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.8886,
             "vacuous": false
           }
         },
@@ -10637,26 +6219,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10675,14 +6241,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10722,26 +6280,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -10750,40 +6292,16 @@
           "token_f1": {
             "score": 0.9492,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9492,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9754,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.8462,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8462,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9561,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10802,27 +6320,11 @@
           "token_f1": {
             "score": 0.9091,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9091,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9677,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9827,
             "vacuous": false
           }
         },
@@ -10830,26 +6332,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10868,14 +6354,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10915,27 +6393,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9429,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9429,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9811,
             "vacuous": false
           }
         },
@@ -10943,40 +6405,16 @@
           "token_f1": {
             "score": 0.8235,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.8235,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.927,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -10995,27 +6433,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9775,
             "vacuous": false
           }
         },
@@ -11023,26 +6445,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.987,
-            "vacuous": false
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -11061,14 +6467,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -11108,27 +6506,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
             "score": 0.9375,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9375,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9702,
             "vacuous": false
           }
         },
@@ -11136,40 +6518,16 @@
           "token_f1": {
             "score": 0.7692,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.7692,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9395,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "insight": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -11188,27 +6546,11 @@
           "token_f1": {
             "score": 0.9333,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9333,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.967,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9738,
             "vacuous": false
           }
         },
@@ -11216,26 +6558,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -11254,14 +6580,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -11301,26 +6619,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "description": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": false
           }
@@ -11329,41 +6631,17 @@
           "token_f1": {
             "score": 0.9854,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9854,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9792,
-            "vacuous": false
           }
         },
         "impact": {
           "token_f1": {
             "score": 0.9444,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9444,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9662,
-            "vacuous": false
           }
         },
         "insight": {
           "token_f1": {
             "score": 0.9,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 0.9,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9673,
             "vacuous": false
           }
         },
@@ -11381,27 +6659,11 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": false
           }
         },
         "detection_method": {
           "token_f1": {
             "score": 1.0,
-            "vacuous": false
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": false
-          },
-          "bertscore": {
-            "score": 0.9811,
             "vacuous": false
           }
         },
@@ -11409,26 +6671,10 @@
           "token_f1": {
             "score": 1.0,
             "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
-            "score": 1.0,
-            "vacuous": true
           }
         },
         "log_method": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
@@ -11447,14 +6693,6 @@
         },
         "instances": {
           "token_f1": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "rouge_l": {
-            "score": 1.0,
-            "vacuous": true
-          },
-          "bertscore": {
             "score": 1.0,
             "vacuous": true
           }
