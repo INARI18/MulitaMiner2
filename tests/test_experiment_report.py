@@ -1,4 +1,4 @@
-"""Interactive HTML report builds from a fabricated experiment tree, self-contained."""
+"""HTML report builds from a fabricated experiment tree; pure SVG, self-contained."""
 import json
 from pathlib import Path
 
@@ -21,13 +21,16 @@ def _fabricate(root: Path) -> None:
                 "fields": {
                     "description": {"token_f1": {"measured_mean": field_mean[model] + 0.01 * n,
                                                  "mean": 0.9, "n_measured": 30,
-                                                 "fill_rate_baseline": 1.0,
-                                                 "fill_rate_extraction": 0.95}},
+                                                 "fill_rate_baseline": 1.0, "fill_rate_extraction": 0.9}},
                     "severity": {"exact": {"measured_mean": 0.97, "mean": 0.97, "n_measured": 30,
                                            "fill_rate_baseline": 1.0, "fill_rate_extraction": 1.0}},
                     "references": {"set_f1": {"measured_mean": 0.8, "mean": 0.9, "n_measured": 20,
                                               "fill_rate_baseline": 0.9, "fill_rate_extraction": 0.6}},
-                }
+                },
+                "pairs": [
+                    {"scores": {"description": {"token_f1": {"score": field_mean[model], "vacuous": False}}}},
+                    {"scores": {"description": {"token_f1": {"score": 0.65, "vacuous": False}}}},
+                ],
             }), encoding="utf-8")
             runs.append({
                 "scanner": "openvas", "model": model, "run": n, "report": "Report.pdf",
@@ -53,14 +56,14 @@ def test_report_builds_and_is_self_contained(tmp_path):
     assert out == tmp_path / "report.html"
     doc = out.read_text(encoding="utf-8")
 
-    # Interactive dashboard: embedded data + inline renderers + the key views.
-    assert "MulitaMiner" in doc and "Experiment report" in doc
-    assert "const DATA=" in doc and "<script>" in doc
-    assert "Hallucination × Omission" in doc and "Qualidade por campo" in doc
+    # Inline-SVG dashboard: embedded data + the English sections + rendered marks.
+    assert "MulitaMiner" in doc and "const DATA=" in doc and "<svg" in doc
+    for heading in ("Coverage", "Consistency", "Field quality", "Omission", "Distribution"):
+        assert heading in doc
     assert "deepseek" in doc and "ollama" in doc
 
-    # Self-contained: no external resource loads (SVG namespace URI is fine).
-    for bad in ("src=", "<link", "@import", "cdn.", "googleapis", "http://localhost"):
+    # Self-contained: no external resource loads and no chart library.
+    for bad in ("<script src", "<link", "@import", "cdnjs", "googleapis", "chart.js"):
         assert bad not in doc
 
 

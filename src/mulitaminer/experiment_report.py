@@ -1,462 +1,564 @@
-"""Self-contained interactive HTML report for an experiment tree.
+"""Self-contained HTML report for an experiment tree.
 
-Reads experiment.json plus each run's evaluation.json, embeds an aggregated
-DATA object, and renders an offline dashboard with inline vanilla JS (no
-external assets, no dependencies). Styled after the project's cream/orange
-deck; model series use the dataviz reference categorical palette (orange is
-reserved for brand chrome, never a series).
+Reads experiment.json plus each run's evaluation.json, aggregates per
+(target, model) with run-to-run spread, and renders a single scrolling
+dashboard of inline SVG (no JavaScript dependencies, no external assets), so
+the file opens offline after being scp'd off the run host. Styled after the
+project's cream/orange defense deck; model series use a categorical palette
+(orange is reserved for brand chrome, never a series). Generated text is
+English.
+
+Chart choices follow the metrics-auditor guidance: a verdict header states the
+winner up front; a precision x recall scatter (with std whiskers) positions the
+models; per-field quality and omission are sequential heatmaps; the score
+distribution is both a box plot of the raw per-pair scores and a similarity
+category stack. The similarity categories are a presentation binning (the
+thresholds are labelled in the report), not something the pipeline computes.
+
+Terminology: a *target* is one report (its baseline XLSX is the gold); a
+*model* is an LLM profile; spread is across the N runs.
 """
 from __future__ import annotations
 
 import json
+import statistics
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Per-field primary metric (first present) used for the field dot summary.
-_METRIC_PRIORITY = ("exact", "set_f1", "set_f1_ids", "structural", "token_f1",
-                    "rouge_l", "bertscore", "nli")
+_TEXT = ("bertscore", "token_f1", "rouge_l")
+_DET = ("exact", "set_f1", "set_f1_ids", "structural")
 
 
-def _mean(xs):
-    return sum(xs) / len(xs) if xs else None
+def _ms(values: list[float]) -> dict:
+    if not values:
+        return {"m": None, "s": 0.0}
+    return {"m": round(statistics.fmean(values), 4),
+            "s": round(statistics.pstdev(values), 4) if len(values) > 1 else 0.0}
+
+
+def _box(values: list[float]) -> dict | None:
+    if not values:
+        return None
+    vs = sorted(values)
+    if len(vs) < 2:
+        v = vs[0]
+        return {"min": v, "q1": v, "med": v, "q3": v, "max": v, "n": 1}
+    q1, med, q3 = statistics.quantiles(vs, n=4)
+    return {"min": round(vs[0], 4), "q1": round(q1, 4), "med": round(med, 4),
+            "q3": round(q3, 4), "max": round(vs[-1], 4), "n": len(vs)}
 
 
 def _aggregate(experiment_dir: Path) -> dict:
     manifest = json.loads((experiment_dir / "experiment.json").read_text(encoding="utf-8"))
     models = manifest["config"]["models"]
 
-    # cov[(scanner, model)] -> {"recall":[], "precision":[], "missed":[], "spurious":[]}
-    cov: dict = defaultdict(lambda: {"recall": [], "precision": [], "missed": [],
-                                     "spurious": [], "cost": [], "duration": []})
-    # field_scores[(field, model, metric)] -> [measured_mean...]
-    field_scores: dict = defaultdict(list)
-    # fill gap (omission proxy) per (field, model)
-    fill_gap: dict = defaultdict(list)
-    metrics_seen: set = set()
-    scanners: set = set()
+    cov: dict = defaultdict(lambda: defaultdict(list))
+    fmeas: dict = defaultdict(lambda: defaultdict(list))
+    fill: dict = defaultdict(lambda: defaultdict(list))     # (t,m) -> field -> [gap per run]
+    pairsc: dict = defaultdict(lambda: defaultdict(list))
+    field_metrics: dict = defaultdict(set)
+    targets: dict = {}
 
     for r in manifest["runs"]:
         if r["status"] not in ("ok", "cached"):
             continue
-        key = (r["scanner"], r["model"])
-        scanners.add(r["scanner"])
-        c = cov[key]
+        target, model = Path(r["report"]).stem, r["model"]
+        targets[target] = r["scanner"]
+        key = (target, model)
         cv = r.get("coverage")
         if cv:
-            c["recall"].append(cv["recall"])
-            c["precision"].append(cv["precision"])
-            c["missed"].append(len(cv.get("missed", [])))
-            c["spurious"].append(len(cv.get("spurious", [])))
+            cov[key]["recall"].append(cv["recall"])
+            cov[key]["precision"].append(cv["precision"])
+            cov[key]["missed"].append(len(cv.get("missed", [])))
+            cov[key]["spurious"].append(len(cv.get("spurious", [])))
+            bc = cv.get("baseline_count") or 0
+            cov[key]["absent"].append(len(cv.get("missed", [])) / bc if bc else 0.0)
         if "cost_usd" in r:
-            c["cost"].append(r["cost_usd"])
+            cov[key]["cost"].append(r["cost_usd"])
         if "duration_s" in r:
-            c["duration"].append(r["duration_s"])
+            cov[key]["duration"].append(r["duration_s"])
         ep = Path(r["run_dir"]) / "evaluation.json"
-        if ep.is_file():
-            fields = json.loads(ep.read_text(encoding="utf-8")).get("fields", {})
-            for field, ms in fields.items():
-                for metric, st in ms.items():
-                    if st.get("n_measured"):
-                        field_scores[(field, r["model"], metric)].append(
-                            st.get("measured_mean", st.get("mean")))
-                        metrics_seen.add(metric)
-                    fb = st.get("fill_rate_baseline")
-                    fe = st.get("fill_rate_extraction")
-                    if fb is not None and fe is not None:
-                        fill_gap[(field, r["model"])].append(max(0.0, fb - fe))
-
-    scanners = sorted(scanners)
-    fields_all = sorted({f for (f, _m, _mt) in field_scores} | {f for (f, _m) in fill_gap})
-
-    # KPI: recall, precision, mean field score, cost/run — per model.
-    def _kpi(fn):
-        return {m: fn(m) for m in models}
-
-    def _cov_mean(m, key):
-        vals = [v for (s, mm), c in cov.items() if mm == m for v in c[key]]
-        return _mean(vals)
-
-    def _text_mean(m):
-        # mean of measured means across text-ish metrics
-        vals = [v for (f, mm, mt), lst in field_scores.items()
-                if mm == m and mt in ("token_f1", "rouge_l", "bertscore") for v in lst]
-        return _mean(vals)
-
-    kpi = [
-        {"id": "recall", "label": "Recall", "fmt": "pct", "direction": 1,
-         "values": _kpi(lambda m: _cov_mean(m, "recall"))},
-        {"id": "precision", "label": "Precision", "fmt": "pct", "direction": 1,
-         "values": _kpi(lambda m: _cov_mean(m, "precision"))},
-        {"id": "text", "label": "Texto (média)", "fmt": "pct", "direction": 1,
-         "values": _kpi(_text_mean)},
-        {"id": "cost", "label": "Custo / run", "fmt": "usd", "direction": -1,
-         "values": _kpi(lambda m: _cov_mean(m, "cost"))},
-    ]
-
-    # Scatter: per (scanner, model) — halluc = 1-precision, omission = 1-recall.
-    scatter = []
-    for (scanner, model), c in cov.items():
-        rec, prec = _mean(c["recall"]), _mean(c["precision"])
-        if rec is None or prec is None:
+        if not ep.is_file():
             continue
-        scatter.append({
-            "scanner": scanner, "model": model,
-            "halluc": round(1 - prec, 4), "omission": round(1 - rec, 4),
-            "missed": round(_mean(c["missed"]) or 0, 1),
-            "spurious": round(_mean(c["spurious"]) or 0, 1),
-        })
+        ev = json.loads(ep.read_text(encoding="utf-8"))
+        for field, ms in ev.get("fields", {}).items():
+            fb = fe = None
+            for metric, st in ms.items():
+                field_metrics[field].add(metric)
+                if st.get("n_measured"):
+                    fmeas[key][(field, metric)].append(st.get("measured_mean"))
+                if fb is None and st.get("fill_rate_baseline") is not None:
+                    fb, fe = st["fill_rate_baseline"], st.get("fill_rate_extraction", 0.0)
+            if fb is not None:
+                fill[key][field].append(max(0.0, fb - (fe or 0.0)))
+        for pair in ev.get("pairs", []):
+            scores = pair.get("scores", {})
+            for metric in _TEXT:
+                vals = [ms[metric]["score"] for ms in scores.values()
+                        if metric in ms and not ms[metric]["vacuous"]]
+                if vals:
+                    pairsc[key][metric].append(statistics.fmean(vals))
 
-    # Field table: {metric: {field: {model: mean}}}
-    fields_by_metric: dict = defaultdict(lambda: defaultdict(dict))
-    for (field, model, metric), lst in field_scores.items():
-        fields_by_metric[metric][field][model] = round(_mean(lst), 4)
+    tsorted = sorted(targets)
+    text_present = [m for m in _TEXT if any(m in ms for ms in field_metrics.values())]
+    det_present = [m for m in _DET if any(m in ms for ms in field_metrics.values())]
+    sem_fields = sorted(f for f, ms in field_metrics.items() if ms & set(_TEXT))
+    det_fields = sorted(f for f, ms in field_metrics.items() if not (ms & set(_TEXT)))
+    omit_fields = sorted({f for c in fill.values() for f in c})
 
-    # Heatmap: {field: {model: fill_gap mean}}
-    heatmap: dict = defaultdict(dict)
-    for (field, model), lst in fill_gap.items():
-        heatmap[field][model] = round(_mean(lst), 4)
+    def pooled(model, key):
+        return [v for (t, m), c in cov.items() if m == model for v in c[key]]
 
-    # Coverage table rows.
-    coverage_rows = []
-    for model in models:
-        coverage_rows.append({
-            "model": model,
-            "recall": _cov_mean(model, "recall"),
-            "precision": _cov_mean(model, "precision"),
-            "missed": _cov_mean(model, "missed"),
-            "spurious": _cov_mean(model, "spurious"),
-        })
+    overall = {m: {k: _ms(pooled(m, k)) for k in
+                   ("recall", "precision", "missed", "spurious", "cost", "duration")}
+               for m in models}
+    by_target = {t: {m: {"recall": _ms(cov[(t, m)]["recall"]),
+                         "precision": _ms(cov[(t, m)]["precision"])}
+                     for m in models} for t in tsorted}
 
-    cost_rows = [{"model": m, "cost": _cov_mean(m, "cost"),
-                  "duration": _cov_mean(m, "duration")} for m in models]
+    def field_block(fields, metrics):
+        return {metric: {t: {f: {m: _ms(fmeas[(t, m)].get((f, metric), []))
+                                 for m in models} for f in fields} for t in tsorted}
+                for metric in metrics}
+
+    omission = {t: {f: {m: _ms(fill[(t, m)].get(f, [])) for m in models}
+                    for f in omit_fields} for t in tsorted}
+
+    def dist_box(metrics):
+        return {metric: {m: _box([v for t in tsorted for v in pairsc[(t, m)].get(metric, [])])
+                         for m in models} for metric in metrics}
+
+    def dist_cat(metrics):
+        # [High>=.9, Moderate>=.8, Slight>=.7, Divergent<.7, Absent] over the baseline.
+        out: dict = {}
+        for metric in metrics:
+            out[metric] = {}
+            for m in models:
+                scores = [v for t in tsorted for v in pairsc[(t, m)].get(metric, [])]
+                ab = statistics.fmean(pooled(m, "absent")) if pooled(m, "absent") else 0.0
+                matched = 1.0 - ab
+                if scores:
+                    n = len(scores)
+                    hi = sum(v >= 0.9 for v in scores) / n
+                    mo = sum(0.8 <= v < 0.9 for v in scores) / n
+                    sl = sum(0.7 <= v < 0.8 for v in scores) / n
+                    dv = sum(v < 0.7 for v in scores) / n
+                    out[metric][m] = [round(x, 4) for x in
+                                      (hi * matched, mo * matched, sl * matched, dv * matched, ab)]
+                else:
+                    out[metric][m] = [0, 0, 0, 0, round(ab, 4)]
+        return out
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "config": manifest["config"], "totals": manifest["totals"],
-        "models": models, "scanners": scanners, "fields": fields_all,
-        "metrics": [mt for mt in _METRIC_PRIORITY if mt in metrics_seen]
-                   + sorted(metrics_seen - set(_METRIC_PRIORITY)),
-        "kpi": kpi, "coverage_rows": coverage_rows, "scatter": scatter,
-        "fields_by_metric": fields_by_metric, "heatmap": heatmap,
-        "cost_rows": cost_rows,
+        "models": models, "targets": tsorted, "scanners": targets,
+        "text_metrics": text_present, "det_metrics": det_present,
+        "sem_fields": sem_fields, "det_fields": det_fields, "omit_fields": omit_fields,
+        "overall": overall, "by_target": by_target,
+        "text_fields": field_block(sem_fields, text_present),
+        "det_field_block": field_block(det_fields, det_present),
+        "omission": omission,
+        "dist": dist_box(text_present), "dist_cat": dist_cat(text_present),
     }
 
 
 def build_report(experiment_dir: Path, out_path: Path | None = None) -> Path:
     data = _aggregate(experiment_dir)
     out_path = out_path or (experiment_dir / "report.html")
-    doc = (f"<!doctype html><html lang=pt-BR><meta charset=utf-8>"
-           f"<meta name=viewport content='width=device-width,initial-scale=1'>"
-           f"<title>MulitaMiner — experiment report</title>"
-           f"<style>{_CSS}</style>{_BODY}"
-           f"<script>const DATA={json.dumps(data, ensure_ascii=False)};{_JS}</script>"
-           f"</html>")
+    doc = (
+        "<!doctype html><html lang=en><meta charset=utf-8>"
+        "<meta name=viewport content='width=device-width,initial-scale=1'>"
+        "<title>MulitaMiner - experiment report</title>"
+        f"<style>{_CSS}</style>{_BODY}"
+        f"<script>const DATA={json.dumps(data, ensure_ascii=False)};{_JS}</script>"
+        "</html>"
+    )
     out_path.write_text(doc, encoding="utf-8")
     return out_path
 
 
-_BODY = """
-<main class="viz-root">
-<header>
-  <div class="kicker">Experiment report</div>
-  <h1>MulitaMiner</h1>
-  <dl class="meta" id="meta"></dl>
-</header>
-<nav class="nav">
-  <a href="#kpi">KPIs</a><a href="#coverage">Cobertura</a>
-  <a href="#tradeoff">Halluc × Omiss</a><a href="#fields">Campos</a>
-  <a href="#heatmap">Heatmap</a><a href="#cost">Custo</a>
-</nav>
-<section id="kpi"><div class="kicker">Headline</div><h2>Por modelo</h2>
-  <div class="kpi-grid" id="kpi-grid"></div></section>
-<section id="coverage"><div class="kicker">Cobertura</div><h2>Recall, precision, perdas</h2>
-  <p class="note">Média entre relatórios e runs. Missed = vulns do baseline não recuperadas; spurious = extraídas sem par.</p>
-  <div class="table-wrap"><table id="t-coverage"></table></div></section>
-<section id="tradeoff"><div class="kicker">Trade-off</div><h2>Hallucination × Omission</h2>
-  <p class="note">Por (modelo, relatório): x = 1−precision, y = 1−recall. Ideal = canto inferior-esquerdo.</p>
-  <div class="filters" id="scatter-filters"><span class="filter-label">Scanner</span></div>
-  <div class="chart-card"><svg id="scatter" viewBox="0 0 760 460" role="img"></svg></div></section>
-<section id="fields"><div class="kicker">Qualidade por campo</div><h2>Média medida por campo × modelo</h2>
-  <p class="note">Pares vazio×vazio excluídos. Alterne a métrica; célula vazia = campo não usa aquela métrica.</p>
-  <div class="filters" id="field-metric-filters"><span class="filter-label">Métrica</span></div>
-  <div class="table-wrap"><table id="t-fields"></table></div></section>
-<section id="heatmap"><div class="kicker">Omissão por campo</div><h2>Lacuna de preenchimento</h2>
-  <p class="note">Fração média onde o baseline preenche o campo e a extração não (proxy de omissão). Mais vermelho = mais omitido.</p>
-  <div class="chart-card"><svg id="heatmap-svg" viewBox="0 0 760 480" role="img"></svg></div></section>
-<section id="cost"><div class="kicker">Custo & latência</div><h2>Por run</h2>
-  <div class="chart-card"><svg id="cost-svg" viewBox="0 0 760 220" role="img"></svg></div></section>
-</main>
-<div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+_MONO = "ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace"
+_SANS = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
+
+_CSS = f"""
+*{{margin:0;padding:0;box-sizing:border-box}}
+:root{{--bg:#f4f1ea;--card:#faf8f2;--card2:#efece3;--accent:#d9541e;
+  --ink:#1a1a17;--ink2:#52514e;--muted:#8a887f;--grid:#e6e3da;--border:#e2ded4}}
+body{{background:var(--bg);color:var(--ink);font-family:{_SANS};
+  font-variant-numeric:tabular-nums;max-width:1040px;margin:0 auto;padding:2rem 1.5rem 4rem}}
+.kick{{font:600 11px/1 {_MONO};letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}}
+h1{{font-size:2.2rem;letter-spacing:-.02em;margin:.35rem 0 .1rem;font-family:{_MONO}}}
+h1 span{{color:var(--accent)}}
+h2{{font-size:1.12rem;margin:.1rem 0}}
+header{{border-bottom:2px solid var(--accent);padding-bottom:1.1rem;margin-bottom:1.2rem;
+  display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem}}
+.meta{{display:flex;flex-wrap:wrap;gap:.4rem 1.3rem;font:.7rem/1.4 {_MONO};color:var(--muted);text-align:right}}
+.meta b{{color:var(--ink);font-weight:600}}
+.hero{{display:grid;grid-template-columns:minmax(240px,1fr) 1.7fr;gap:1.2rem;margin-bottom:1.6rem;align-items:stretch}}
+@media(max-width:740px){{.hero{{grid-template-columns:1fr}}}}
+.hero .dark{{background:var(--ink);color:#faf8f2;border-radius:14px;padding:1.4rem 1.5rem;
+  display:flex;flex-direction:column;justify-content:space-between;gap:1rem;min-height:150px}}
+.hero .dark .l{{font:600 10px/1 {_MONO};letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}}
+.hero .dark .win{{display:flex;align-items:center;gap:.55rem;margin-top:.6rem;font:700 1.4rem/1.1 {_MONO};word-break:break-word}}
+.hero .dark .big{{font:700 2.7rem/1 {_MONO}}}
+.hero .dark .sub{{font:.72rem/1.4 {_MONO};color:#c9c7bd;margin-top:.4rem}}
+.hero .lite{{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.3rem;
+  display:flex;flex-direction:column;overflow:hidden}}
+/* Bounded, scrollable ranking: the hero stays compact no matter the model count. */
+#verdictBars{{overflow-y:auto;overflow-x:hidden;max-height:190px;padding-right:.25rem;margin-right:-.25rem}}
+.brow{{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}}
+.brow:last-child{{margin-bottom:0}}
+.brow .nm{{width:84px;text-align:right;font:.7rem {_MONO};flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.brow .track{{flex:1;height:16px;background:var(--card2);border-radius:4px;overflow:hidden}}
+.brow .fill{{height:100%;border-radius:4px}}
+.brow .vv{{width:98px;font:.7rem {_MONO};flex-shrink:0}}
+.brow .vv s{{color:var(--muted);font-size:.6rem;text-decoration:none}}
+.dot{{width:11px;height:11px;border-radius:50%;display:inline-block;flex-shrink:0}}
+nav{{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;flex-wrap:wrap;gap:.3rem;
+  padding:.7rem 0;margin-bottom:1rem;border-bottom:1px solid var(--border)}}
+nav a{{color:var(--ink2);text-decoration:none;font:.7rem/1 {_MONO};padding:.4rem .6rem;border-radius:6px}}
+nav a:hover{{background:var(--card2);color:var(--ink)}}
+section{{margin:2.2rem 0;scroll-margin-top:3.4rem}}
+.sub{{color:var(--ink2);font-size:.85rem;margin:.2rem 0 1rem;max-width:70ch}}
+.card{{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1rem}}
+.card-t{{font:600 .72rem/1.2 {_MONO};text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+  margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}}
+.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:1rem}}
+@media(max-width:740px){{.grid2{{grid-template-columns:1fr}}}}
+.chart{{width:100%;height:auto;display:block}}
+.grid{{stroke:var(--grid);stroke-width:1}}
+.tick{{fill:var(--muted);font:10px {_MONO}}}
+.axt{{fill:var(--ink2);font:600 11px {_MONO}}}
+.ylab{{fill:var(--ink2);font:11px {_MONO}}}
+.err{{stroke:var(--ink);stroke-opacity:.4;stroke-width:1.4}}
+.wh{{stroke:var(--ink2);stroke-width:1.3}}
+.toggle{{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}}
+.toggle .lb{{font:600 10px/1 {_MONO};text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:.2rem}}
+.toggle button{{background:var(--card2);color:var(--ink2);border:1px solid var(--border);font:.7rem {_MONO};
+  padding:.28rem .6rem;border-radius:999px;cursor:pointer}}
+.toggle button[aria-pressed=true]{{background:var(--accent);color:#fff;border-color:var(--accent)}}
+.toggle button:focus-visible{{outline:2px solid var(--accent);outline-offset:2px}}
+select{{background:var(--card2);color:var(--ink);border:1px solid var(--border);border-radius:6px;
+  padding:.3rem .55rem;font:.7rem {_MONO};cursor:pointer}}
+.legend{{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.6rem;font:.7rem {_MONO};color:var(--ink2)}}
+.legend span{{display:inline-flex;align-items:center;gap:.35rem}}
+.sw{{width:11px;height:11px;border-radius:3px;display:inline-block}}
+.mult{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.8rem}}
+.htab-wrap{{overflow-x:auto}}
+.htab{{width:100%;border-collapse:collapse;font:.72rem {_MONO}}}
+.htab th{{font-weight:400;color:var(--muted);font-size:.64rem;padding:.5rem .6rem;border-bottom:1px solid var(--border);white-space:nowrap}}
+.htab th.l,.htab td.l{{text-align:left}}.htab th:not(.l){{text-align:center}}
+.htab td{{padding:.45rem .6rem;text-align:center;white-space:nowrap}}
+.htab td.l{{color:var(--ink)}}
+.htab td s{{display:block;font-size:.56rem;opacity:.7;text-decoration:none}}
+.empty{{color:var(--muted);font:.75rem {_MONO};padding:.5rem 0}}
+#tip{{position:fixed;pointer-events:none;background:var(--ink);color:#f4f1ea;padding:.4rem .6rem;border-radius:6px;
+  font:.68rem/1.35 {_MONO};box-shadow:0 8px 22px rgba(0,0,0,.28);transform:translate(-50%,-120%);opacity:0;
+  transition:opacity .12s;z-index:100;max-width:280px;white-space:pre-line}}
+#tip.on{{opacity:1}}
+@media(prefers-reduced-motion:reduce){{*{{transition:none!important}}}}
 """
 
-_CSS = """
-:root{color-scheme:light dark}
-.viz-root{--page:#f4f1ea;--card:#faf8f2;--card2:#efece3;--ink:#1a1a17;--ink2:#52514e;
-  --muted:#8a887f;--accent:#d9541e;--grid:#e6e3da;--baseline:#cfccc2;--border:#e2ded4;
-  --s0:#2a78d6;--s1:#008300;--s2:#e87ba4;--s3:#eda100;--s4:#4a3aa7;--s5:#e34948;--s6:#1baf7a;
-  --pos:#0ca30c;--neg:#d03b3b;
-  background:var(--page);color:var(--ink);
-  font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-variant-numeric:tabular-nums;max-width:1000px;margin:0 auto;padding:32px 24px 64px;}
-@media(prefers-color-scheme:dark){:root:where(:not([data-theme=light])) .viz-root{
-  --page:#14130f;--card:#1c1b16;--card2:#232219;--ink:#f4f1ea;--ink2:#c3c2b7;--muted:#8a887f;
-  --accent:#eb6834;--grid:#2c2c26;--baseline:#3a3932;--border:#2c2b24;
-  --s0:#3987e5;--s1:#008300;--s2:#d55181;--s3:#c98500;--s4:#9085e9;--s5:#e66767;--s6:#199e70;}}
-:root[data-theme=dark] .viz-root{--page:#14130f;--card:#1c1b16;--card2:#232219;--ink:#f4f1ea;
-  --ink2:#c3c2b7;--accent:#eb6834;--grid:#2c2c26;--baseline:#3a3932;--border:#2c2b24;
-  --s0:#3987e5;--s1:#008300;--s2:#d55181;--s3:#c98500;--s4:#9085e9;--s5:#e66767;--s6:#199e70;}
-.kicker{font:600 11px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:8px}
-h1{font-size:40px;margin:0 0 18px;letter-spacing:-.02em}
-h2{font-size:19px;margin:0 0 4px}
-header{border-bottom:2px solid var(--accent);padding-bottom:18px;margin-bottom:8px}
-.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px 20px;margin:0}
-.meta div{margin:0}.meta dt{font:600 10px/1.4 ui-monospace,monospace;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--muted)}
-.meta dd{margin:2px 0 0;font-weight:600}
-.nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 24px;
-  padding:8px 0;background:var(--page);border-bottom:1px solid var(--border)}
-.nav a{color:var(--ink2);text-decoration:none;font-size:12px;padding:5px 9px;border-radius:6px}
-.nav a:hover{background:var(--card2);color:var(--ink)}
-section{margin-bottom:40px;scroll-margin-top:56px}
-.note{color:var(--ink2);font-size:13px;margin:2px 0 12px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
-.kpi-card .label{font:600 11px/1 ui-monospace,monospace;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
-.kpi-row{display:grid;grid-template-columns:70px 1fr auto;gap:6px 10px;align-items:center;margin-bottom:5px}
-.kpi-row .m{font-size:12px;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kpi-row .bar{height:6px;background:var(--card2);border-radius:3px;overflow:hidden}
-.kpi-row .bar>span{display:block;height:100%;border-radius:3px}
-.kpi-row .v{font-size:13px;font-weight:600;text-align:right;min-width:4ch}
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:9px 14px;text-align:left}
-thead th{background:var(--card2);color:var(--ink2);font:600 11px/1 ui-monospace,monospace;
-  text-transform:uppercase;letter-spacing:.06em;position:sticky;top:0}
-td.num{text-align:right}
-tbody tr{border-top:1px solid var(--border)}
-tbody tr:hover{background:var(--card2)}
-.sw{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
-.chart-card svg{width:100%;height:auto;display:block}
-.grid line{stroke:var(--grid);stroke-width:1}
-.axis text{fill:var(--muted);font:10px ui-monospace,monospace}
-.axis-label{fill:var(--ink2);font:600 12px system-ui;}
-.pt{cursor:pointer;transition:stroke-width .15s}.pt:hover{stroke-width:3}
-.bar-rect{cursor:pointer}.bar-rect:hover{opacity:.85}
-.hm-cell{stroke:var(--card);stroke-width:1;cursor:pointer}.hm-cell:hover{stroke:var(--ink);stroke-width:2}
-.zone{fill:color-mix(in srgb,var(--pos) 8%,transparent);stroke:color-mix(in srgb,var(--pos) 30%,transparent);
-  stroke-dasharray:4 4}
-.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
-.filter-label{font:600 11px/1 ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--muted);margin-right:6px}
-.filters button{background:var(--card2);color:var(--ink2);border:1px solid var(--border);font:inherit;
-  font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer}
-.filters button[aria-pressed=true]{background:color-mix(in srgb,var(--accent) 18%,var(--card2));
-  border-color:var(--accent);color:var(--ink)}
-.legend{display:flex;flex-wrap:wrap;gap:14px;margin:4px 0 12px;font-size:12px;color:var(--ink2)}
-.legend span{display:inline-flex;align-items:center}
-.tooltip{position:fixed;pointer-events:none;background:var(--card);color:var(--ink);padding:8px 12px;
-  border-radius:8px;border:1px solid var(--baseline);font-size:12px;line-height:1.4;
-  box-shadow:0 8px 24px rgba(0,0,0,.25);transform:translate(-50%,-115%);opacity:0;transition:opacity .15s;
-  z-index:100;min-width:150px}
-.tooltip.on{opacity:1}
-.tt-title{font-weight:700;margin-bottom:4px}
-.tt-row{display:flex;justify-content:space-between;gap:14px}
-.tt-row .k{color:var(--muted)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+_BODY = """
+<header>
+  <div>
+    <div class="kick">Experiment report</div>
+    <h1>Mulita<span>Miner</span></h1>
+  </div>
+  <div class="meta" id="meta"></div>
+</header>
+
+<div class="hero">
+  <div class="dark" id="verdict"></div>
+  <div class="lite"><div class="card-t">Overall recall by model · mean across reports (±std)</div>
+    <div id="verdictBars"></div></div>
+</div>
+
+<nav>
+  <a href="#coverage">Coverage</a><a href="#consistency">By report</a>
+  <a href="#fields">Field quality</a><a href="#omission">Omission</a>
+  <a href="#dist">Distribution</a><a href="#errors">Errors &amp; cost</a>
+</nav>
+
+<section id="coverage">
+  <div class="kick">Coverage</div>
+  <h2>Precision × recall — where each model sits</h2>
+  <p class="sub">Top-right = extracts everything (recall) without hallucinating (precision).
+     Whiskers = spread across runs. Averaged over reports and runs.</p>
+  <div class="card"><div class="card-t">Precision × Recall by model (±std)</div>
+    <div id="scatter"></div><div class="legend" id="scLegend"></div></div>
+</section>
+
+<section id="consistency">
+  <div class="kick">Consistency</div>
+  <h2>Does the winner hold across reports?</h2>
+  <p class="sub">One panel per report (recall by model). If the order changes panel to panel,
+     the overall mean is hiding it.</p>
+  <div class="mult" id="sm"></div>
+  <div class="legend" id="smLegend"></div>
+</section>
+
+<section id="fields">
+  <div class="kick">Field quality</div>
+  <h2>Where each model gets fields right</h2>
+  <p class="sub">Measured mean per field (empty×empty pairs excluded). Darker = better.
+     BERTScore saturates high: read the gap between cells, not the absolute value.</p>
+  <div class="card">
+    <div class="card-t">
+      <span class="toggle" id="fldFamily"><span class="lb">Family</span></span>
+      <span class="toggle" id="fldMetric"><span class="lb">Metric</span></span>
+      <span style="margin-left:auto;display:flex;gap:.4rem;align-items:center">
+        <span class="lb" style="font:600 10px/1 monospace;color:var(--muted)">Report</span><select id="fldTarget"></select></span>
+    </div>
+    <div class="htab-wrap"><table class="htab" id="heat"></table></div>
+    <div class="legend" id="heatLegend"></div>
+  </div>
+</section>
+
+<section id="omission">
+  <div class="kick">Omission</div>
+  <h2>Which fields each model leaves empty</h2>
+  <p class="sub">Proxy: fraction of pairs where the baseline fills the field and the extraction does not
+     (baseline-filled − extraction-filled). Redder = more omitted.</p>
+  <div class="card">
+    <div class="card-t">Field omission
+      <span style="margin-left:auto;display:flex;gap:.4rem;align-items:center">
+        <span class="lb" style="font:600 10px/1 monospace;color:var(--muted)">Report</span><select id="omTarget"></select></span>
+    </div>
+    <div class="htab-wrap"><table class="htab" id="omheat"></table></div>
+    <div class="legend" id="omLegend"></div>
+  </div>
+</section>
+
+<section id="dist">
+  <div class="kick">Distribution</div>
+  <h2>How per-pair scores spread</h2>
+  <p class="sub">Box plot: box = interquartile range, line = median, ticks = min/max. The stacked bar bins
+     the same per-pair scores into similarity bands (a presentation choice, thresholds shown), plus
+     Absent = baseline vulns never recovered.</p>
+  <div class="card"><div class="card-t"><span class="toggle" id="distMetric"><span class="lb">Metric</span></span></div>
+    <div id="distBox"></div>
+    <div style="margin-top:1.2rem"><div class="card-t" style="margin-bottom:.5rem">Similarity categories · share of baseline
+      <span style="text-transform:none;letter-spacing:0;color:var(--muted)">(High ≥0.90 · Moderate ≥0.80 · Slight ≥0.70 · Divergent &lt;0.70 · Absent = omitted)</span></div>
+      <div id="distCat"></div><div class="legend" id="catLegend"></div></div>
+  </div>
+</section>
+
+<section id="errors">
+  <div class="kick">Errors &amp; cost</div>
+  <h2>Where coverage fails, and at what cost</h2>
+  <p class="sub">Per run, against the baseline (the gold): missed = baseline vulns not recovered
+     (false negatives); false positives = extracted records with no baseline match.</p>
+  <div class="card"><div class="card-t">Missed vs false positives by model (mean/run)</div>
+    <div id="err"></div>
+    <div class="legend"><span><span class="sw" style="background:var(--accent)"></span>Missed (FN)</span>
+      <span><span class="sw" style="background:var(--muted)"></span>False positives (FP)</span></div></div>
+  <div class="grid2" id="cost" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"></div>
+</section>
+<div id="tip" role="tooltip"></div>
 """
 
 _JS = r"""
-const S=["--s0","--s1","--s2","--s3","--s4","--s5","--s6"];
-const css=v=>getComputedStyle(document.querySelector(".viz-root")).getPropertyValue(v).trim();
-const color=i=>css(S[i%S.length]);
-const pct=v=>v==null?"—":(v*100).toFixed(1)+"%";
-const usd=v=>v==null?"—":"$"+v.toFixed(4);
-const num=v=>v==null?"—":(Math.abs(v)>=10?v.toFixed(1):v.toFixed(2));
-const NS="http://www.w3.org/2000/svg";
-const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
-const models=DATA.models;
-const tip=document.getElementById("tooltip");
-function showTip(h,e){tip.innerHTML=h;tip.style.left=e.clientX+"px";tip.style.top=e.clientY+"px";tip.classList.add("on");}
-function moveTip(e){tip.style.left=e.clientX+"px";tip.style.top=e.clientY+"px";}
-function hideTip(){tip.classList.remove("on");}
+const M=DATA.models,TGT=DATA.targets,OV=DATA.overall;
+const PAL=['#2a78d6','#008300','#a24bb0','#0f9d9d','#4a3aa7','#c81d54','#7a6a00','#946037'];
+const MC={};M.forEach((m,i)=>MC[m]=PAL[i%PAL.length]);
+const pct=v=>v==null?'—':(v*100).toFixed(1)+'%';
+const f3=v=>v==null?'—':v.toFixed(3);
+const avg=a=>{const x=a.filter(v=>v!=null);return x.length?x.reduce((s,v)=>s+v,0)/x.length:null;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el=id=>document.getElementById(id);
+const orec=m=>OV[m].recall.m;
 
-/* meta */
-const t=DATA.totals,c=DATA.config;
-document.getElementById("meta").innerHTML=[
-  ["modelos",models.join(", ")],["relatórios",c.reports.length],["runs cada",c.runs],
-  ["completos",t.done+"/"+t.planned],["tempo ativo",Math.round(t.active_seconds)+"s"],
-  ["custo","$"+t.cost_usd.toFixed(4)],["gerado",DATA.generated_at]
-].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+const tip=el('tip');
+document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(t){tip.textContent=t.getAttribute('data-tip');tip.classList.add('on');}});
+document.addEventListener('mousemove',e=>{if(tip.classList.contains('on')){tip.style.left=e.clientX+'px';tip.style.top=e.clientY+'px';}});
+document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]'))tip.classList.remove('on');});
 
-/* legend helper */
-function legend(host){host.innerHTML=models.map((m,i)=>
-  `<span><span class="sw" style="background:${color(i)}"></span>${m}</span>`).join("");}
+function axis(padL,plotW,top,bottom,min,max){let s='';[0,.25,.5,.75,1].forEach(t=>{
+  const v=min+(max-min)*t,x=padL+t*plotW;
+  s+=`<line class="grid" x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"/>`+
+     `<text class="tick" x="${x}" y="${top-7}" text-anchor="middle">${v.toFixed(2)}</text>`;});return s;}
 
-/* KPI cards */
-document.getElementById("kpi-grid").innerHTML=DATA.kpi.map(k=>{
-  const vals=models.map(m=>k.values[m]).filter(v=>v!=null);
-  const mx=k.fmt==="usd"?(vals.length?Math.max(...vals):1):1;
-  const rows=models.map((m,i)=>{
-    const v=k.values[m];const sc=v==null?0:Math.max(0,Math.min(1,mx?v/mx:0));
-    const disp=v==null?"—":k.fmt==="usd"?usd(v):pct(v);
-    return `<div class="kpi-row"><span class="m">${m}</span>
-      <div class="bar"><span style="width:${(sc*100).toFixed(1)}%;background:${color(i)}"></span></div>
-      <span class="v">${disp}</span></div>`;
-  }).join("");
-  return `<div class="kpi-card"><div class="label">${k.label}</div>${rows}</div>`;
-}).join("");
-
-/* Coverage table */
-(function(){
-  const head=`<thead><tr><th>Modelo</th><th class=num>Recall</th><th class=num>Precision</th>
-    <th class=num>Missed</th><th class=num>Spurious</th></tr></thead>`;
-  const body="<tbody>"+DATA.coverage_rows.map((r,i)=>
-    `<tr><td><span class="sw" style="background:${color(i)}"></span>${r.model}</td>
-     <td class=num>${pct(r.recall)}</td><td class=num>${pct(r.precision)}</td>
-     <td class=num>${num(r.missed)}</td><td class=num>${num(r.spurious)}</td></tr>`).join("")+"</tbody>";
-  document.getElementById("t-coverage").innerHTML=head+body;
-})();
-
-/* Scatter: halluc x omission, filter by scanner */
-let scScanner="__all__";
-(function(){
-  const host=document.getElementById("scatter-filters");
-  const btns=["__all__",...DATA.scanners].map(s=>
-    `<button data-sc="${s}" aria-pressed="${s==="__all__"}">${s==="__all__"?"Todos":s}</button>`).join(" ");
-  host.insertAdjacentHTML("beforeend",btns);
-  host.querySelectorAll("button[data-sc]").forEach(b=>b.addEventListener("click",()=>{
-    host.querySelectorAll("button[data-sc]").forEach(x=>x.setAttribute("aria-pressed",x===b));
-    scScanner=b.dataset.sc;renderScatter();}));
-})();
-function renderScatter(){
-  const svg=document.getElementById("scatter");svg.innerHTML="";
-  const W=760,H=460,P={t:20,r:24,b:52,l:60};
-  const pts=DATA.scatter.filter(p=>scScanner==="__all__"||p.scanner===scScanner);
-  if(!pts.length)return;
-  const xMax=Math.max(.05,Math.ceil(Math.max(...pts.map(p=>p.halluc))*20)/20);
-  const yMax=Math.max(.05,Math.ceil(Math.max(...pts.map(p=>p.omission))*20)/20);
-  const pw=W-P.l-P.r,ph=H-P.t-P.b;
-  const xs=v=>P.l+(v/xMax)*pw,ys=v=>P.t+ph-(v/yMax)*ph;
-  const g=el("g",{class:"grid"});
-  const tks=n=>Array.from({length:6},(_,i)=>i*n/5);
-  tks(xMax).forEach(v=>g.appendChild(el("line",{x1:xs(v),x2:xs(v),y1:P.t,y2:P.t+ph})));
-  tks(yMax).forEach(v=>g.appendChild(el("line",{x1:P.l,x2:P.l+pw,y1:ys(v),y2:ys(v)})));
-  svg.appendChild(g);
-  svg.appendChild(el("rect",{class:"zone",x:xs(0),y:ys(Math.min(yMax,.05)),
-    width:xs(Math.min(xMax,.05))-xs(0),height:ys(0)-ys(Math.min(yMax,.05))}));
-  const ax=el("g",{class:"axis"});
-  tks(xMax).forEach(v=>{const x=el("text",{x:xs(v),y:P.t+ph+16,"text-anchor":"middle"});x.textContent=(v*100).toFixed(0)+"%";ax.appendChild(x);});
-  tks(yMax).forEach(v=>{const y=el("text",{x:P.l-8,y:ys(v)+3,"text-anchor":"end"});y.textContent=(v*100).toFixed(0)+"%";ax.appendChild(y);});
-  const xl=el("text",{class:"axis-label",x:P.l+pw/2,y:H-10,"text-anchor":"middle"});xl.textContent="Hallucination →";ax.appendChild(xl);
-  const yl=el("text",{class:"axis-label",x:-(P.t+ph/2),y:14,"text-anchor":"middle",transform:"rotate(-90)"});yl.textContent="Omission →";ax.appendChild(yl);
-  svg.appendChild(ax);
-  pts.forEach(p=>{
-    const i=models.indexOf(p.model);
-    const cc=el("circle",{class:"pt",cx:xs(p.halluc),cy:ys(p.omission),r:8,
-      fill:color(i),"fill-opacity":.72,stroke:color(i),"stroke-width":1.5,tabindex:0});
-    const h=`<div class="tt-title">${p.model} · ${p.scanner}</div>
-      <div class="tt-row"><span class="k">Halluc</span><span>${pct(p.halluc)}</span></div>
-      <div class="tt-row"><span class="k">Omiss</span><span>${pct(p.omission)}</span></div>
-      <div class="tt-row"><span class="k">Missed</span><span>${p.missed}</span></div>
-      <div class="tt-row"><span class="k">Spurious</span><span>${p.spurious}</span></div>`;
-    cc.addEventListener("mouseenter",e=>showTip(h,e));cc.addEventListener("mousemove",moveTip);
-    cc.addEventListener("mouseleave",hideTip);
-    cc.addEventListener("focus",()=>{const b=cc.getBoundingClientRect();showTip(h,{clientX:b.left+b.width/2,clientY:b.top});});
-    cc.addEventListener("blur",hideTip);
-    svg.appendChild(cc);
-  });
-  const lg=el("g",{});const lx=P.l+pw-90;let ly=P.t+6;
-  models.forEach((m,i)=>{lg.appendChild(el("circle",{cx:lx,cy:ly,r:5,fill:color(i)}));
-    const tx=el("text",{x:lx+12,y:ly+4,"font-size":11,fill:css("--ink2")});tx.textContent=m;lg.appendChild(tx);ly+=16;});
-  svg.appendChild(lg);
+function hDot(rows,{W=760,rowH=28,padL=120,min=0,max=1,ticks=true}={}){
+  const padR=40,top=ticks?30:12,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
+  const X=v=>padL+((v-min)/(max-min))*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  if(ticks)s+=axis(padL,plotW,top,bottom,min,max);
+  else [0,.5,1].forEach(t=>{const x=padL+t*plotW;s+=`<line class="grid" x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"/>`;});
+  rows.forEach((r,i)=>{const y=top+i*rowH+rowH/2;
+    s+=`<text class="ylab" x="${padL-10}" y="${y+4}" text-anchor="end">${esc(r.label)}</text>`;
+    r.points.forEach(p=>{if(p.v==null)return;const cx=X(p.v);
+      if(p.err)s+=`<line class="err" x1="${X(Math.max(min,p.v-p.err))}" y1="${y}" x2="${X(Math.min(max,p.v+p.err))}" y2="${y}"/>`;
+      s+=`<circle cx="${cx}" cy="${y}" r="6" fill="${p.color}" data-tip="${esc(p.tip)}"/>`;});});
+  return s+'</svg>';
 }
 
-/* Field table with metric toggle */
-let fMetric=DATA.metrics[0];
-(function(){
-  const host=document.getElementById("field-metric-filters");
-  host.insertAdjacentHTML("beforeend",DATA.metrics.map((mt,i)=>
-    `<button data-fm="${mt}" aria-pressed="${i===0}">${mt}</button>`).join(" "));
-  host.querySelectorAll("button[data-fm]").forEach(b=>b.addEventListener("click",()=>{
-    host.querySelectorAll("button[data-fm]").forEach(x=>x.setAttribute("aria-pressed",x===b));
-    fMetric=b.dataset.fm;renderFields();}));
-})();
-function renderFields(){
-  const by=DATA.fields_by_metric[fMetric]||{};
-  const head=`<thead><tr><th>Campo</th>${models.map((m,i)=>
-    `<th class=num><span class="sw" style="background:${color(i)}"></span>${m}</th>`).join("")}</tr></thead>`;
-  const rows=DATA.fields.filter(f=>by[f]).map(f=>
-    `<tr><td>${f}</td>${models.map(m=>`<td class=num>${pct((by[f]||{})[m])}</td>`).join("")}</tr>`).join("");
-  document.getElementById("t-fields").innerHTML=head+"<tbody>"+rows+"</tbody>";
+function hBox(rows,{W=760,rowH=38,padL=120}={}){
+  const padR=40,top=30,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
+  const X=v=>padL+v*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`+axis(padL,plotW,top,bottom,0,1);
+  rows.forEach((r,i)=>{const y=top+i*rowH+rowH/2;
+    s+=`<text class="ylab" x="${padL-10}" y="${y+4}" text-anchor="end">${esc(r.label)}</text>`;
+    const b=r.box;if(!b){s+=`<text class="tick" x="${padL+6}" y="${y+4}">no data</text>`;return;}
+    const bh=rowH*.46,tp=esc(`${r.label}\nmin ${b.min.toFixed(2)}  Q1 ${b.q1.toFixed(2)}  med ${b.med.toFixed(2)}  Q3 ${b.q3.toFixed(2)}  max ${b.max.toFixed(2)}\nn=${b.n} pairs`);
+    s+=`<line class="wh" x1="${X(b.min)}" y1="${y}" x2="${X(b.q1)}" y2="${y}"/>`+
+       `<line class="wh" x1="${X(b.q3)}" y1="${y}" x2="${X(b.max)}" y2="${y}"/>`+
+       `<line class="wh" x1="${X(b.min)}" y1="${y-4}" x2="${X(b.min)}" y2="${y+4}"/>`+
+       `<line class="wh" x1="${X(b.max)}" y1="${y-4}" x2="${X(b.max)}" y2="${y+4}"/>`+
+       `<rect x="${X(b.q1)}" y="${y-bh/2}" width="${Math.max(1,X(b.q3)-X(b.q1))}" height="${bh}" rx="2" fill="${r.color}" fill-opacity=".28" stroke="${r.color}" data-tip="${tp}"/>`+
+       `<line x1="${X(b.med)}" y1="${y-bh/2}" x2="${X(b.med)}" y2="${y+bh/2}" stroke="${r.color}" stroke-width="2.5"/>`;});
+  return s+'</svg>';
 }
 
-/* Heatmap: fill gap per field x model */
-function hmColor(v){
-  if(v==null)return css("--card2");
-  const t=Math.max(0,Math.min(1,v/0.5));
-  const stops=[[0,[31,102,68]],[.5,[230,184,0]],[1,[154,36,36]]];
-  let lo=stops[0],hi=stops[2];
-  for(let i=0;i<2;i++)if(t>=stops[i][0]&&t<=stops[i+1][0]){lo=stops[i];hi=stops[i+1];break;}
-  const k=(t-lo[0])/((hi[0]-lo[0])||1);
-  return "rgb("+lo[1].map((x,i)=>Math.round(x+(hi[1][i]-x)*k)).join(",")+")";
-}
-function renderHeatmap(){
-  const svg=document.getElementById("heatmap-svg");svg.innerHTML="";
-  const fields=DATA.fields.filter(f=>DATA.heatmap[f]);
-  if(!fields.length){svg.innerHTML='<text x=20 y=30 fill="'+css("--muted")+'">sem dados de preenchimento</text>';return;}
-  const W=760,P={t:16,r:70,b:96,l:150};
-  const cols=models.length,rows=fields.length;
-  const cw=(W-P.l-P.r)/cols,ch=26;
-  const H=P.t+rows*ch+P.b;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
-  fields.forEach((f,ri)=>{
-    const yl=el("text",{x:P.l-8,y:P.t+ri*ch+ch/2+4,"text-anchor":"end","font-size":11,fill:css("--ink2")});
-    yl.textContent=f;svg.appendChild(yl);
-    models.forEach((m,ci)=>{
-      const v=(DATA.heatmap[f]||{})[m];const x=P.l+ci*cw,y=P.t+ri*ch;
-      const r=el("rect",{class:"hm-cell",x,y,width:cw,height:ch,fill:hmColor(v),tabindex:0});
-      const disp=v==null?"N/A":(v*100).toFixed(1)+"%";
-      const h=`<div class="tt-title">${m}</div><div class="tt-row"><span class="k">${f}</span><span>${disp}</span></div>`;
-      r.addEventListener("mouseenter",e=>showTip(h,e));r.addEventListener("mousemove",moveTip);
-      r.addEventListener("mouseleave",hideTip);
-      r.addEventListener("focus",()=>{const b=r.getBoundingClientRect();showTip(h,{clientX:b.left+b.width/2,clientY:b.top});});
-      r.addEventListener("blur",hideTip);svg.appendChild(r);
-      if(cw>=48&&v!=null){const tx=el("text",{x:x+cw/2,y:y+ch/2+3,"text-anchor":"middle","font-size":9,
-        fill:v>.25?"#fff":"#111","pointer-events":"none"});tx.textContent=(v*100).toFixed(0);svg.appendChild(tx);}
-    });
-  });
-  models.forEach((m,ci)=>{const x=P.l+ci*cw+cw/2,y=P.t+rows*ch+14;
-    const tx=el("text",{x,y,"text-anchor":"end","font-size":11,fill:css("--ink2"),transform:`rotate(-40 ${x} ${y})`});
-    tx.textContent=m;svg.appendChild(tx);});
+// stacked horizontal bar (each row sums to ~1). rows:[{label,vals:[...]}], cats colors
+function hStack(rows,cats,colors,{W=760,rowH=30,padL=120}={}){
+  const padR=20,top=30,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
+  const X=v=>padL+v*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  [0,.25,.5,.75,1].forEach(t=>{s+=`<line class="grid" x1="${X(t)}" y1="${top}" x2="${X(t)}" y2="${bottom}"/>`+
+    `<text class="tick" x="${X(t)}" y="${top-7}" text-anchor="middle">${(t*100).toFixed(0)}%</text>`;});
+  rows.forEach((r,i)=>{const y=top+i*rowH+rowH*.2,bh=rowH*.55;
+    s+=`<text class="ylab" x="${padL-10}" y="${y+bh/2+4}" text-anchor="end">${esc(r.label)}</text>`;
+    let cum=0;r.vals.forEach((v,ci)=>{if(v<=0){return;}const x=X(cum),w=X(cum+v)-x;
+      s+=`<rect x="${x}" y="${y}" width="${Math.max(0.5,w)}" height="${bh}" fill="${colors[ci]}" data-tip="${esc(r.label+' · '+cats[ci]+': '+(v*100).toFixed(1)+'%')}"/>`;cum+=v;});});
+  return s+'</svg>';
 }
 
-/* Cost + latency bars */
-function renderCost(){
-  const svg=document.getElementById("cost-svg");svg.innerHTML="";
-  const W=760,H=220,P={t:16,r:24,b:40,l:150};
-  const rows=DATA.cost_rows.filter(r=>r.cost!=null||r.duration!=null);
-  if(!rows.length)return;
-  const cMax=Math.max(...rows.map(r=>r.cost||0))||1;
-  const half=(H-P.t-P.b)/rows.length;
-  rows.forEach((r,i)=>{
-    const y=P.t+i*half+half*.2,bh=half*.55;const i2=models.indexOf(r.model);
-    const lbl=el("text",{x:P.l-8,y:y+bh/2+4,"text-anchor":"end","font-size":12,fill:css("--ink2")});
-    lbl.textContent=r.model;svg.appendChild(lbl);
-    const w=(W-P.l-P.r)*((r.cost||0)/cMax);
-    const rect=el("rect",{class:"bar-rect",x:P.l,y,width:w,height:bh,rx:4,fill:color(i2)});
-    const h=`<div class="tt-title">${r.model}</div>
-      <div class="tt-row"><span class="k">Custo</span><span>${usd(r.cost)}</span></div>
-      <div class="tt-row"><span class="k">Tempo</span><span>${r.duration!=null?Math.round(r.duration)+"s":"—"}</span></div>`;
-    rect.addEventListener("mouseenter",e=>showTip(h,e));rect.addEventListener("mousemove",moveTip);
-    rect.addEventListener("mouseleave",hideTip);svg.appendChild(rect);
-    const vt=el("text",{x:P.l+w+6,y:y+bh/2+4,"font-size":11,fill:css("--ink2")});
-    vt.textContent=usd(r.cost)+(r.duration!=null?" · "+Math.round(r.duration)+"s":"");svg.appendChild(vt);
-  });
+function hBars(rows,{W=760,rowH=40,padL=120}={}){
+  const padR=54,top=12,plotW=W-padL-padR,H=top+rows.length*rowH+12;
+  const max=Math.max(1,...rows.flatMap(r=>r.bars.map(b=>b.v)));const X=v=>(v/max)*plotW;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  rows.forEach((r,i)=>{const y0=top+i*rowH+6,n=r.bars.length,bh=(rowH-10)/n;
+    s+=`<text class="ylab" x="${padL-10}" y="${y0+rowH/2-4}" text-anchor="end">${esc(r.label)}</text>`;
+    r.bars.forEach((b,j)=>{const y=y0+j*bh,w=X(b.v);
+      s+=`<rect x="${padL}" y="${y}" width="${Math.max(0,w)}" height="${bh-2}" rx="2" fill="${b.color}" data-tip="${esc(b.tip)}"/>`+
+         `<text class="tick" x="${padL+w+5}" y="${y+bh/2+1}">${b.v.toFixed(1)}</text>`;});});
+  return s+'</svg>';
 }
 
-renderScatter();renderFields();renderHeatmap();renderCost();
-let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{renderScatter();renderHeatmap();renderCost();},150);});
+function scatter(pts,{W=760,H=520,min=0.5}={}){
+  const pad={t:16,r:20,b:48,l:56},plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
+  const X=v=>pad.l+((v-min)/(1-min))*plotW,Y=v=>pad.t+plotH-((v-min)/(1-min))*plotH;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+  [0,.25,.5,.75,1].forEach(t=>{const v=min+(1-min)*t;
+    s+=`<line class="grid" x1="${X(v)}" y1="${pad.t}" x2="${X(v)}" y2="${pad.t+plotH}"/>`+
+       `<line class="grid" x1="${pad.l}" y1="${Y(v)}" x2="${pad.l+plotW}" y2="${Y(v)}"/>`+
+       `<text class="tick" x="${X(v)}" y="${pad.t+plotH+16}" text-anchor="middle">${v.toFixed(2)}</text>`+
+       `<text class="tick" x="${pad.l-8}" y="${Y(v)+3}" text-anchor="end">${v.toFixed(2)}</text>`;});
+  s+=`<text class="axt" x="${pad.l+plotW/2}" y="${H-8}" text-anchor="middle">Precision →</text>`+
+     `<text class="axt" x="${-(pad.t+plotH/2)}" y="14" text-anchor="middle" transform="rotate(-90)">Recall →</text>`;
+  pts.forEach(p=>{if(p.x==null||p.y==null)return;const cx=X(p.x),cy=Y(p.y);
+    if(p.ex)s+=`<line class="err" x1="${X(Math.max(min,p.x-p.ex))}" y1="${cy}" x2="${X(Math.min(1,p.x+p.ex))}" y2="${cy}"/>`;
+    if(p.ey)s+=`<line class="err" x1="${cx}" y1="${Y(Math.max(min,p.y-p.ey))}" x2="${cx}" y2="${Y(Math.min(1,p.y+p.ey))}"/>`;
+    s+=`<circle cx="${cx}" cy="${cy}" r="8" fill="${p.color}" fill-opacity=".85" stroke="${p.color}" data-tip="${esc(p.label+'\nprecision '+f3(p.x)+' · recall '+f3(p.y))}"/>`+
+       `<text x="${cx+11}" y="${cy+3}" class="ylab" style="font-size:10px">${esc(p.label)}</text>`;});
+  return s+'</svg>';
+}
+
+// sequential color: v mapped from [min,max] to cream -> deep hue (green good, red bad).
+function ramp(v,min,max,hue){const t=Math.max(0,Math.min(1,(v-min)/(max-min)));const L=(a,b)=>Math.round(a+(b-a)*t);
+  const to=hue==='red'?[176,26,69]:[26,94,99];
+  return{bg:`rgb(${L(244,to[0])},${L(241,to[1])},${L(234,to[2])})`,tx:t>0.5?'#faf8f2':'#1a1a17'};}
+
+function heatTable(tableId,fields,getCell,colorFn){
+  const tbl=el(tableId);
+  if(!fields.length){tbl.innerHTML='<tbody><tr><td class="empty">no data</td></tr></tbody>';return;}
+  let h=`<thead><tr><th class="l">Field</th>${M.map(m=>`<th><span class="dot" style="width:7px;height:7px;background:${MC[m]};margin-right:4px"></span>${esc(m)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>`;
+  fields.forEach(f=>{h+=`<tr><td class="l">${esc(f)}</td>`;const row=[];
+    M.forEach(m=>{const d=getCell(f,m),v=d.m;if(v==null){h+=`<td>—</td>`;return;}row.push(v);const c=colorFn(v);
+      h+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}<s>±${(d.s||0).toFixed(2)}</s></td>`;});
+    const a=avg(row),ac=a==null?null:colorFn(a);
+    h+=a==null?`<td>—</td></tr>`:`<td style="background:${ac.bg};color:${ac.tx};font-weight:700">${a.toFixed(2)}</td></tr>`;});
+  tbl.innerHTML=h+'</tbody>';
+}
+
+function legend(id,items){el(id).innerHTML=items.map(([l,c])=>
+  `<span><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('');}
+function toggle(id,opts,active,cb){const h=el(id);
+  h.querySelectorAll('button').forEach(b=>b.remove());
+  h.insertAdjacentHTML('beforeend',opts.map(o=>`<button data-v="${o}" aria-pressed="${o===active}">${o}</button>`).join(''));
+  h.querySelectorAll('button').forEach(b=>b.onclick=()=>{h.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});}
+function fillSel(id,opts,onch){const s=el(id);s.innerHTML=opts.map(o=>`<option value="${o}">${o}</option>`).join('');s.onchange=()=>onch(s.value);}
+
+// ---- meta ----
+const T=DATA.totals,C=DATA.config;
+el('meta').innerHTML=[['models',M.length],['reports',TGT.length],['runs',C.runs],
+  ['done',`${T.done}/${T.planned}`],['cost',`$${T.cost_usd.toFixed(4)}`],
+  ['time',`${Math.round(T.active_seconds)}s`]].map(([k,v])=>`<span>${k} <b>${v}</b></span>`).join('');
+
+// ---- verdict ----
+const ranked=[...M].filter(m=>orec(m)!=null).sort((a,b)=>orec(b)-orec(a));
+if(ranked.length){const win=ranked[0],c=MC[win],delta=ranked[1]?orec(win)-orec(ranked[1]):null;
+  el('verdict').innerHTML=`<div><div class="l">Best model · overall recall</div>
+    <div class="win"><span class="dot" style="background:${c}"></span>${esc(win)}</div></div>
+    <div><div class="big" style="color:${c}">${orec(win).toFixed(3)}</div>
+    <div class="sub">mean recall${delta!=null?` · +${delta.toFixed(3)} ahead of ${esc(ranked[1])}`:''}</div></div>`;
+  const maxV=orec(ranked[0]);
+  el('verdictBars').innerHTML=ranked.map(m=>{const v=orec(m),s=OV[m].recall.s||0;
+    return `<div class="brow"><span class="nm">${esc(m)}</span>
+      <div class="track"><div class="fill" style="width:${(v/maxV*100).toFixed(1)}%;background:${MC[m]}"></div></div>
+      <span class="vv">${v.toFixed(3)} <s>±${s.toFixed(3)}</s></span></div>`;}).join('');
+}else{el('verdict').innerHTML='<div class="l">no coverage evaluated</div>';}
+
+// ---- scatter ----
+(function(){const vals=M.flatMap(m=>[OV[m].recall.m,OV[m].precision.m]).filter(v=>v!=null);
+  const lo=vals.length?Math.max(0,Math.floor((Math.min(...vals)-0.06)*10)/10):0.5;
+  el('scatter').innerHTML=scatter(M.map(m=>({x:OV[m].precision.m,y:OV[m].recall.m,
+    ex:OV[m].precision.s,ey:OV[m].recall.s,color:MC[m],label:m})),{min:lo});
+  legend('scLegend',M.map(m=>[m,MC[m]]));})();
+
+// ---- small multiples ----
+el('sm').innerHTML=TGT.map(t=>{
+  const rows=[...M].sort((a,b)=>(DATA.by_target[t][b].recall.m??-1)-(DATA.by_target[t][a].recall.m??-1))
+    .map(m=>({label:m,points:[{v:DATA.by_target[t][m].recall.m,err:DATA.by_target[t][m].recall.s,color:MC[m],
+      tip:`${m} @ ${t}\nrecall ${pct(DATA.by_target[t][m].recall.m)} ±${((DATA.by_target[t][m].recall.s||0)*100).toFixed(1)}`}]}));
+  return `<div class="card"><div class="card-t">${esc(t)}</div>${hDot(rows,{W:520,padL:110,rowH:24,ticks:false})}</div>`;
+}).join('')||'<div class="empty">no reports evaluated</div>';
+legend('smLegend',M.map(m=>[m,MC[m]]));
+
+// ---- field quality heatmap ----
+(function(){let fam='text',metric=null,target=TGT[0]||null;
+  const block=()=>fam==='text'?DATA.text_fields:DATA.det_field_block;
+  const fields=()=>fam==='text'?DATA.sem_fields:DATA.det_fields;
+  const metrics=()=>fam==='text'?DATA.text_metrics:DATA.det_metrics;
+  function render(){const b=block(),cell=(metric&&target&&b[metric])?b[metric][target]:null;
+    const fs=cell?fields().filter(f=>M.some(m=>cell[f][m].m!=null)):[];
+    if(!fs.length){heatTable('heat',[],()=>({}),()=>({}));el('heatLegend').innerHTML='';return;}
+    heatTable('heat',fs,(f,m)=>cell[f][m],v=>ramp(v,0.5,1,'green'));
+    el('heatLegend').innerHTML=`<span style="color:var(--muted)">0.50</span>
+      <span style="width:150px;height:11px;border-radius:3px;background:linear-gradient(90deg,rgb(244,241,234),rgb(26,94,99));display:inline-block"></span>
+      <span style="color:var(--muted)">1.00 · darker = better</span>`;}
+  function setFam(f){fam=f;metric=metrics()[0]||null;toggle('fldMetric',metrics(),metric,v=>{metric=v;render();});render();}
+  fillSel('fldTarget',TGT,v=>{target=v;render();});
+  toggle('fldFamily',['text','exact'],'text',setFam);
+  setFam('text');})();
+
+// ---- omission heatmap ----
+(function(){let target=TGT[0]||null;
+  function render(){const cell=target?DATA.omission[target]:null;
+    heatTable('omheat',DATA.omit_fields,(f,m)=>(cell&&cell[f])?cell[f][m]:{m:null,s:0},v=>ramp(v,0,0.4,'red'));
+    el('omLegend').innerHTML=`<span style="color:var(--muted)">0.00</span>
+      <span style="width:150px;height:11px;border-radius:3px;background:linear-gradient(90deg,rgb(244,241,234),rgb(176,26,69));display:inline-block"></span>
+      <span style="color:var(--muted)">higher · redder = more omitted</span>`;}
+  fillSel('omTarget',TGT,v=>{target=v;render();});
+  render();})();
+
+// ---- distribution: box + category stack ----
+(function(){let metric=DATA.text_metrics[0]||null;
+  const CATS=['High','Moderate','Slight','Divergent','Absent'];
+  const CC=['#0a6b0a','#7a9a2f','#d9a200','#c81d54','#b8b4a8'];
+  function render(){if(!metric){el('distBox').innerHTML='<div class="empty">no per-pair scores</div>';el('distCat').innerHTML='';return;}
+    el('distBox').innerHTML=hBox(M.map(m=>({label:m,box:DATA.dist[metric][m],color:MC[m]})));
+    el('distCat').innerHTML=hStack(M.map(m=>({label:m,vals:DATA.dist_cat[metric][m]})),CATS,CC);
+    legend('catLegend',CATS.map((c,i)=>[c,CC[i]]));}
+  if(DATA.text_metrics.length)toggle('distMetric',DATA.text_metrics,metric,v=>{metric=v;render();});
+  render();})();
+
+// ---- errors + cost ----
+el('err').innerHTML=hBars(M.map(m=>({label:m,bars:[
+  {v:OV[m].missed.m??0,color:'var(--accent)',tip:`${m} · missed ${(OV[m].missed.m??0).toFixed(1)}/run`},
+  {v:OV[m].spurious.m??0,color:'var(--muted)',tip:`${m} · false positives ${(OV[m].spurious.m??0).toFixed(1)}/run`}]})));
+el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
+  return `<div class="card" style="margin:0"><div class="card-t" style="margin:0 0 .4rem">${esc(m)}</div>
+    <div style="font:700 1.05rem ui-monospace,monospace;color:${MC[m]}">${c?'$'+c.toFixed(4):'—'}</div>
+    <div style="font:.65rem ui-monospace,monospace;color:var(--muted)">${d!=null?Math.round(d)+'s/run':''}</div></div>`;}).join('');
 """
