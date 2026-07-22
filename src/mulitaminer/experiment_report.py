@@ -1,22 +1,11 @@
-"""Self-contained HTML report for an experiment tree.
+"""Self-contained HTML report for an experiment tree: reads experiment.json plus
+each run's evaluation.json and renders one offline inline-SVG dashboard (no JS
+deps, no external assets), styled after the project's cream/orange deck.
 
-Reads experiment.json plus each run's evaluation.json, aggregates per
-(target, model) with run-to-run spread, and renders a single scrolling
-dashboard of inline SVG (no JavaScript dependencies, no external assets), so
-the file opens offline after being scp'd off the run host. Styled after the
-project's cream/orange defense deck; model series use a categorical palette
-(orange is reserved for brand chrome, never a series). Generated text is
-English.
-
-Chart choices follow the metrics-auditor guidance: a verdict header states the
-winner up front; a precision x recall scatter (with std whiskers) positions the
-models; per-field quality and omission are sequential heatmaps; the score
-distribution is both a box plot of the raw per-pair scores and a similarity
-category stack. The similarity categories are a presentation binning (the
-thresholds are labelled in the report), not something the pipeline computes.
-
-Terminology: a *target* is one report (its baseline XLSX is the gold); a
-*model* is an LLM profile; spread is across the N runs.
+A *target* is one report (its baseline XLSX is the gold); a *model* is an LLM
+profile; spread is across the N runs. The similarity categories in the
+distribution are a presentation binning (thresholds shown), not a pipeline
+metric.
 """
 from __future__ import annotations
 

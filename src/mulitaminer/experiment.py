@@ -1,21 +1,11 @@
 """Run X extractions per (scanner, model, report), grouped for parallelism.
 
-Layout: <out>/<scanner>/<model>/run_<n>/<report_stem>/ with the usual run
-artifacts plus evaluation.json/.md when a baseline XLSX sits by the PDF.
-
-Parallelism is by capacity bucket (a model's api_key_env or, if local, its
-base_url): the credential/server that enforces rate limits. Buckets run
-concurrently; runs within a bucket run sequentially. A local model and an API
-model land in different buckets and overlap.
-
-Checkpointing: a run dir with results.json + run.json is skipped on
-re-invocation, its metrics re-read from disk so the rewritten manifest stays
-complete after a resume. This also composes across hosts: run one model here,
-another on a GPU box, drop its run dirs into the same tree, and re-invoke with
-both model keys to get one unified manifest and report (every run cached, no
-API calls). The manifest is rewritten after every finished run. Duration
-accounting sums each run's active duration_s (never wall clock), so pausing and
-resuming from checkpoint never inflates the total.
+Layout: <out>/<scanner>/<model>/run_<n>/<report_stem>/, plus evaluation.json/.md
+when a baseline XLSX sits by the PDF. Parallelism is by capacity bucket (a
+model's api_key_env or, if local, its base_url): buckets run concurrently, runs
+within a bucket sequentially. Complete run dirs are skipped and re-read from
+disk, so a resumed or cross-host-merged batch yields one complete manifest with
+no API calls. Duration sums each run's active duration_s, never wall clock.
 """
 from __future__ import annotations
 
