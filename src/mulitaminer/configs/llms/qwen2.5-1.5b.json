@@ -1,0 +1,8 @@
+{
+  "key": "qwen2.5-1.5b",
+  "model": "qwen2.5:1.5b",
+  "base_url": "http://localhost:11434/v1",
+  "context_window": 16000,
+  "max_output_tokens": 8000,
+  "supports_json_schema": false
+}

@@ -103,8 +103,13 @@ else is optional with sensible defaults.
 | `supports_json_schema` | Strict schema vs `json_object` + validation (default `false`) |
 | `price_in` / `price_out` | USD per 1M tokens, for the run cost report (default 0) |
 | `reasoning_tags` | `true` strips `<think>` blocks (reasoning models like Qwen3) |
-| `temperature` | Defaults to 0 for deterministic extraction |
+| `temperature` | Sampling temperature; set per model to override. **Default `0`** |
 | `encoding` | tiktoken encoding for token counting; default `cl100k_base` |
+
+**Temperature is `0` by default for every model** (deterministic extraction, the
+single most important knob for fidelity). This is sent on every call, so it also
+overrides a provider's own default (e.g. Ollama's `0.7`). Raise it in a model's
+JSON only if you have a reason to; extraction almost always wants `0`.
 
 A config with an unknown or missing field fails at load with an error naming
 the file and the valid field list.
