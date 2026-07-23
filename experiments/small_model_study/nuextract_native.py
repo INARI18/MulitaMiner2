@@ -9,7 +9,7 @@ It reuses the tool's segmenter + record schema, does ONE call per block (NuExtra
 `mulitaminer evaluate <out_dir>` can score it exactly like a normal run.
 
 Usage:
-    uv run python experiments/nuextract_native.py <scanner> <report.pdf> <model_key> <out_dir>
+    uv run python experiments/small_model_study/nuextract_native.py <scanner> <report.pdf> <model_key> <out_dir>
     # e.g. ... openvas resources/openvas/OpenVAS_JuiceShop.pdf nuextract /tmp/nu_native
     uv run mulitaminer evaluate <out_dir> --baseline resources/openvas/OpenVAS_JuiceShop.xlsx
 """
