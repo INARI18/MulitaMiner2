@@ -1,0 +1,8 @@
+{
+  "key": "nuextract-tiny",
+  "model": "sroecker/nuextract-tiny-v1.5",
+  "base_url": "http://localhost:11434/v1",
+  "context_window": 16000,
+  "max_output_tokens": 8000,
+  "supports_json_schema": true
+}

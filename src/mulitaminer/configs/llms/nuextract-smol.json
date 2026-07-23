@@ -1,0 +1,8 @@
+{
+  "key": "nuextract-smol",
+  "model": "hf.co/QuantFactory/NuExtract-1.5-smol-GGUF",
+  "base_url": "http://localhost:11434/v1",
+  "context_window": 8000,
+  "max_output_tokens": 4000,
+  "supports_json_schema": true
+}
