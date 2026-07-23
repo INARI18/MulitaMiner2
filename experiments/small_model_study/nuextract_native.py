@@ -27,6 +27,33 @@ from mulitaminer.models import _is_llm_produced
 from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanner_engine import get_scanner
 
+# Severity comes from the report structure (block header), not the model, so we
+# backfill it before validating — the normal pipeline gets it via schema-guided
+# decoding, which raw NuExtract completions do not have.
+_SEV_TIERS = {"CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO"}
+_QUALYS_SEV = {"1": "INFO", "2": "LOW", "3": "MEDIUM", "4": "HIGH", "5": "CRITICAL"}
+
+
+def _backfill_context(data: dict, block) -> None:
+    """Fill severity/port/protocol/cvss from block context so free-form model
+    output validates against the strict record schema (these are report
+    metadata, not fields NuExtract is being tested on)."""
+    data["host"] = block.host
+    sev = (block.severity_hint or "").strip()
+    sev = _QUALYS_SEV.get(sev, sev.upper())
+    if sev in _SEV_TIERS:
+        data["severity"] = sev
+    if data.get("port") in (None, "") and block.port is not None:
+        data["port"] = block.port
+    if data.get("protocol") not in ("tcp", "udp"):
+        data["protocol"] = block.protocol if block.protocol in ("tcp", "udp") else None
+    cvss = data.get("cvss")
+    if isinstance(cvss, str):
+        try:
+            data["cvss"] = float(cvss)
+        except ValueError:
+            data["cvss"] = None
+
 
 def build_template(record_type) -> dict:
     """Empty-value NuExtract template from the record schema ("" text, [] list)."""
@@ -71,18 +98,14 @@ def main() -> None:
         except json.JSONDecodeError:
             print(f"  block {i}: JSON parse failed; skipped")
             continue
-        data["host"] = block.host
-        if data.get("port") in (None, "") and block.port is not None:
-            data["port"] = block.port
-            if block.protocol in ("tcp", "udp"):
-                data["protocol"] = block.protocol
+        _backfill_context(data, block)
         try:
             rec = profile.record_type.model_validate(data)
             if not rec.source:
                 rec.source = profile.source
             records.append(rec.model_dump(by_alias=True))
         except Exception as exc:  # noqa: BLE001 - experiment: log and move on
-            print(f"  block {i}: validation failed ({type(exc).__name__})")
+            print(f"  block {i}: validation failed: {exc}")
 
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
