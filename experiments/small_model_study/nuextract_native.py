@@ -21,6 +21,7 @@ import typing
 from pathlib import Path
 
 from openai import OpenAI
+from pydantic import ValidationError
 
 from mulitaminer.llm import get_model
 from mulitaminer.models import _is_llm_produced
@@ -53,6 +54,30 @@ def _backfill_context(data: dict, block) -> None:
             data["cvss"] = float(cvss)
         except ValueError:
             data["cvss"] = None
+
+
+def _validate_lenient(data: dict, profile, i: int) -> dict | None:
+    """Validate; drop any field the model produced in a shape the schema rejects
+    (typed/structured fields NuExtract cannot fill via a flat template) so the
+    record still validates on its default. -> record dict, or None."""
+    data = dict(data)
+    for _ in range(len(data) + 1):
+        try:
+            rec = profile.record_type.model_validate(data)
+            if not rec.source:
+                rec.source = profile.source
+            return rec.model_dump(by_alias=True)
+        except ValidationError as exc:
+            dropped = False
+            for err in exc.errors():
+                loc = err["loc"][0] if err["loc"] else None
+                if isinstance(loc, str) and loc in data:
+                    del data[loc]
+                    dropped = True
+            if not dropped:
+                print(f"  block {i}: validation failed: {exc}")
+                return None
+    return None
 
 
 def build_template(record_type) -> dict:
@@ -89,23 +114,30 @@ def main() -> None:
     for i, block in enumerate(blocks):
         prompt = (f"<|input|>\n### Template:\n{tmpl_str}\n"
                   f"### Text:\n{block.text}\n\n<|output|>")
-        out = client.completions.create(
-            model=mp.model, prompt=prompt, temperature=mp.temperature,
-            max_tokens=mp.max_output_tokens,
-        ).choices[0].text.strip()
+        # Cap output so input + output stays inside the context window (chars/3
+        # overestimates tokens for a safe margin); oversized blocks still error
+        # and are skipped below rather than crashing the run.
+        ctx = getattr(mp, "context_window", None)
+        max_tok = mp.max_output_tokens
+        if ctx:
+            max_tok = max(256, min(max_tok, ctx - len(prompt) // 3 - 128))
+        try:
+            out = client.completions.create(
+                model=mp.model, prompt=prompt, temperature=mp.temperature,
+                max_tokens=max_tok,
+            ).choices[0].text.strip()
+        except Exception as exc:  # noqa: BLE001 - experiment: skip and move on
+            print(f"  block {i}: request failed ({type(exc).__name__}); skipped")
+            continue
         try:
             data = json.loads(out)
         except json.JSONDecodeError:
             print(f"  block {i}: JSON parse failed; skipped")
             continue
         _backfill_context(data, block)
-        try:
-            rec = profile.record_type.model_validate(data)
-            if not rec.source:
-                rec.source = profile.source
-            records.append(rec.model_dump(by_alias=True))
-        except Exception as exc:  # noqa: BLE001 - experiment: log and move on
-            print(f"  block {i}: validation failed: {exc}")
+        rec = _validate_lenient(data, profile, i)
+        if rec is not None:
+            records.append(rec)
 
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
