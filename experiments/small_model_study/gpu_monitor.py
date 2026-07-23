@@ -5,7 +5,7 @@ Two modes:
 
   # wrap a command: sample only while it runs, then summarize
   python gpu_monitor.py --out gpu_bbwa_qwen15.json -- \
-      uv run mulitaminer experiment resources/openvas/OpenVAS_bWAPP.pdf \
+      uv run mulitaminer experiment resources/openvas/OpenVAS_Metasploitable2.pdf \
           --models qwen2.5-1.5b --runs 1
 
   # free-running: sample until Ctrl-C
