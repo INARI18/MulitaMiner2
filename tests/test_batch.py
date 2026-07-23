@@ -9,7 +9,7 @@ from mulitaminer.llm import FatalLLMError
 from mulitaminer.pipeline import RunConfig, run_directory
 
 OPENVAS_PDF = Path("resources/openvas/OpenVAS_JuiceShop.pdf")
-TENABLE_PDF = Path("resources/tenable/TenableWAS_bWAAP.pdf")
+TENABLE_PDF = Path("resources/tenable/TenableWAS_bWAPP.pdf")
 
 
 class EchoClient:

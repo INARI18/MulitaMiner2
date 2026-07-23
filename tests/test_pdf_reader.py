@@ -25,6 +25,6 @@ def test_no_control_characters_survive_extraction():
     """pypdfium2 emits broken ligatures as raw control chars ("a\\x1bected" =
     "affected"); a stray control char makes the LLM's JSON invalid, so the
     reader must map them (CID table) or strip them."""
-    doc = extract_pdf(Path("resources/openvas/OpenVAS_bBWA.pdf"))
+    doc = extract_pdf(Path("resources/openvas/OpenVAS_bWAPP.pdf"))
     assert not re.search(r"[\x00-\x08\x0b-\x1f\x7f]", doc.text)
     assert "affected" in doc.text  # the \x1b ligature was restored, not dropped

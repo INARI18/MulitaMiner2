@@ -134,7 +134,7 @@ def test_tenable_severity_hint():
 
 REAL_CASES = [
     ("openvas", Path("resources/openvas/OpenVAS_JuiceShop.pdf"), 34),
-    ("openvas", Path("resources/openvas/OpenVAS_bBWA.pdf"), 59),
+    ("openvas", Path("resources/openvas/OpenVAS_bWAPP.pdf"), 59),
     ("tenable", Path("resources/tenable/TenableWAS_JuiceShop.pdf"), 152),
 ]
 
