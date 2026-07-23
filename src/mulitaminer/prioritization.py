@@ -131,7 +131,7 @@ def _epss_score_date(epss_bytes: bytes) -> str | None:
 def extract_cve_ids(record: VulnRecord) -> list[str]:
     """CVE ids from references and plugin details, upper-cased, order preserved."""
     parts = [str(x) for x in record.references]
-    details = record.plugin_details
+    details = getattr(record, "plugin_details", None)  # scanner-specific field
     if details:
         parts.append(details if isinstance(details, str) else json.dumps(
             details if isinstance(details, dict) else details.model_dump()))
@@ -145,7 +145,7 @@ def host_of(record: VulnRecord) -> str | None:
     """The asset host, or the first instance URL for web-scan records."""
     if record.host:
         return str(record.host)
-    for item in record.instances or []:
+    for item in getattr(record, "instances", None) or []:
         value = item.get("instance") if isinstance(item, dict) else getattr(item, "instance", "")
         if value:
             return str(value)
@@ -171,7 +171,8 @@ def exposure(record: VulnRecord) -> str:
 
 def severity_band(record: VulnRecord) -> str:
     """high / medium / low from numeric CVSS, falling back to the label."""
-    cvss = record.cvss if isinstance(record.cvss, (int, float)) else None
+    cvss = getattr(record, "cvss", None)
+    cvss = cvss if isinstance(cvss, (int, float)) else None
     if cvss is not None and cvss > 0:
         return "high" if cvss >= 7.0 else "medium" if cvss >= 4.0 else "low"
     word = (record.severity or "").lower()
@@ -211,7 +212,7 @@ def build_queue(records: list[VulnRecord], kev: set[str], epss: dict[str, float]
             "severity": sev,
             "kev": any(cve in kev for cve in cves),
             "epss": round(score, 5),
-            "cvss": record.cvss if isinstance(record.cvss, (int, float)) else "",
+            "cvss": _c if isinstance((_c := getattr(record, "cvss", None)), (int, float)) else "",
             "cves": ", ".join(cves),
             "justification": _justify(expl, expo, sev),
             "snapshot_date": snapshot_date or "",

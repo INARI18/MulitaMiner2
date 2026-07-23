@@ -12,7 +12,7 @@ from pathlib import Path
 
 from mulitaminer.exporters import register
 from mulitaminer.exporters.generic import cves_from
-from mulitaminer.models import TenableRecord, VulnRecord
+from mulitaminer.models import VulnRecord
 
 CWE_RE = re.compile(r"CWE[-\s](\d+)", re.IGNORECASE)
 IPV4_RE = re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$")
@@ -31,10 +31,11 @@ def _join(lines: list[str]) -> str | None:
 def _cvss_fields(record: VulnRecord) -> dict:
     out = {"definition.cvss3.base_score": None, "definition.cvss3.base_vector": None,
            "definition.cvss2.base_score": None, "definition.cvss2.base_vector": None}
-    if isinstance(record.cvss, (int, float)):
-        out["definition.cvss3.base_score"] = float(record.cvss)
-    elif isinstance(record.cvss, list):
-        joined = " ".join(record.cvss)
+    cvss = getattr(record, "cvss", None)  # scanner-specific field (config-declared)
+    if isinstance(cvss, (int, float)):
+        out["definition.cvss3.base_score"] = float(cvss)
+    elif isinstance(cvss, list):
+        joined = " ".join(cvss)
         if m := _CVSS3_SCORE_RE.search(joined):
             out["definition.cvss3.base_score"] = float(m.group(1))
         if m := _CVSS3_VECTOR_RE.search(joined):
@@ -60,7 +61,7 @@ def to_cais_row(record: VulnRecord, row_id: int) -> dict:
     host = record.host
     is_ip = bool(host and IPV4_RE.match(host))
     cves = cves_from(record)
-    details = record.plugin_details if isinstance(record, TenableRecord) else None
+    details = getattr(record, "plugin_details", None) or None
     return {
         "id": f"vuln_{row_id}",
         "asset.name": host,
@@ -73,7 +74,7 @@ def to_cais_row(record: VulnRecord, row_id: int) -> dict:
         "definition.severity": record.severity,
         "definition.description": _join(record.description),
         "definition.solution": _join(record.solution),
-        "definition.id": str(record.plugin) if record.plugin else None,
+        "definition.id": str(getattr(record, "plugin", None)) if getattr(record, "plugin", None) else None,
         "definition.family": details.family if details else None,
         "definition.type": None,
         "definition.cve": ", ".join(cves) or None,
@@ -88,7 +89,7 @@ def to_cais_row(record: VulnRecord, row_id: int) -> dict:
         "definition.patch_published": None,
         "definition.epss.score": None,
         "definition.exploitability_ease": None,
-        "output": _join(record.detection_result),
+        "output": _join(getattr(record, "detection_result", [])),
         "port": record.port,
         "protocol": record.protocol,
         "scan.id": None,

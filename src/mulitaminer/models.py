@@ -5,7 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
+from pydantic import BaseModel, ConfigDict, Field, create_model
 
 # Informational tier: OpenVAS emits LOG, Tenable INFO; each scanner keeps its own.
 Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO"]
@@ -16,9 +16,11 @@ _PIPELINE_FILLED = {"json_schema_extra": {"llm_produced": False}}
 
 
 class VulnRecord(BaseModel):
-    """Core contract shared by every scanner. Validated, stable.
+    """Canonical core shared by every scanner. Validated, stable.
 
-    Scanner-specific extras live in subclasses (OpenVASRecord / TenableRecord).
+    Scanner-specific fields (cvss, plugin, instances, insight, ...) are declared
+    in each scanner's JSON config under "fields" and added on top of this core;
+    see docs/SCANNER_CONFIGS.md.
     """
 
     # allow undeclared keys; accept `Name` and `name`; keep post-validation
@@ -29,20 +31,7 @@ class VulnRecord(BaseModel):
     description: list[str] = []
     solution: list[str] = []
     impact: list[str] = []
-    insight: list[str] = []
     references: list[str] = []
-
-    # Shared wide schema: every scanner emits all fields (null/empty where
-    # N/A) so output columns stay stable across scanners.
-    detection_result: list[str] = []
-    detection_method: list[str] = []
-    product_detection_result: list[str] = []
-    log_method: list[str] = []
-    plugin: int | None = None
-    plugin_details: dict = {}
-    instances: list = []
-
-    cvss: float | int | None = None  # numeric score; Tenable overrides with raw CVSS strings
     severity: Severity
 
     # Filled by the pipeline from report context, never by the LLM.
@@ -52,14 +41,6 @@ class VulnRecord(BaseModel):
 
     # Stamped from the scanner profile, never prompted.
     source: str = Field(default="", **_PIPELINE_FILLED)
-
-    @field_validator("plugin_details", "instances", mode="before")
-    @classmethod
-    def _junk_empty_to_container(cls, value, info):
-        """Coerce "-"/""/null (the report's empty idiom) to the empty container."""
-        if value in ("", "-", None):
-            return {} if info.field_name == "plugin_details" else []
-        return value
 
 
 class PluginDetails(BaseModel):
@@ -91,30 +72,16 @@ class Instance(BaseModel):
     response_content_type: str = ""
 
 
-class OpenVASRecord(VulnRecord):
-    """OpenVAS/Greenbone. Network scan: CVE-rich, has detection metadata."""
-
-    source: Literal["OPENVAS"] = Field(default="OPENVAS", **_PIPELINE_FILLED)
-
-
-class TenableRecord(VulnRecord):
-    """Tenable WAS. Web app scan: mostly CVE-less, per-URL instances."""
-
-    source: Literal["TENABLEWAS"] = Field(default="TENABLEWAS", **_PIPELINE_FILLED)
-
-    cvss: list[str] = []
-    plugin_details: PluginDetails = Field(default_factory=PluginDetails)
-    instances: list[Instance] = []
-
-
-BY_SOURCE: dict[str, type[VulnRecord]] = {
-    "OPENVAS": OpenVASRecord,
-    "TENABLEWAS": TenableRecord,
-}
-
-
 def record_type_for_source(source: str | None) -> type[VulnRecord]:
-    return BY_SOURCE.get(source or "", VulnRecord)
+    """The record type of the scanner whose profile stamps `source`
+    (registry-driven, so config-declared fields are included); VulnRecord if
+    none matches. Lazy import avoids a cycle with scanner_engine."""
+    from mulitaminer.scanner_engine import all_scanners
+
+    for profile in all_scanners().values():
+        if profile.source == source:
+            return profile.record_type
+    return VulnRecord
 
 
 def _is_llm_produced(field) -> bool:

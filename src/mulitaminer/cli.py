@@ -35,7 +35,7 @@ def extract(
     ),
     scanner: str | None = typer.Option(
         None, "--scanner", "-s",
-        help="Force a scanner profile; omit to auto-detect (see `mulitaminer scanners`)",
+        help="Force a scanner; omit to use the report's parent-folder name",
     ),
     model: str = typer.Option("deepseek", "--model", "-m", help="See `mulitaminer models`"),
     model_name: str | None = typer.Option(
@@ -89,19 +89,13 @@ def extract(
         )
         raise typer.Exit(code=0 if ok else 1)
 
-    if scanner is None:
-        from mulitaminer.pdf_reader import extract_pdf
-        from mulitaminer.scanner_engine import detect_scanner
+    from mulitaminer.scanner_engine import scanner_for
 
-        detected, counts = detect_scanner(extract_pdf(report).text)
-        if detected is None:
-            ui.error(
-                f"could not identify the scanner for {report.name} "
-                f"(marker counts: {counts}). Pass --scanner explicitly."
-            )
-            raise typer.Exit(code=1)
-        ui.echo(f"Detected scanner: {detected} ({counts[detected]} markers)")
-        config.scanner = detected
+    try:
+        config.scanner = scanner_for(report, scanner)
+    except ValueError as exc:
+        ui.error(exc)
+        raise typer.Exit(code=1)
 
     # --debug keeps the full console log; otherwise a live one-liner with the
     # console log quieted (the detail still lands in the per-run log file).
@@ -136,6 +130,43 @@ def models() -> None:
         kind = "local " if p.is_local else "cloud "
         keys = p.api_key_env or "no key needed"
         ui.echo(f"{key:<16} {kind} {p.model:<28} {keys}")
+
+
+@app.command()
+def schema() -> None:
+    """Print the effective unified output schema: every column, its type, and
+    where it comes from (the shared core, or the scanner config that declares it).
+
+    The schema is assembled at runtime (core fields in code + config-declared
+    fields), so this is the single place to inspect the whole picture."""
+    import typing
+
+    from mulitaminer.models import VulnRecord
+    from mulitaminer.writers import unified_columns
+
+    def by_col(record_type) -> dict:
+        return {(f.alias or name): f for name, f in record_type.model_fields.items()}
+
+    def typename(annotation) -> str:
+        if typing.get_args(annotation):
+            return str(annotation).replace("typing.", "")
+        return getattr(annotation, "__name__", str(annotation))
+
+    core = by_col(VulnRecord)
+    annotation = {col: f.annotation for col, f in core.items()}
+    origin: dict[str, list[str]] = {}
+    for name, profile in all_scanners().items():
+        for col, f in by_col(profile.record_type).items():
+            if col not in core:
+                annotation.setdefault(col, f.annotation)
+                origin.setdefault(col, [])
+                if name not in origin[col]:
+                    origin[col].append(name)
+
+    ui.echo("Unified output schema (identical columns for every scanner):", style="bold")
+    for col in unified_columns():
+        source = "core" if col in core else "+".join(origin.get(col, []))
+        ui.echo(f"  {col:<26} {typename(annotation.get(col)):<20} {source}")
 
 
 @app.command()
@@ -261,7 +292,7 @@ def experiment(
     models: str = typer.Option(..., "--models", help="Comma-separated model keys"),
     runs: int = typer.Option(..., "--runs", help="Runs per (model, report)"),
     scanner: str | None = typer.Option(
-        None, "--scanner", "-s", help="Force a scanner; omit to auto-detect per report"
+        None, "--scanner", "-s", help="Force a scanner; omit to use each report's parent-folder name"
     ),
     metrics: str = typer.Option("all", "--metrics", help="Metrics for per-run evaluation"),
     output_dir: Path = typer.Option(Path("output_experiments"), "--output-dir"),

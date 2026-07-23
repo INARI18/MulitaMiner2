@@ -20,7 +20,7 @@ from mulitaminer.extraction import extract_blocks
 from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.models import RunResult, TokenUsage
 from mulitaminer.pdf_reader import extract_pdf
-from mulitaminer.scanner_engine import detect_scanner, get_scanner
+from mulitaminer.scanner_engine import get_scanner, scanner_for
 from mulitaminer.exporters import get_exporter
 from mulitaminer.ui import NULL_PROGRESS, Progress
 from mulitaminer.writers import write_json
@@ -77,16 +77,16 @@ def run_directory(config: RunConfig, client: LLMClient | None = None) -> list[di
     """Extract every PDF in the directory ``config.input_path``.
 
     Per file: resolve the scanner (config.scanner forces one for the whole
-    batch; None auto-detects via marker census, skipping files no scanner
-    uniquely claims), then run the normal pipeline into its own run dir.
-    A failing file is recorded and the batch continues, EXCEPT for
-    FatalLLMError (bad key/quota): every subsequent file would fail the
-    same way, so the batch aborts.
+    batch; otherwise each report's parent-folder name, the
+    `resources/<scanner>/report.pdf` convention), then run the normal pipeline
+    into its own run dir. A failing file is recorded and the batch continues,
+    EXCEPT for FatalLLMError (bad key/quota): every subsequent file would fail
+    the same way, so the batch aborts.
 
-    Returns one summary dict per PDF: file, status (ok|skipped|failed),
-    scanner, detail, and run_dir/cost_usd when extracted.
+    Returns one summary dict per PDF: file, status (ok|failed), scanner,
+    detail, and run_dir/cost_usd when extracted.
     """
-    pdfs = sorted(config.input_path.glob("*.pdf"))
+    pdfs = sorted(config.input_path.rglob("*.pdf"))
     if not pdfs:
         raise ValueError(f"No PDF files in {config.input_path}")
 
@@ -95,22 +95,9 @@ def run_directory(config: RunConfig, client: LLMClient | None = None) -> list[di
         entry = {"file": pdf.name, "status": "failed", "scanner": config.scanner,
                  "detail": ""}
         summaries.append(entry)
+        scanner_name = config.scanner
         try:
-            scanner_name = config.scanner
-            if scanner_name is None:
-                doc = extract_pdf(pdf)
-                scanner_name, counts = detect_scanner(doc.text)
-                if scanner_name is None:
-                    positive = {k: v for k, v in counts.items() if v}
-                    entry["status"] = "skipped"
-                    entry["detail"] = (
-                        f"ambiguous scanner markers {positive}" if positive
-                        else "no scanner markers found"
-                    )
-                    log.warning("%s: skipped (%s)", pdf.name, entry["detail"])
-                    continue
-                log.info("%s -> %s (%d markers)", pdf.name, scanner_name,
-                         counts[scanner_name])
+            scanner_name = scanner_for(pdf, config.scanner)
             result, run_dir = run(replace(config, input_path=pdf,
                                           scanner=scanner_name), client=client)
             entry.update(

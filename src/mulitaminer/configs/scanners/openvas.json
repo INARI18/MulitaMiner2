@@ -1,6 +1,14 @@
 {
   "name": "openvas",
   "source": "OPENVAS",
+  "fields": {
+    "cvss": "number",
+    "insight": "list",
+    "detection_result": "list",
+    "detection_method": "list",
+    "product_detection_result": "list",
+    "log_method": "list"
+  },
   "max_vulns_per_chunk": 4,
   "marker_pattern": "^\\s*(Critical|High|Medium|Low|Log)\\s+\\(CVSS:",
   "discard_patterns": ["(?:\\d+\\s+)?Results\\s+per\\s+Host(?:\\s+\\d+)?"],

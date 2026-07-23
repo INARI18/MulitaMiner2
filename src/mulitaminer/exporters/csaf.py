@@ -30,9 +30,10 @@ def _product_id(host: str, index: dict[str, str]) -> str:
 
 
 def _score(record: VulnRecord, product_id: str | None) -> dict | None:
-    if not isinstance(record.cvss, list):
+    cvss = getattr(record, "cvss", None)  # scanner-specific field
+    if not isinstance(cvss, list):
         return None
-    joined = " ".join(record.cvss)
+    joined = " ".join(cvss)
     vector = _CVSS3_VECTOR_RE.search(joined)
     score = _CVSS3_SCORE_RE.search(joined)
     if not (vector and score):

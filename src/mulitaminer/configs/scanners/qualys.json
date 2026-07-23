@@ -1,0 +1,21 @@
+{
+  "name": "qualys",
+  "source": "QUALYS",
+  "max_vulns_per_chunk": 3,
+  "marker_pattern": "^\\s*([1-5])\\s+[A-Za-z]",
+  "fields": {
+    "category": "str",
+    "plugin": "int"
+  },
+  "discard_patterns": [
+    "[1-5]\\s+(?:Minimal|Medium|Serious|Critical|Urgent)\\b.*",
+    "\\d+\\s+Biggest Categories"
+  ],
+  "context": {
+    "host_anchor": "^(?:(?:Potential\\s+)?Vulnerabilities|Information\\s+Gathered)\\s*\\(\\d+\\)",
+    "host_line": "^((?:\\d{1,3}\\.){3}\\d{1,3})\\s*\\("
+  },
+  "evaluation": {
+    "key_parts": ["port", "protocol"]
+  }
+}

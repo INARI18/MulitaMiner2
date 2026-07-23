@@ -1,6 +1,12 @@
 {
   "name": "tenable",
   "source": "TENABLEWAS",
+  "fields": {
+    "cvss": "list",
+    "plugin": "int",
+    "plugin_details": "PluginDetails",
+    "instances": "[Instance]"
+  },
   "max_vulns_per_chunk": 3,
   "marker_pattern": "(?i)(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?VULNERABILITY\\s+(CRITICAL|HIGH|MEDIUM|LOW|INFO)\\s+PLUGIN\\s+ID\\s+\\d+",
   "name_above_marker": true,

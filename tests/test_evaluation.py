@@ -4,8 +4,11 @@ import pytest
 from mulitaminer.evaluation.align import align, classify_false_positives, composite_key
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
-from mulitaminer.models import Instance, OpenVASRecord, PluginDetails, TenableRecord
+from mulitaminer.models import Instance, PluginDetails
 from mulitaminer.scanner_engine import get_scanner
+
+OpenVASRecord = get_scanner("openvas").record_type
+TenableRecord = get_scanner("tenable").record_type
 
 
 # --- scorers -----------------------------------------------------------------
@@ -91,12 +94,12 @@ def test_fields_openvas_inference_matches_spec_table():
     assert by_name["severity"] == "exact"       # Literal
     assert by_name["protocol"] == "exact"       # Literal | None
     assert by_name["cvss"] == "exact"           # float | int | None
-    assert by_name["plugin"] == "exact"         # int | None
     assert by_name["port"] == "exact"           # int | str | None
     assert by_name["name"] == "text"            # str
     assert by_name["description"] == "text"     # list[str]
-    assert by_name["plugin_details"] == "structural"  # dict
-    assert by_name["instances"] == "text"       # bare list, safe default
+    # plugin / plugin_details / instances are Tenable-specific now (see the
+    # Tenable field test); OpenVAS no longer carries them.
+    assert "plugin" not in by_name and "instances" not in by_name
     # Pipeline-stamped fields are never evaluated.
     assert "host" not in by_name and "source" not in by_name
 
@@ -259,15 +262,16 @@ def mini_run(tmp_path):
     records = [
         OpenVASRecord(
             name="SQL Injection", severity="HIGH", cvss=8.1, port=80, protocol="tcp",
-            description=["Injectable parameter found."],
+            description=["Injectable parameter found."], source="OPENVAS",
             references=["CVE-2021-1111", "CVE-2020-2222"],
         ),
         OpenVASRecord(
             name="Weak Cipher Suites", severity="MEDIUM", cvss=5.3, port=443, protocol="tcp",
-            description=["Server accepts weak TLS ciphers."],
+            description=["Server accepts weak TLS ciphers."], source="OPENVAS",
         ),
         OpenVASRecord(  # false positive: not in the baseline
             name="Ghost Finding", severity="LOW", cvss=2.0, port=21, protocol="tcp",
+            source="OPENVAS",
         ),
     ]
     run_dir = tmp_path / "run"

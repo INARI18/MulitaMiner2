@@ -52,7 +52,7 @@ def _finding(record: VulnRecord) -> dict:
         "active": True,
         "dynamic_finding": True,
         "static_finding": False,
-        "vuln_id_from_tool": str(record.plugin) if record.plugin else record.name,
+        "vuln_id_from_tool": str(getattr(record, "plugin", None) or record.name),
         "unique_id_from_tool": "|".join(
             str(p) for p in (record.source, record.name, record.host, record.port)
         ),
@@ -60,8 +60,9 @@ def _finding(record: VulnRecord) -> dict:
     if cves:
         finding["cve"] = cves[0]
         finding["vulnerability_ids"] = [{"vulnerability_id": c} for c in cves]
-    if isinstance(record.cvss, (int, float)):
-        finding["cvssv3_score"] = float(record.cvss)
+    cvss = getattr(record, "cvss", None)
+    if isinstance(cvss, (int, float)):
+        finding["cvssv3_score"] = float(cvss)
     endpoint = _endpoint(record)
     if endpoint:
         finding["endpoints"] = [endpoint]

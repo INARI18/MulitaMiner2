@@ -20,7 +20,7 @@ from pathlib import Path
 
 from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.pipeline import RunConfig, run
-from mulitaminer.scanner_engine import detect_scanner
+from mulitaminer.scanner_engine import scanner_for
 from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.ui import Unit, experiment_view, quiet_logging
 
@@ -62,14 +62,12 @@ def _plan(config: ExperimentConfig) -> tuple[list[_Task], list[dict], dict]:
     docs: dict[Path, object] = {}
     resolved: list[tuple[Path, str]] = []
     for report in config.reports:
-        doc = extract_pdf(report)
-        scanner = config.scanner
-        if scanner is None:
-            scanner, counts = detect_scanner(doc.text)
-            if scanner is None:
-                skipped.append({"report": report.name, "reason": f"scanner undetected {counts}"})
-                continue
-        docs[report] = doc
+        try:
+            scanner = scanner_for(report, config.scanner)
+        except ValueError as exc:
+            skipped.append({"report": report.name, "reason": str(exc)})
+            continue
+        docs[report] = extract_pdf(report)
         resolved.append((report, scanner))
 
     for model in config.models:

@@ -5,19 +5,21 @@ import pytest
 
 from mulitaminer.exporters import EXPORTERS, get_exporter
 from mulitaminer.exporters.generic import cves_from
-from mulitaminer.models import OpenVASRecord
+from mulitaminer.scanner_engine import get_scanner
+
+OpenVASRecord = get_scanner("openvas").record_type
 
 RECORDS = [
     OpenVASRecord(
         name="Ingreslock Backdoor", severity="HIGH", cvss=7.5, port=1524,
-        protocol="tcp", host="10.0.0.5",
+        protocol="tcp", host="10.0.0.5", source="OPENVAS",
         description=["A backdoor is installed."],
         solution=["Clean the host."],
         references=["https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-0001",
                     "See also CVE-2011-0002 and cve-2011-0001"],
     ),
     OpenVASRecord(name="CGI Scanning Consolidation", severity="LOG", cvss=0.0,
-                  port=443, protocol="tcp", host="10.0.0.5"),
+                  port=443, protocol="tcp", host="10.0.0.5", source="OPENVAS"),
 ]
 
 
@@ -64,10 +66,13 @@ def test_sarif_structure_levels_and_rule_dedup(tmp_path):
 
 
 def test_cais_mapping(tmp_path):
-    from mulitaminer.models import Instance, TenableRecord
+    from mulitaminer.models import Instance
+
+    TenableRecord = get_scanner("tenable").record_type
 
     tenable = TenableRecord(
         name="HSTS Missing", severity="HIGH", plugin=98056, host="example.com",
+        source="TENABLEWAS",
         description=["No HSTS."], solution=["Enable HSTS."],
         references=["CWE 693", "CVE-2020-0001"],
         cvss=["CVSSV3 BASE SCORE 6.5", "CVSSV3 VECTOR CVSS:3.0/AV:N/AC:L"],

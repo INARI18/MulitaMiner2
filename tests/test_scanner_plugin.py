@@ -38,3 +38,34 @@ def test_user_scanner_dir_registers_and_segments(tmp_path):
     assert blocks[0].text.startswith("FINDING HIGH")
     assert "Intro text" not in blocks[0].text
     assert profile.prompt() == "Extract findings."
+
+
+FIELD_CONFIG = {
+    "name": "fieldscan",
+    "source": "FIELDSCAN",
+    "prompt": "fieldscan_prompt.txt",
+    "max_vulns_per_chunk": 5,
+    "marker_pattern": "^FINDING\\s+(HIGH|LOW)\\b",
+    "fields": {"category": "str", "tags": "list"},
+}
+
+
+def test_config_fields_extend_record_extraction_and_evaluation(tmp_path):
+    """A scanner can declare extra record fields in its JSON, with zero Python;
+    they flow into the extraction contract, output, and per-field evaluation."""
+    (tmp_path / "fieldscan.json").write_text(json.dumps(FIELD_CONFIG), encoding="utf-8")
+    (tmp_path / "fieldscan_prompt.txt").write_text("Extract.", encoding="utf-8")
+
+    record_type = _registry(str(tmp_path))["fieldscan"].record_type
+    assert "category" in record_type.model_fields and "tags" in record_type.model_fields
+
+    from mulitaminer.models import extraction_model_for
+
+    assert "category" in extraction_model_for(record_type).model_fields  # LLM can emit it
+
+    from mulitaminer.evaluation.fields import field_plans
+
+    assert {"category", "tags"} <= {p.name for p in field_plans(record_type)}  # scored
+
+    record = record_type(name="x", severity="HIGH", category="Web server", tags=["a", "b"])
+    assert record.category == "Web server" and record.tags == ["a", "b"]

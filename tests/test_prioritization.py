@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from mulitaminer.models import Instance, OpenVASRecord, TenableRecord
+from mulitaminer.models import Instance
 from mulitaminer.prioritization import (
     build_queue,
     exploitation,
@@ -13,6 +13,10 @@ from mulitaminer.prioritization import (
     prioritize_run,
     severity_band,
 )
+from mulitaminer.scanner_engine import get_scanner
+
+OpenVASRecord = get_scanner("openvas").record_type
+TenableRecord = get_scanner("tenable").record_type
 
 
 def _rec(name="V", cvss=7.5, host="1.2.3.4", refs=()):

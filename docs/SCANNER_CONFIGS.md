@@ -50,8 +50,9 @@ untouched and keep one worked example.
 
 | Key | Meaning |
 | --- | --- |
-| `name` | CLI name. Also selects the typed record class when one matches; `record` overrides |
+| `name` | CLI name, and the scanner a report is assigned to when its folder is named this (the `resources/<scanner>/report.pdf` convention) |
 | `source` | Stamped into every record's `source` field |
+| `fields` | Scanner-specific record fields, `{"<name>": "<type>"}`. Types: `str`, `list` (list[str]), `int`, `float`, `number` (int-or-float), a model `PluginDetails` / `Instance`, or `[Instance]` (list of). Added on top of the shared core (name, description, solution, impact, references, severity, host, port, protocol, source). They flow automatically into the LLM contract, per-field evaluation, and (as the union across scanners) the tabular output columns. Inspect the effective schema with `mulitaminer schema` |
 | `prompt` | Optional prompt filename, defaults to `<name>.txt` |
 | `max_vulns_per_chunk` | Max blocks per LLM call |
 | `marker_pattern` | Regex; one match line = one block. Capture group 1 becomes the severity hint. Prefix `(?i)` for case-insensitive |
@@ -61,6 +62,29 @@ untouched and keep one worked example.
 | `context.header_patterns` | Regexes with named groups `sev`/`port`/`proto`; the latest match above a marker becomes that block's context |
 | `context.host_anchor` / `host_line` | Host recovery: `host_line` group 1, matched on the nearest non-blank line above the anchor |
 | `pair` | Structural pairing: `strip_name_suffix`, `by` (fields), `merge_instances`. Always runs |
+
+## Record fields: shared core + per-scanner `fields`
+
+The record model is a small **canonical core** (`models.py`: name, description,
+solution, impact, references, severity, host, port, protocol, source) plus the
+fields each scanner declares in its `fields`. So OpenVAS declares `cvss` (number)
+and its detection lists; Tenable declares `cvss` (list), `plugin`, `plugin_details`,
+`instances`; Qualys declares `category` and `plugin` (its QID). Structured
+sub-schemas (`PluginDetails`, `Instance`) stay as code models and are referenced by
+name; simple fields are pure config.
+
+Output columns are the **union** across all scanners, so every scanner writes the
+same tabular shape (a field it does not declare is empty). The prompt must mention
+**exactly** that scanner's fields: the LLM contract is closed (`extra="forbid"`), so
+naming a field the record does not have makes the whole extraction fail.
+
+## Scanner resolution (no content auto-detection)
+
+A report's scanner is taken from an explicit `--scanner`, or from its **parent
+folder name** when that is a registered scanner (`resources/<scanner>/report.pdf`).
+`mulitaminer experiment resources/` runs every scanner in one go, each report using
+its folder. There is no marker-census guessing (it did not scale as scanners grew and
+could silently skip a report); an unresolvable report fails with an actionable message.
 
 ## OpenVAS (`openvas.json`)
 

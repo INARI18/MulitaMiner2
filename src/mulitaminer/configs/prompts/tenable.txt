@@ -34,7 +34,7 @@ FIELD EXTRACTION RULES:
 
 6. severity: from the VULNERABILITY header, UPPERCASE (CRITICAL|HIGH|MEDIUM|LOW|INFO).
 
-7. detection_result, detection_method, product_detection_result, impact, insight, log_method: always []. port, protocol: always null.
+7. impact: always []. port, protocol: always null.
 
 SPECIAL RULES:
 - A field containing ONLY a hyphen ("-") is empty; do not copy the hyphen.
@@ -68,6 +68,6 @@ CVE -
 ---
 
 Expected extraction object for this block:
-{"block_id":4,"Name":"Missing HTTP Strict Transport Security Policy","description":["The remote web server does not send the HTTP Strict-Transport-Security header."],"detection_result":[],"detection_method":[],"product_detection_result":[],"impact":[],"solution":["Enable HSTS by adding the Strict-Transport-Security header to HTTPS responses."],"insight":[],"log_method":[],"cvss":["CVSSV3 BASE SCORE 6.5","CVSSV3 VECTOR CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"],"port":null,"protocol":null,"severity":"HIGH","references":["CWE 693","OWASP 2021-A5","OWASP 2017-A6"],"plugin":98056,"plugin_details":{"publication_date":"2019-03-20T00:00:00+00:00","modification_date":"2024-06-01T00:00:00+00:00","family":"Web Servers","severity":"High","plugin_id":98056},"instances":[]}
+{"block_id":4,"Name":"Missing HTTP Strict Transport Security Policy","description":["The remote web server does not send the HTTP Strict-Transport-Security header."],"impact":[],"solution":["Enable HSTS by adding the Strict-Transport-Security header to HTTPS responses."],"cvss":["CVSSV3 BASE SCORE 6.5","CVSSV3 VECTOR CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"],"port":null,"protocol":null,"severity":"HIGH","references":["CWE 693","OWASP 2021-A5","OWASP 2017-A6"],"plugin":98056,"plugin_details":{"publication_date":"2019-03-20T00:00:00+00:00","modification_date":"2024-06-01T00:00:00+00:00","family":"Web Servers","severity":"High","plugin_id":98056},"instances":[]}
 
 Respond with a JSON object: {"items": [<one extraction object per block>]}.

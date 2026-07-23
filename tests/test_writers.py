@@ -1,13 +1,22 @@
 """Writers: schema-derived columns, round-trippable JSON."""
 import json
 
-from mulitaminer.models import OpenVASRecord
-from mulitaminer.writers import columns_for, write_csv, write_json, write_xlsx
+from mulitaminer.models import VulnRecord
+from mulitaminer.scanner_engine import _record_with_fields, get_scanner
+from mulitaminer.writers import (
+    columns_for,
+    unified_columns,
+    write_csv,
+    write_json,
+    write_xlsx,
+)
+
+OpenVASRecord = get_scanner("openvas").record_type  # core + config-declared fields
 
 RECORDS = [
     OpenVASRecord(name="A", severity="HIGH", cvss=7.5, port=443, protocol="tcp",
-                  description=["first", "second"]),
-    OpenVASRecord(name="B", severity="LOG", cvss=0.0),
+                  description=["first", "second"], source="OPENVAS"),
+    OpenVASRecord(name="B", severity="LOG", cvss=0.0, source="OPENVAS"),
 ]
 
 
@@ -30,10 +39,21 @@ def test_json_round_trip(tmp_path):
 def test_xlsx_and_csv_write(tmp_path):
     import pandas as pd
 
-    write_xlsx(RECORDS, OpenVASRecord, tmp_path / "r.xlsx")
-    write_csv(RECORDS, OpenVASRecord, tmp_path / "r.csv")
+    write_xlsx(RECORDS, tmp_path / "r.xlsx")
+    write_csv(RECORDS, tmp_path / "r.csv")
     df = pd.read_excel(tmp_path / "r.xlsx")
-    assert list(df.columns) == columns_for(OpenVASRecord)
+    # Tabular output uses the union columns so every scanner writes the same shape.
+    assert list(df.columns) == unified_columns()
     assert df.iloc[0]["Name"] == "A"
     # list fields are newline-joined in tabular formats
     assert df.iloc[0]["description"] == "first\nsecond"
+
+
+def test_config_declared_field_joins_union_empty_for_others():
+    """A config-declared field (e.g. Qualys `category`) becomes a shared output
+    column; scanners that don't declare it emit it, empty."""
+    qualys = _record_with_fields(VulnRecord, "qualys", {"category": "str"})
+    cols = unified_columns([OpenVASRecord, qualys])
+    assert "category" in cols
+    # It is not part of OpenVAS's own schema, but the union carries it.
+    assert "category" not in columns_for(OpenVASRecord)

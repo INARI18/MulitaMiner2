@@ -1,7 +1,10 @@
 """Consolidation identity and merge rules (policies come from scanner JSONs)."""
 from mulitaminer.consolidate import normalize_name
-from mulitaminer.models import Instance, OpenVASRecord, TenableRecord
+from mulitaminer.models import Instance
 from mulitaminer.scanner_engine import get_scanner
+
+OpenVASRecord = get_scanner("openvas").record_type
+TenableRecord = get_scanner("tenable").record_type
 
 consolidate_openvas = get_scanner("openvas").consolidate
 consolidate_tenable = get_scanner("tenable").consolidate

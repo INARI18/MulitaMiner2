@@ -20,8 +20,9 @@ _LEVEL = {"CRITICAL": "error", "HIGH": "error", "MEDIUM": "warning",
 
 
 def _rule_id(record: VulnRecord) -> str:
-    if record.plugin:
-        return f"{record.source}-{record.plugin}"
+    plugin = getattr(record, "plugin", None)  # scanner-specific field
+    if plugin:
+        return f"{record.source}-{plugin}"
     slug = re.sub(r"[^A-Za-z0-9]+", "-", record.name).strip("-")[:80]
     return f"{record.source}-{slug}"
 
@@ -35,7 +36,7 @@ def _result(record: VulnRecord, rule_index: int) -> dict:
         "message": {"text": message},
         "properties": {
             "severity": record.severity,
-            "cvss": record.cvss,
+            "cvss": getattr(record, "cvss", None),
             "source": record.source,
             "port": record.port,
             "protocol": record.protocol,

@@ -6,7 +6,7 @@ from __future__ import annotations
 import logging
 import re
 
-from mulitaminer.models import TenableRecord, VulnRecord
+from mulitaminer.models import VulnRecord
 
 log = logging.getLogger(__name__)
 
@@ -50,11 +50,13 @@ def dedupe(
             merged[key] = record
             continue
         kept = merged[key]
-        if merge_instances and isinstance(record, TenableRecord):
+        has_instances = "instances" in type(record).model_fields
+        if merge_instances and has_instances:
             kept.instances = list(kept.instances) + list(record.instances)
         if _completeness(record) > _completeness(kept):
             record_wins = _merge_pair(record, kept)
-            record_wins.instances = kept.instances  # already accumulated above
+            if merge_instances and has_instances:
+                record_wins.instances = kept.instances  # already accumulated above
             merged[key] = record_wins
         else:
             _merge_pair(kept, record)

@@ -2,12 +2,13 @@
 import pytest
 from pydantic import ValidationError
 
-from mulitaminer.models import (
-    OpenVASRecord,
-    TenableRecord,
-    VulnRecord,
-    extraction_model_for,
-)
+from mulitaminer.models import VulnRecord, extraction_model_for
+from mulitaminer.scanner_engine import get_scanner
+
+# Record types are now assembled from each scanner's config (core + declared
+# "fields"), not hardcoded subclasses.
+OpenVASRecord = get_scanner("openvas").record_type
+TenableRecord = get_scanner("tenable").record_type
 
 GOOD_OPENVAS = {
     "Name": "Ingreslock Backdoor",
@@ -25,12 +26,14 @@ def test_valid_record_accepted_via_alias():
     assert rec.cvss == 7.5
 
 
-def test_source_is_stamped_not_extracted():
+def test_source_is_pipeline_filled_not_extracted():
+    # source is stamped by the pipeline from the profile (profile.source),
+    # never by the LLM, so it defaults empty and is absent from the contract.
     rec = OpenVASRecord.model_validate(GOOD_OPENVAS)
-    assert rec.source == "OPENVAS"
-    assert TenableRecord.model_validate(
-        {"Name": "XSS", "severity": "INFO", "cvss": []}
-    ).source == "TENABLEWAS"
+    assert rec.source == ""
+    assert "source" not in extraction_model_for(OpenVASRecord).model_fields
+    assert get_scanner("openvas").source == "OPENVAS"
+    assert get_scanner("tenable").source == "TENABLEWAS"
 
 
 def test_wrong_severity_rejected():

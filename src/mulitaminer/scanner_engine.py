@@ -13,14 +13,72 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Callable
 
+from pydantic import Field, create_model, field_validator
+
 from mulitaminer.consolidate import dedupe, normalize_name
-from mulitaminer.models import Block, OpenVASRecord, TenableRecord, VulnRecord
+from mulitaminer.models import Block, Instance, PluginDetails, VulnRecord
 
 RECORD_TYPES: dict[str, type[VulnRecord]] = {
-    "openvas": OpenVASRecord,
-    "tenable": TenableRecord,
     "generic": VulnRecord,
 }
+
+# Config `fields` type vocabulary -> (annotation, default). All are LLM-produced
+# (no llm_produced=False marker), so they flow into the extraction contract, the
+# output columns, and per-field evaluation automatically.
+_FIELD_TYPES: dict[str, tuple] = {
+    "str": (str, ""),
+    "list": (list[str], Field(default_factory=list)),
+    "int": (int | None, None),
+    "float": (float | None, None),
+    "number": (float | int | None, None),
+}
+# Structured sub-schemas stay as code models (type safety, validators); a config
+# references them by name ("PluginDetails") or as a list ("[Instance]").
+_FIELD_MODELS: dict[str, type] = {"Instance": Instance, "PluginDetails": PluginDetails}
+_LIST_MODEL_RE = re.compile(r"\[(\w+)\]")
+
+
+def _blank_to_dict(cls, value):  # noqa: N805 - pydantic validator
+    return {} if value in ("", "-", None) else value
+
+
+def _blank_to_list(cls, value):  # noqa: N805 - pydantic validator
+    return [] if value in ("", "-", None) else value
+
+
+def _resolve_field(scanner: str, fname: str, ftype: str) -> tuple:
+    """(annotation, default, empty_coercer|None) for one config field type."""
+    if ftype in _FIELD_TYPES:
+        annotation, default = _FIELD_TYPES[ftype]
+        return annotation, default, None
+    if ftype in _FIELD_MODELS:
+        model = _FIELD_MODELS[ftype]
+        return model, Field(default_factory=model), _blank_to_dict
+    m = _LIST_MODEL_RE.fullmatch(ftype)
+    if m and m.group(1) in _FIELD_MODELS:
+        model = _FIELD_MODELS[m.group(1)]
+        return list[model], Field(default_factory=list), _blank_to_list
+    raise ValueError(
+        f"scanner '{scanner}': field '{fname}' has unknown type '{ftype}'; use "
+        f"{sorted(_FIELD_TYPES)}, a model {sorted(_FIELD_MODELS)}, or [Model]"
+    )
+
+
+def _record_with_fields(base: type[VulnRecord], name: str, spec: dict) -> type[VulnRecord]:
+    """A record subclass extending `base` with config-declared `fields`."""
+    definitions: dict = {}
+    validators: dict = {}
+    for fname, ftype in spec.items():
+        annotation, default, coercer = _resolve_field(name, fname, ftype)
+        definitions[fname] = (annotation, default)
+        if coercer is not None:
+            validators[f"_coerce_{fname}"] = field_validator(fname, mode="before")(coercer)
+    return create_model(
+        f"{name.capitalize()}Record",
+        __base__=base,
+        __validators__=validators or None,
+        **definitions,
+    )
 
 _BUILTIN_DIR = Path(__file__).parent / "configs" / "scanners"
 
@@ -179,6 +237,8 @@ def load_profile(config_path: Path) -> ScannerProfile:
     cfg = json.loads(config_path.read_text(encoding="utf-8"))
     try:
         record_type = RECORD_TYPES.get(cfg.get("record", cfg["name"]), VulnRecord)
+        if cfg.get("fields"):
+            record_type = _record_with_fields(record_type, cfg["name"], cfg["fields"])
         return ScannerProfile(
             name=cfg["name"],
             source=cfg["source"],
@@ -224,22 +284,19 @@ def get_scanner(name: str) -> ScannerProfile:
         raise ValueError(f"Unknown scanner '{name}'. Available: {sorted(scanners)}")
 
 
-def detect_scanner(text: str) -> tuple[str | None, dict[str, int]]:
-    """Deterministic scanner identification by marker census.
-
-    Counts every registered profile's marker matches in the extracted text.
-    A scanner claims the document only when it alone has matches; zero
-    everywhere or more than one positive returns None (callers skip or ask
-    for an explicit --scanner). Never guesses: even a hypothetical wrong
-    claim would segment 0 blocks and extract nothing, but the rule keeps
-    that scenario out entirely.
+def scanner_for(report: Path, forced: str | None = None) -> str:
+    """The scanner a report belongs to: `forced` (an explicit --scanner) if
+    given, else the report's parent-folder name when it is a registered scanner
+    (the `resources/<scanner>/report.pdf` convention). Explicit, never guessed
+    from content - raises with an actionable message when it cannot be resolved.
     """
-    # Count per line, mirroring how the segmenter applies markers (patterns
-    # may use ^ without MULTILINE because segmentation is line-oriented).
-    lines = text.splitlines()
-    counts = {
-        name: sum(1 for line in lines if profile.marker.search(line))
-        for name, profile in all_scanners().items()
-    }
-    positive = [name for name, n in counts.items() if n > 0]
-    return (positive[0] if len(positive) == 1 else None), counts
+    if forced:
+        return forced.lower()
+    folder = report.parent.name.lower()
+    if folder in all_scanners():
+        return folder
+    raise ValueError(
+        f"Cannot determine the scanner for '{report.name}': its folder "
+        f"'{report.parent.name}' is not a known scanner {sorted(all_scanners())}. "
+        f"Put the report under a scanner-named folder or pass --scanner."
+    )
