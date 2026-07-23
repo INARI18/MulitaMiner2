@@ -124,7 +124,7 @@ def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
 
 
 def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
-                on_start, on_done, cancel: threading.Event) -> None:
+                on_start, on_done, cancel: threading.Event, make_progress) -> None:
     """Run one bucket's tasks sequentially (shared rate limit / local server)."""
     clients: dict[str, LLMClient] = {}
     for task in tasks:
@@ -143,7 +143,7 @@ def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
                        model=task.model, model_name=config.model_names.get(task.model))
         try:
             result, _ = run(rc, client=client, run_dir=task.run_dir,
-                            doc=docs.get(task.report))
+                            doc=docs.get(task.report), progress=make_progress(task))
         except FatalLLMError as exc:
             on_done(task, {"status": "fatal", "detail": str(exc)})
             return  # this bucket's credential is dead; stop it, spare the rest
@@ -225,9 +225,13 @@ def run_experiment(config: ExperimentConfig) -> dict:
         log.info("%s %s run_%d %s -> %s", task.scanner, task.model,
                  task.run_index, task.report.stem, outcome.get("status"))
 
+    def make_progress(task: _Task):
+        return view.progress_for(task.model, task.run_index, task.report.stem)
+
     cancel = threading.Event()
     pool = ThreadPoolExecutor(max_workers=len(buckets))
-    futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_start, on_done, cancel)
+    futures = [pool.submit(_run_bucket, bucket_tasks, config, docs, on_start, on_done,
+                           cancel, make_progress)
                for bucket_tasks in buckets.values()]
     interrupted = False
     with quiet_logging(config.verbose), view:

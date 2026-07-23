@@ -94,6 +94,14 @@ def _short(name: str, width: int) -> str:
     return name if len(name) <= width else name[: width - 1] + _ELL
 
 
+def _bar(done: int, total: int, width: int = 14) -> str:
+    fill, empty = ("█", "░") if _FANCY else ("#", "-")
+    if total <= 0:
+        return empty * width
+    n = round(width * min(done, total) / total)
+    return fill * n + empty * (width - n)
+
+
 @dataclass
 class Unit:
     """One (model, run, report) work unit."""
@@ -106,6 +114,9 @@ class Unit:
     warnings: int = 0
     duration: float = 0.0
     cost: float = 0.0
+    resolved: int = 0        # blocks resolved so far (live, while running)
+    jsonerr: int = 0         # invalid-JSON chunks (live)
+    round_no: int = 0        # current retry round (live)
 
     @property
     def key(self) -> tuple[str, int, str]:
@@ -133,6 +144,24 @@ class ExperimentView:
             u = self.units.get((model, run, report))
             if u:
                 u.state = "running"
+                u.total = u.resolved = u.jsonerr = u.round_no = 0
+            self._refresh()
+
+    def progress_for(self, model: str, run: int, report: str) -> Progress:
+        """A Progress sink the pipeline feeds; it updates this unit's live line."""
+        return _UnitProgress(self, (model, run, report))
+
+    def _live_update(self, key, *, total=None, resolved_add=0, jsonerr_add=0, round_no=None):
+        with self._lock:
+            u = self.units.get(key)
+            if not u or u.state != "running":
+                return
+            if total is not None:
+                u.total = total
+            if round_no is not None:
+                u.round_no = round_no
+            u.resolved += resolved_add
+            u.jsonerr += jsonerr_add
             self._refresh()
 
     def finish(self, model: str, run: int, report: str, *, status: str, blocks: int,
@@ -156,7 +185,15 @@ class ExperimentView:
         if u.state == "queued":
             t.append("queued", style="dim")
         elif u.state == "running":
-            t.append("extracting", style="blue")
+            if u.total:
+                t.append(f"{_bar(u.resolved, u.total)} ", style="blue")
+                t.append(f"{u.resolved}/{u.total}")
+            else:
+                t.append("extracting", style="blue")
+            if u.jsonerr:
+                t.append(f"  · {u.jsonerr} json-err", style="yellow")
+            if u.round_no:
+                t.append(f"  · retry {u.round_no}", style="dim")
         else:
             t.append(f"{u.blocks}/{u.total} blocks")
             note = "clean" if u.warnings == 0 else f"{u.warnings} warnings"
@@ -239,6 +276,9 @@ class NullView:
     def start(self, model: str, run: int, report: str) -> None:
         pass
 
+    def progress_for(self, model: str, run: int, report: str) -> "Progress":
+        return NULL_PROGRESS
+
     def finish(self, model: str, run: int, report: str, *, status: str, blocks: int,
                total: int, warnings: int, duration: float, cost: float) -> None:
         self._inner.finish(model, run, report, status=status, blocks=blocks, total=total,
@@ -272,6 +312,26 @@ class Progress:
 
 
 NULL_PROGRESS = Progress()
+
+
+class _UnitProgress(Progress):
+    """Routes one run's pipeline events to its line in an ExperimentView."""
+
+    def __init__(self, view: "ExperimentView", key: tuple[str, int, str]):
+        self.view = view
+        self.key = key
+
+    def segmented(self, total: int) -> None:
+        self.view._live_update(self.key, total=total)
+
+    def retry_round(self, round_no: int, chunks: int) -> None:
+        self.view._live_update(self.key, round_no=round_no)
+
+    def chunk_done(self, got: int, expected: int) -> None:
+        self.view._live_update(self.key, resolved_add=got)
+
+    def chunk_failed(self) -> None:
+        self.view._live_update(self.key, jsonerr_add=1)
 
 
 class ExtractView(Progress):
