@@ -9,6 +9,8 @@ numbers mean, and what the HTML report shows.
   the run directory.
 - `experiment` evaluates every run the same way and builds a self-contained
   `report.html` over the whole tree.
+- The full output layout (records, run.json, evaluation files) and every field's
+  meaning are documented in [OUTPUT.md](OUTPUT.md).
 
 ## Coverage
 
@@ -72,7 +74,7 @@ fits its shape.
 
 | Fields | Metric | Why |
 | --- | --- | --- |
-| `severity`, `port`, `protocol`, `plugin`, `cvss` (OpenVAS) | `exact` | one correct value; partial credit is meaningless. Case- and format-insensitive (`TCP` = `tcp`, `8019` = `8019.0`). |
+| `severity`, `port`, `protocol`, `plugin`, `cvss` (OpenVAS) | `exact` | one correct value; partial credit is meaningless. Case- and format-insensitive (`TCP` = `tcp`, `8019` = `8019.0`). `protocol` is a free str, so each scanner config forces `exact` via `field_metrics` rather than the inferred text metric. |
 | `references` | `set_f1_ids` | an unordered set of ids: `set_f1_ids` canonicalizes each item to its identifier (`CVE-...`, `CWE-N`, `BID-N`) and scores the sets, so `cve: CVE-1` vs `CVE-1` is not a miss. The strict `set_f1` (format-sensitive) is recorded alongside so the report shows whether a gap is content or just formatting. |
 | `cvss` (Tenable, a list of vectors) | `set_f1` | an unordered list of vector strings, scored as a set. |
 | `plugin_details`, `instances` (Tenable) | `structural` | a nested object / list of objects: recurse and score each sub-field. |

@@ -134,6 +134,35 @@ Without it every finding is two broken halves.
 
 `max_vulns_per_chunk: 3`, empirical calibration.
 
+## Nessus (`nessus.json`)
+
+Marker `^\s*\d+ - .+$`, the `<plugin id> - <name>` line that opens each finding.
+No capture group, so no severity hint: Nessus severity comes from the `Risk
+Factor` section inside the block, not the marker. The prompt maps it verbatim
+(`Critical->CRITICAL`, ..., `None->NONE`) and never derives it from CVSS, since
+Nessus `Risk Factor` (CVSS v2 scale) routinely disagrees with the block's CVSS
+v3.0 score.
+
+`context.host_anchor` / `host_line`: each per-host section opens with a severity
+count line (`0 0 1 1 11`), and the scanned IP is the line just above it. That
+anchor recovers the host for every block in the section.
+
+`discard_patterns`: the trial-license PDFs repeat a `For Trial Use Only` banner
+and a `<host ip> <page>` footer that lands mid-field on page breaks; both are
+dropped before segmentation.
+
+Field mapping (in the prompt): Synopsis to `description`, Description to
+`insight`, Risk Factor to `severity`, Plugin Output to `detection_result`, the
+per-CVSS lines to `cvss` (a list), Plugin Information to `plugin_details`. There
+is no Impact section, so `impact` is always empty.
+
+`evaluation.field_metrics` forces `protocol` to `exact` (it is a free str, so the
+inferred metric would be fuzzy text). The baseline XLSX is built from the HTML
+export by `tools/nessus_html_to_baseline.py`, because a trial license cannot
+produce the CSV export.
+
+`max_vulns_per_chunk: 3`, empirical calibration.
+
 ## Engine-wide rules (not configurable)
 
 - Duplicate = fully identical record, name compared normalized. Same key with

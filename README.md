@@ -48,7 +48,7 @@ ground-truth baselines.
 
 | | |
 | --- | --- |
-| Scanners | OpenVAS/Greenbone, Tenable WAS (add your own with a JSON config) |
+| Scanners | OpenVAS/Greenbone, Tenable WAS, Tenable Nessus, Qualys (add your own with a JSON config) |
 | Cloud models | DeepSeek, OpenAI (gpt-4o, gpt-4o-mini), Groq (Llama 3.3 70B), Claude (Haiku) |
 | Local models | Ollama, LM Studio, any OpenAI-compatible server. No API key needed |
 | Exports | XLSX, CSV, SARIF 2.1.0, DefectDojo Generic JSON, CAIS, CSAF 2.0 |
@@ -165,6 +165,7 @@ taxonomy and the HTML report are in [docs/EVALUATION.md](docs/EVALUATION.md).
 | Document | Description |
 | --- | --- |
 | [docs/USAGE.md](docs/USAGE.md) | All commands, flags, run artifacts and examples |
+| [docs/OUTPUT.md](docs/OUTPUT.md) | Every output field and file, and what each means |
 | [docs/EVALUATION.md](docs/EVALUATION.md) | Coverage, metrics, false-positive taxonomy, HTML report |
 | [docs/CONFIG.md](docs/CONFIG.md) | API keys, model profiles and tunables |
 | [docs/ADDING_A_MODEL.md](docs/ADDING_A_MODEL.md) | Plug a new LLM, cloud or local |

@@ -19,4 +19,6 @@ segmenting it (`mulitaminer segment <report> -s <scanner>`).
 | `resources/openvas/OpenVAS_Metasploitable2.xlsx` | SSL/TLS: Certificate Signed Using A Weak Signature Algorithm | Baseline has only the **5432/tcp** instance; the report also has a **25/tcp** instance (host 172.17.0.3) | Segmentation yields blocks 44 (port 25/tcp) and 51 (port 5432/tcp); the extractor finds both in all 3 deepseek runs. Suggested fix: add the port-25/tcp row to the baseline. |
 
 No other baseline gaps were found across the five reports (openvas: Metasploitable2,
-JuiceShop, artifactory; tenable: bWAPP, JuiceShop).
+JuiceShop, artifactory; tenable: bWAPP, JuiceShop). The Nessus baselines
+(VulnLab scan-a, scan-b) were added later; scan-b evaluates clean (recall and
+precision 1.000, no false positives) on deepseek.

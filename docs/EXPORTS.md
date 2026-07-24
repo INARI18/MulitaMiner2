@@ -27,8 +27,8 @@ tabular formats are `xlsx`, `csv` and `cais`.
 - CVE and CWE ids are parsed from the record's `references`.
 - CVSS v3 score/vector are parsed from the Tenable CVSS strings; SARIF/CSAF
   emit scores only when a vector exists.
-- Severity maps per target: LOG becomes `Info` (DefectDojo), `note` (SARIF),
-  `NONE` (CSAF baseSeverity).
+- Severity maps per target: the informational tier (`LOG`/`INFO`/`NONE`) becomes
+  `Info` (DefectDojo), `note` (SARIF), `NONE` (CSAF baseSeverity).
 - Hosts become SARIF logical locations (`host:port`) and the CSAF product
   tree.
 

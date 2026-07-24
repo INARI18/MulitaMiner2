@@ -73,8 +73,8 @@ Each run creates `outputs/runs/<timestamp>_<input>_<model>/`:
 
 | File | Content |
 | --- | --- |
-| `results.json` | Extracted records (primary artifact) |
-| `run.json` | Config snapshot, tokens, cost, duration, warnings, merge log |
+| `results.json` | Extracted records (primary artifact). Every field explained in [OUTPUT.md](OUTPUT.md) |
+| `run.json` | Config snapshot, tokens, cost, duration, warnings, block_id drops, merge log |
 | `results.raw.json` | Pre-consolidation records, only when merges happened |
 | `results.<format>.*` | One file per `--export` |
 | `run.log` | The per-run detailed log (always written; `debug.log` at DEBUG with `--debug`) |
