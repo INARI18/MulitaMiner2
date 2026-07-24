@@ -1,0 +1,25 @@
+{
+  "name": "nessus",
+  "source": "NESSUS",
+  "fields": {
+    "cvss": "list",
+    "insight": "list",
+    "detection_result": "list",
+    "plugin": "int",
+    "plugin_details": "PluginDetails"
+  },
+  "max_vulns_per_chunk": 3,
+  "marker_pattern": "^\\s*\\d+ - .+$",
+  "discard_patterns": [
+    "For Trial Use Only",
+    "(?:\\d{1,3}\\.){3}\\d{1,3} \\d+"
+  ],
+  "context": {
+    "host_anchor": "^\\d+ \\d+ \\d+ \\d+ \\d+$",
+    "host_line": "^\\s*((?:\\d{1,3}\\.){3}\\d{1,3})\\s*$"
+  },
+  "evaluation": {
+    "field_metrics": { "cvss": "set_f1", "protocol": "exact" },
+    "key_parts": ["host", "port", "protocol", "plugin"]
+  }
+}
