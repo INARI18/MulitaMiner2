@@ -147,6 +147,7 @@ class RunResult(BaseModel):
 
     records: list[VulnRecord]
     warnings: list[str] = []
+    drops: dict = {}  # block_id reconciliation drops by category
     usage: TokenUsage = Field(default_factory=TokenUsage)
     duration_s: float = 0.0
     block_count: int = 0

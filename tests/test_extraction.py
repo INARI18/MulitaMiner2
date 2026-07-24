@@ -65,15 +65,20 @@ def test_missing_ids_are_resent_and_recovered():
 
 
 def test_unknown_and_duplicate_ids_dropped_with_warning():
+    from collections import Counter
+
     blocks = _blocks(2)
     client = FakeClient([
         [_item(0), _item(0), _item(99)],  # dup 0, unknown 99, missing 1
         [_item(1)],
     ])
-    records, warnings = extract_blocks(blocks, PROFILE, client, TokenUsage())
+    drops: Counter = Counter()
+    records, warnings = extract_blocks(blocks, PROFILE, client, TokenUsage(), drops=drops)
     assert len(records) == 2
     assert any("duplicate block_id 0" in w for w in warnings)
     assert any("unknown block_id 99" in w for w in warnings)
+    # block 1 recovers on retry, so it is not counted as unrecovered.
+    assert dict(drops) == {"duplicate_id": 1, "unknown_id": 1}
 
 
 def test_retry_rounds_shrink_chunks():

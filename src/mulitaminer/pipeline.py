@@ -11,6 +11,7 @@ import logging
 import re
 import threading
 import time
+from collections import Counter
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -161,8 +162,9 @@ def run(config: RunConfig, client: LLMClient | None = None,
 
         usage = TokenUsage()
         debug_sink: list | None = [] if config.debug else None
+        drops: Counter = Counter()
         records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink,
-                                           progress=progress)
+                                           progress=progress, drops=drops)
         raw_count = len(records)
         raw_records = list(records)
         records, merge_log = profile.consolidate(records)
@@ -174,6 +176,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
         result = RunResult(
             records=records,
             warnings=warnings,
+            drops=dict(drops),
             usage=usage,
             duration_s=round(time.perf_counter() - started, 2),
             block_count=len(blocks),
@@ -199,6 +202,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
                     "usage": usage.model_dump(),
                     "duration_s": result.duration_s,
                     "warnings": warnings,
+                    "drops": dict(drops),
                     "merge_log": merge_log,
                     "pdf": {"pages": doc.page_count, "backend": doc.backend},
                 },

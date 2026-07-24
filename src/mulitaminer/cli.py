@@ -116,6 +116,10 @@ def extract(
         f"({result.usage.prompt_tokens}+{result.usage.completion_tokens} tokens, "
         f"{result.usage.calls} calls)"
     )
+    if result.drops:
+        total = sum(result.drops.values())
+        detail = ", ".join(f"{k}={v}" for k, v in sorted(result.drops.items()))
+        ui.warn(f"block_id drops: {total} ({detail})")
     if result.warnings:
         ui.warn(f"{len(result.warnings)} warning(s):")
         for w in result.warnings:

@@ -72,6 +72,18 @@ def _worst_pairs(result: EvalResult, field_name: str) -> list[tuple[str, float]]
     return sorted(scored, key=lambda t: t[1])[:_WORST_N]
 
 
+def _drops_section(drops: dict) -> list[str]:
+    """block_id reconciliation drops, if any were recorded in run.json."""
+    if not drops:
+        return []
+    total = sum(drops.values())
+    detail = ", ".join(f"{k}={v}" for k, v in sorted(drops.items()))
+    return ["## block_id drops", "",
+            f"- {total} dropped ({detail})",
+            "  (unknown_id/duplicate_id: LLM output rejected; unrecovered: "
+            "block yielded no record after retries)", ""]
+
+
 def render_markdown(result: EvalResult) -> str:
     cov = result.coverage
     lines = [
@@ -89,6 +101,7 @@ def render_markdown(result: EvalResult) -> str:
         f"- matched: {cov['matched']}  (recall {cov['recall']:.3f},"
         f" precision {cov['precision']:.3f})",
         "",
+        *_drops_section(result.meta.get("drops") or {}),
         "## Field scores (measured mean — vacuous empty×empty pairs excluded)",
         "",
         "```",

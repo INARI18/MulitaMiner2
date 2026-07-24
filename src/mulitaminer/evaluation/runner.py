@@ -423,6 +423,7 @@ def evaluate_run(
         "results": str(results_path),
         **provenance,
         "source": source,
+        "drops": (run or {}).get("drops", {}),
         "threshold": threshold,
         "text_metrics": [s.name for s in selected_text],
         "unavailable_metrics": {
