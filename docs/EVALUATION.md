@@ -58,8 +58,7 @@ Every false positive carries a `category` (`false_positive_kinds` totals them,
 
 `best_baseline`/`best_similarity` give the closest baseline row for context, so a
 name-diverged false positive (high similarity) is easy to tell from a genuinely
-unrelated one (low similarity). Confirmed baseline gaps are tracked in
-[BASELINE_NOTES.md](BASELINE_NOTES.md).
+unrelated one (low similarity).
 
 A false negative is the mirror image: a baseline finding the extraction did not
 recover (or recovered under a name too different to align).
