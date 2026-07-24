@@ -48,9 +48,9 @@ def test_experiment_layout_and_manifest(tmp_path):
         scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
     )
     run_experiment(config)
-    # Layout: <out>/<scanner>/<model>/run_<n>/<stem>/
+    # Layout: <out>/<model>/<scanner>/<stem>/run_<n>/
     for n in (1, 2):
-        d = tmp_path / "exp" / "openvas" / "deepseek" / f"run_{n}" / OPENVAS_PDF.stem
+        d = tmp_path / "exp" / "deepseek" / "openvas" / OPENVAS_PDF.stem / f"run_{n}"
         assert (d / "results.json").is_file() and (d / "run.json").is_file()
         assert (d / "evaluation.json").is_file()  # baseline XLSX exists -> evaluated
 

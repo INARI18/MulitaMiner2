@@ -1,6 +1,6 @@
 """Run X extractions per (scanner, model, report), grouped for parallelism.
 
-Layout: <out>/<scanner>/<model>/run_<n>/<report_stem>/, plus evaluation.json/.md
+Layout: <out>/<model>/<scanner>/<report_stem>/run_<n>/, plus evaluation.json/.md
 when a baseline XLSX sits by the PDF. Parallelism is by capacity bucket (a
 model's api_key_env or, if local, its base_url): buckets run concurrently, runs
 within a bucket sequentially. Complete run dirs are skipped and re-read from
@@ -73,8 +73,8 @@ def _plan(config: ExperimentConfig) -> tuple[list[_Task], list[dict], dict]:
     for model in config.models:
         for run_index in range(1, config.runs + 1):
             for report, scanner in resolved:
-                run_dir = (config.output_dir / scanner / model /
-                           f"run_{run_index}" / report.stem)
+                run_dir = (config.output_dir / model / scanner /
+                           report.stem / f"run_{run_index}")
                 tasks.append(_Task(scanner, model, run_index, report, run_dir))
     return tasks, skipped, docs
 

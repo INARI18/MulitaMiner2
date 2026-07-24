@@ -64,7 +64,7 @@ models run **in parallel** (grouped by the credential or server that enforces
 rate limits). Completed runs are checkpointed, so an interrupted batch resumes
 where it stopped, and a model run on another machine can be dropped into the
 same tree and merged by re-invoking with both model keys (every run cached, no
-API calls). Output lands under `output_experiments/<scanner>/<model>/run_<n>/`,
+API calls). Output lands under `output_experiments/<model>/<scanner>/<report>/run_<n>/`,
 plus an auto-generated `report.html` (see [EVALUATION.md](EVALUATION.md)).
 
 ## Run artifacts
