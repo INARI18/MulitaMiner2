@@ -7,8 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, create_model
 
-# Informational tier: OpenVAS emits LOG, Tenable INFO; each scanner keeps its own.
-Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO"]
+# Informational tier: OpenVAS emits LOG, Tenable INFO, Nessus None; each keeps its own.
+Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO", "NONE"]
 
 # Marks fields the LLM is NOT responsible for producing; the pipeline fills
 # them. Used to derive the LLM response contract (see extraction_model_for).
@@ -37,7 +37,7 @@ class VulnRecord(BaseModel):
     # Filled by the pipeline from report context, never by the LLM.
     host: str | None = Field(default=None, **_PIPELINE_FILLED)
     port: int | str | None = None
-    protocol: Literal["tcp", "udp"] | None = None
+    protocol: str | None = None
 
     # Stamped from the scanner profile, never prompted.
     source: str = Field(default="", **_PIPELINE_FILLED)
