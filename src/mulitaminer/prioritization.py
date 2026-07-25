@@ -11,6 +11,7 @@ import gzip
 import io
 import ipaddress
 import json
+import logging
 import os
 import re
 from datetime import UTC, datetime
@@ -18,6 +19,8 @@ from pathlib import Path
 
 from mulitaminer.models import VulnRecord
 from mulitaminer.settings import FEEDS_DIR
+
+log = logging.getLogger(__name__)
 
 KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
 EPSS_URL = "https://epss.cyentia.com/epss_scores-current.csv.gz"
@@ -169,6 +172,18 @@ def exposure(record: VulnRecord) -> str:
     return "internal" if private else "exposed"
 
 
+# Severity labels the supported scanners emit. The record model keeps severity a
+# free string so a new scanner costs no code; this is where the vocabulary lives,
+# because it is the only place the value changes a decision. An unrecognized
+# label still lands in the "low" band, but it is reported instead of silently
+# downgrading a finding.
+KNOWN_SEVERITIES = frozenset({
+    "critical", "high", "medium", "low",     # shared
+    "log", "info", "information", "none", "best practice",  # informational tiers
+})
+_warned_severities: set[str] = set()
+
+
 def severity_band(record: VulnRecord) -> str:
     """high / medium / low from numeric CVSS, falling back to the label."""
     cvss = getattr(record, "cvss", None)
@@ -176,6 +191,10 @@ def severity_band(record: VulnRecord) -> str:
     if cvss is not None and cvss > 0:
         return "high" if cvss >= 7.0 else "medium" if cvss >= 4.0 else "low"
     word = (record.severity or "").lower()
+    if word and word not in KNOWN_SEVERITIES and word not in _warned_severities:
+        _warned_severities.add(word)  # once per label, so a big queue stays readable
+        log.warning("unknown severity %r, ranked as low; add it to KNOWN_SEVERITIES "
+                    "if the scanner is supported", record.severity)
     return "high" if word in ("critical", "high") else "medium" if word == "medium" else "low"
 
 

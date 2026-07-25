@@ -36,9 +36,14 @@ def test_source_is_pipeline_filled_not_extracted():
     assert get_scanner("tenable").source == "TENABLEWAS"
 
 
-def test_wrong_severity_rejected():
-    with pytest.raises(ValidationError):
-        OpenVASRecord.model_validate({**GOOD_OPENVAS, "severity": "BANANA"})
+def test_severity_keeps_the_scanner_native_tier():
+    """severity is a free string: a scanner's own tier must survive extraction
+    verbatim, so adding a scanner never costs a model change. The known-label
+    vocabulary lives in prioritization, which warns on anything it does not know
+    (see test_prioritization)."""
+    for tier in ("LOG", "INFO", "INFORMATION", "NONE", "BEST PRACTICE"):
+        rec = OpenVASRecord.model_validate({**GOOD_OPENVAS, "severity": tier})
+        assert rec.severity == tier
 
 
 def test_openvas_cvss_is_numeric_tenable_cvss_is_list():

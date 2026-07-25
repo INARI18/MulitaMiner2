@@ -58,6 +58,30 @@ def test_severity_band_prefers_numeric_cvss():
     assert severity_band(_rec(cvss=None)) == "high"  # falls back to the HIGH label
 
 
+def test_known_scanner_tiers_rank_without_warning(caplog):
+    """Each scanner keeps its native informational tier; none of them is a surprise."""
+    import mulitaminer.prioritization as pz
+
+    pz._warned_severities.clear()
+    with caplog.at_level("WARNING"):
+        for tier in ("LOG", "INFO", "INFORMATION", "NONE", "BEST PRACTICE"):
+            rec = OpenVASRecord(name="V", severity=tier, cvss=None, host="1.2.3.4")
+            assert severity_band(rec) == "low"
+    assert not caplog.records
+
+
+def test_unknown_severity_ranks_low_and_warns_once(caplog):
+    import mulitaminer.prioritization as pz
+
+    pz._warned_severities.clear()
+    with caplog.at_level("WARNING"):
+        for _ in range(3):
+            rec = OpenVASRecord(name="V", severity="MEDUIM", cvss=None, host="1.2.3.4")
+            assert severity_band(rec) == "low"
+    assert len(caplog.records) == 1  # warned once, not once per record
+    assert "MEDUIM" in caplog.records[0].getMessage()
+
+
 def test_queue_orders_by_category():
     kev, epss = {"CVE-2020-0001"}, {"CVE-2020-0002": 0.9}
     records = [

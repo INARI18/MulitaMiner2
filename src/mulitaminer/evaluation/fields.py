@@ -26,7 +26,7 @@ from mulitaminer.models import VulnRecord, _is_llm_produced
 
 # Defaults by field name for fields whose type does not reveal their semantics.
 # A config override still wins; this only beats plain type inference.
-_NAME_DEFAULTS = {"references": "set_f1_ids"}
+_NAME_DEFAULTS = {"references": "set_f1_ids", "severity": "exact"}
 
 
 @dataclass(frozen=True)
