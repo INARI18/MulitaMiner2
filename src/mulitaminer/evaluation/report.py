@@ -73,13 +73,14 @@ def _worst_pairs(result: EvalResult, field_name: str) -> list[tuple[str, float]]
 
 
 def _drops_section(drops: dict) -> list[str]:
-    """block_id reconciliation drops, if any were recorded in run.json."""
-    if not drops:
-        return []
+    """block_id reconciliation drops; always shown, 0-filled and clean-labelled."""
+    from mulitaminer.models import full_drops
+
+    drops = full_drops(drops)
     total = sum(drops.values())
-    detail = ", ".join(f"{k}={v}" for k, v in sorted(drops.items()))
-    return ["## block_id drops", "",
-            f"- {total} dropped ({detail})",
+    detail = ", ".join(f"{k}={v}" for k, v in drops.items())
+    headline = f"- {total} dropped ({detail})" if total else f"- 0 (clean): {detail}"
+    return ["## block_id drops", "", headline,
             "  (unknown_id/duplicate_id: LLM output rejected; unrecovered: "
             "block yielded no record after retries)", ""]
 

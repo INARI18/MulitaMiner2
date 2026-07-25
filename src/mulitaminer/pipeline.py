@@ -19,7 +19,7 @@ from pathlib import Path
 from mulitaminer import settings
 from mulitaminer.extraction import extract_blocks
 from mulitaminer.llm import FatalLLMError, LLMClient, get_model
-from mulitaminer.models import RunResult, TokenUsage
+from mulitaminer.models import RunResult, TokenUsage, full_drops
 from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanner_engine import get_scanner, scanner_for
 from mulitaminer.exporters import get_exporter
@@ -176,7 +176,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
         result = RunResult(
             records=records,
             warnings=warnings,
-            drops=dict(drops),
+            drops=full_drops(drops),
             usage=usage,
             duration_s=round(time.perf_counter() - started, 2),
             block_count=len(blocks),
@@ -202,7 +202,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
                     "usage": usage.model_dump(),
                     "duration_s": result.duration_s,
                     "warnings": warnings,
-                    "drops": dict(drops),
+                    "drops": full_drops(drops),
                     "merge_log": merge_log,
                     "pdf": {"pages": doc.page_count, "backend": doc.backend},
                 },

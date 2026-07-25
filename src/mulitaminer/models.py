@@ -142,6 +142,17 @@ class TokenUsage(BaseModel):
         self.cost_usd += cost
 
 
+# block_id reconciliation drop categories, in a fixed order so the output always
+# lists all four (0-filled) and is self-explanatory.
+DROP_CATEGORIES = ("unknown_id", "duplicate_id", "validation_error", "unrecovered")
+
+
+def full_drops(counts: dict | None) -> dict:
+    """Every drop category present, 0-filled, from a partial/empty counter."""
+    counts = counts or {}
+    return {c: int(counts.get(c, 0)) for c in DROP_CATEGORIES}
+
+
 class RunResult(BaseModel):
     """Everything a run produced, in memory. Writers serialize from this."""
 
