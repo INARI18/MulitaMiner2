@@ -27,5 +27,6 @@ archive/
 # Local training/eval datasets (user-provided, never committed)
 pdfs/
 vulnnet_scans_openvas.csv
+outros/
 
 # Internal planning docs (local only)
