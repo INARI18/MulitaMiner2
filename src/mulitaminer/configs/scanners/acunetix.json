@@ -1,0 +1,23 @@
+{
+  "name": "acunetix",
+  "source": "ACUNETIX",
+  "fields": {
+    "cvss": "list",
+    "classification": "list",
+    "instances": "[Instance]"
+  },
+  "max_vulns_per_chunk": 2,
+  "marker_pattern": "^(CRITICAL|HIGH|MEDIUM|LOW|BEST PRACTICE|INFORMATION)\\s+\\d+(?:\\s+CONFIRMED\\s+\\d+)?$",
+  "name_above_marker": true,
+  "name_stop_pattern": "^\\s*(\\d+/\\d+|Impact|Remedy|Vulnerabilities|Certainty|Request|Response|External References|CLASSIFICATION|Exploits)\\s*$",
+  "discard_patterns": [
+    "\\d+/\\d+",
+    "Go to the report on Acunetix 360\\.",
+    "(?:Accept|Accept-Language|Accept-Encoding|Cache-Control|User-Agent|Referer|Cookie|Set-Cookie|Connection|Keep-Alive|Content-Length|Transfer-Encoding|Pragma|Expires|Vary|ETag|Last-Modified|Location|Upgrade|Age|Via|P3P|X-[\\w-]+):\\s.*",
+    "(?:Response Time \\(ms\\)|Total Bytes Received|Body Length|Is Compressed)\\s*:.*"
+  ],
+  "evaluation": {
+    "field_metrics": { "cvss": "set_f1", "protocol": "exact" },
+    "key_parts": ["severity"]
+  }
+}
