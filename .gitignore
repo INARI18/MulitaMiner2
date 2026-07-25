@@ -30,3 +30,6 @@ vulnnet_scans_openvas.csv
 outros/
 
 # Internal planning docs (local only)
+
+# Local analysis artifacts (metrics-auditor output)
+analysis_reports/
