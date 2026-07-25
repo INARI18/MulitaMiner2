@@ -145,39 +145,43 @@ def _token_f1(a: Any, b: Any) -> float:
     return 2 * p * r / (p + r)
 
 
-def _lcs_len(xs: list[str], ys: list[str]) -> int:
-    # Classic DP over one rolling row; O(len(xs) * len(ys)).
-    prev = [0] * (len(ys) + 1)
-    for x in xs:
-        curr = [0]
-        for j, y in enumerate(ys, 1):
-            curr.append(prev[j - 1] + 1 if x == y else max(prev[j], curr[j - 1]))
-        prev = curr
-    return prev[-1]
+_rouge_scorer = None  # canonical google-research rougeL; reused across pairs
 
 
 def _rouge_l(a: Any, b: Any) -> float:
-    ta, tb = _tokens(render_text(a)), _tokens(render_text(b))
+    # rouge_score does its own tokenization (lowercase, drop punctuation);
+    # use_stemmer=False keeps it a pure lexical LCS-F1. F1 is symmetric, so
+    # target/prediction order is irrelevant.
+    global _rouge_scorer
+    if _rouge_scorer is None:
+        from rouge_score import rouge_scorer
+
+        _rouge_scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=False)
+    ta, tb = render_text(a), render_text(b)
     if not ta or not tb:
         return 0.0
-    lcs = _lcs_len(ta, tb)
-    if lcs == 0:
-        return 0.0
-    p, r = lcs / len(ta), lcs / len(tb)
-    return 2 * p * r / (p + r)
+    return float(_rouge_scorer.score(tb, ta)["rougeL"].fmeasure)
 
 
 _bert_model = None  # loaded once per process; the model load dominates cost
 
 
-def _bertscore(a: Any, b: Any) -> float:
+def _bertscore_batch(pairs: list[tuple[Any, Any]]) -> list[float]:
     global _bert_model
+    if not pairs:
+        return []
     if _bert_model is None:
         from bert_score import BERTScorer
 
         _bert_model = BERTScorer(lang="en")
-    _, _, f1 = _bert_model.score([render_text(a)], [render_text(b)])
-    return float(f1[0])
+    cands = [render_text(a) for a, b in pairs]
+    refs = [render_text(b) for a, b in pairs]
+    _, _, f1 = _bert_model.score(cands, refs)
+    return [float(x) for x in f1]
+
+
+def _bertscore(a: Any, b: Any) -> float:
+    return _bertscore_batch([(a, b)])[0]
 
 
 def _bertscore_missing(a: Any, b: Any) -> float:
@@ -193,30 +197,50 @@ _SENT_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|\n+")
 _nli_pipeline = None  # loaded once per process
 
 
-def _nli(a: Any, b: Any) -> float:
-    """1 - max P(contradiction) over ground-truth sentences.
+def _nli_batch(pairs: list[tuple[Any, Any]]) -> list[float]:
+    """1 - max P(contradiction) over ground-truth sentences, batched.
 
     Premise = the extraction text, hypothesis = each baseline sentence: a
     dropped/flipped negation makes the pair a contradiction. Splitting the
     baseline side keeps hypotheses inside the model's 512-token window and
-    localizes which sentence flipped.
+    localizes which sentence flipped. All pairs' sentence-hypotheses are flattened
+    into one call, then reduced back per pair.
     """
     global _nli_pipeline
+    if not pairs:
+        return []
     if _nli_pipeline is None:
         from transformers import pipeline
 
         _nli_pipeline = pipeline("text-classification", model=NLI_MODEL, top_k=None)
-    premise = render_text(a)
-    sentences = [s.strip() for s in _SENT_SPLIT_RE.split(render_text(b)) if s.strip()]
-    if not premise or not sentences:
-        return 0.0
-    inputs = [{"text": premise, "text_pair": s} for s in sentences]
-    results = _nli_pipeline(inputs, truncation=True, max_length=512)
-    worst = max(
-        next(r["score"] for r in res if r["label"].lower() == "contradiction")
-        for res in results
+    inputs: list[dict] = []
+    spans: list[tuple[int, int]] = []  # each pair's [start, end) slice of inputs
+    for a, b in pairs:
+        premise = render_text(a)
+        sentences = [s.strip() for s in _SENT_SPLIT_RE.split(render_text(b)) if s.strip()]
+        start = len(inputs)
+        if premise and sentences:
+            inputs.extend({"text": premise, "text_pair": s} for s in sentences)
+        spans.append((start, len(inputs)))
+    results = (
+        _nli_pipeline(inputs, truncation=True, max_length=512, batch_size=32)
+        if inputs else []
     )
-    return 1.0 - float(worst)
+    out: list[float] = []
+    for start, end in spans:
+        if end <= start:
+            out.append(0.0)
+            continue
+        worst = max(
+            next(r["score"] for r in res if r["label"].lower() == "contradiction")
+            for res in results[start:end]
+        )
+        out.append(1.0 - float(worst))
+    return out
+
+
+def _nli(a: Any, b: Any) -> float:
+    return _nli_batch([(a, b)])[0]
 
 
 def _nli_missing(a: Any, b: Any) -> float:
@@ -230,9 +254,16 @@ class Scorer:
     fn: Callable[[Any, Any], float] = field(repr=False)
     available: bool = True
     hint: str = ""
-    # Whether --metrics all includes this scorer. nli opts out: ~seconds per
-    # pair on CPU, so it must be requested explicitly (--metrics nli).
+    # Whether --metrics all includes this scorer. nli opts out on CPU (~seconds
+    # per pair) but opts back in when a GPU makes the batched pass cheap.
     in_all: bool = True
+    in_all_gpu: bool = False  # join --metrics all only when a CUDA device is present
+    # Model-backed scorers set this to score a whole batch of (ext, base) pairs
+    # in one forward pass. The runner routes "both filled" pairs here so the
+    # model loads and runs once per evaluation, not once per pair.
+    batch_fn: Callable[[list[tuple[Any, Any]]], list[float]] | None = field(
+        default=None, repr=False
+    )
 
 
 _BERT_AVAILABLE = importlib.util.find_spec("bert_score") is not None
@@ -250,6 +281,7 @@ SCORERS: dict[str, Scorer] = {
         _bertscore if _BERT_AVAILABLE else _bertscore_missing,
         available=_BERT_AVAILABLE,
         hint="" if _BERT_AVAILABLE else BERTSCORE_HINT,
+        batch_fn=_bertscore_batch if _BERT_AVAILABLE else None,
     ),
     "nli": Scorer(
         "nli",
@@ -258,8 +290,26 @@ SCORERS: dict[str, Scorer] = {
         available=_NLI_AVAILABLE,
         hint="" if _NLI_AVAILABLE else EVAL_GROUP_HINT,
         in_all=False,
+        in_all_gpu=True,
+        batch_fn=_nli_batch if _NLI_AVAILABLE else None,
     ),
 }
+
+_gpu_available: bool | None = None
+
+
+def gpu_available() -> bool:
+    """True if a CUDA device is present. Cached; imports torch lazily (only when
+    the eval group is installed and something asks)."""
+    global _gpu_available
+    if _gpu_available is None:
+        try:
+            import torch
+
+            _gpu_available = bool(torch.cuda.is_available())
+        except Exception:  # noqa: BLE001 - no torch, or a broken CUDA build
+            _gpu_available = False
+    return _gpu_available
 
 
 def text_scorers() -> list[Scorer]:

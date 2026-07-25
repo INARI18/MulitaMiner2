@@ -26,6 +26,7 @@ from mulitaminer.evaluation.scorers import (
     SCORERS,
     Scorer,
     _as_number,
+    gpu_available,
     pair_score,
     render_text,
     text_scorers,
@@ -141,9 +142,11 @@ def _profile_for_source(source: str | None):
 
 
 def resolve_metrics(spec: str | None) -> list[Scorer]:
-    """--metrics value -> text scorers to run ("all" = every installed one)."""
+    """--metrics value -> text scorers to run ("all" = every installed one,
+    plus GPU-only scorers like nli when a CUDA device is present)."""
     if spec in (None, "", "all"):
-        return [s for s in text_scorers() if s.available and s.in_all]
+        return [s for s in text_scorers()
+                if s.available and (s.in_all or (s.in_all_gpu and gpu_available()))]
     chosen: list[Scorer] = []
     for raw in spec.split(","):
         name = _METRIC_ALIASES.get(raw.strip().lower(), raw.strip().lower())
@@ -274,16 +277,22 @@ def _score_pair(
     selected_text: list[Scorer],
     ext_row: dict,
     base_row: dict,
+    batched: dict[str, dict[str, tuple[float, bool]]] | None = None,
 ) -> dict[str, dict[str, tuple[float, bool]]]:
-    """-> {field: {metric: (score, vacuous)}}."""
+    """-> {field: {metric: (score, vacuous)}}.
+
+    ``selected_text`` holds only the per-pair text scorers; model-backed ones are
+    precomputed in one batch and merged in via ``batched`` (per-field scores).
+    """
+    batched = batched or {}
     out: dict[str, dict[str, tuple[float, bool]]] = {}
     for plan in plans:
         ext_val = _row_value(ext_row, plan.name)
         base_val = _row_value(base_row, plan.name)
         if plan.metric == "text":
-            out[plan.name] = {
-                s.name: pair_score(s, ext_val, base_val) for s in selected_text
-            }
+            scores = {s.name: pair_score(s, ext_val, base_val) for s in selected_text}
+            scores.update(batched.get(plan.name, {}))
+            out[plan.name] = scores
         elif plan.metric == "structural":
             out[plan.name] = {"structural": _structural_score(plan, ext_val, base_val)}
         else:  # a single scorer name (exact, set_f1, set_f1_ids, or an override)
@@ -297,6 +306,40 @@ def _score_pair(
                 # format. The report shows whether a gap is real or just format.
                 for m in ("set_f1", "set_f1_ids"):
                     out[plan.name][m] = pair_score(SCORERS[m], ext_val, base_val)
+    return out
+
+
+def _batch_text_scores(
+    text_plans: list[FieldPlan],
+    scorers: list[Scorer],
+    pairs: list[tuple[int, int]],
+    ext_rows: list[dict],
+    base_rows: list[dict],
+) -> list[dict[str, dict[str, tuple[float, bool]]]]:
+    """Score model-backed text scorers across all pairs in one forward pass each.
+
+    Returns per-pair {field: {scorer_name: (score, vacuous)}}. Presence rules
+    (empty x empty = vacuous 1.0; one-empty = 0.0) are resolved without the model,
+    so only genuinely comparable text goes into the batched call.
+    """
+    out: list[dict[str, dict[str, tuple[float, bool]]]] = [{} for _ in pairs]
+    for scorer in scorers:
+        need: list[tuple[int, str, Any, Any]] = []  # (pair_idx, field, ext, base)
+        for pidx, (i, j) in enumerate(pairs):
+            for plan in text_plans:
+                ext_val = _row_value(ext_rows[i], plan.name)
+                base_val = _row_value(base_rows[j], plan.name)
+                e, b = render_text(ext_val), render_text(base_val)
+                if not e and not b:
+                    out[pidx].setdefault(plan.name, {})[scorer.name] = (1.0, True)
+                elif not e or not b:
+                    out[pidx].setdefault(plan.name, {})[scorer.name] = (0.0, False)
+                else:
+                    need.append((pidx, plan.name, ext_val, base_val))
+        if need and scorer.batch_fn is not None:
+            scores = scorer.batch_fn([(ev, bv) for _, _, ev, bv in need])
+            for (pidx, field, _, _), sc in zip(need, scores):
+                out[pidx].setdefault(field, {})[scorer.name] = (float(sc), False)
     return out
 
 
@@ -376,9 +419,16 @@ def evaluate_run(
     key_parts = profile.key_parts if profile else ()
     alignment = align(ext_rows, base_rows, key_parts, threshold)
 
+    # Model-backed text scorers run once over all pairs; cheap ones stay per-pair.
+    batched_scorers = [s for s in selected_text if s.batch_fn is not None]
+    perpair_text = [s for s in selected_text if s.batch_fn is None]
+    text_plans = [p for p in plans if p.metric == "text"]
+    batched_by_pair = _batch_text_scores(
+        text_plans, batched_scorers, alignment.pairs, ext_rows, base_rows
+    )
     pair_scores = [
-        _score_pair(plans, selected_text, ext_rows[i], base_rows[j])
-        for i, j in alignment.pairs
+        _score_pair(plans, perpair_text, ext_rows[i], base_rows[j], batched_by_pair[pidx])
+        for pidx, (i, j) in enumerate(alignment.pairs)
     ]
 
     def _name(row: dict) -> str:

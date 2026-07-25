@@ -81,6 +81,17 @@ def test_scorers_kinds_split():
     assert SCORERS["set_f1_ids"].kind == "structural"
 
 
+def test_nli_joins_metrics_all_only_on_gpu(monkeypatch):
+    import mulitaminer.evaluation.runner as rn
+
+    monkeypatch.setattr(rn, "gpu_available", lambda: False)
+    cpu = {s.name for s in rn.resolve_metrics("all")}
+    assert "bertscore" in cpu and "nli" not in cpu  # CPU: nli stays opt-out
+
+    monkeypatch.setattr(rn, "gpu_available", lambda: True)
+    assert "nli" in {s.name for s in rn.resolve_metrics("all")}  # GPU: nli joins
+
+
 # --- fields ------------------------------------------------------------------
 
 
