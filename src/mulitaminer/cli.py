@@ -116,6 +116,12 @@ def extract(
         f"({result.usage.prompt_tokens}+{result.usage.completion_tokens} tokens, "
         f"{result.usage.calls} calls)"
     )
+    total_drops = sum(result.drops.values())
+    detail = ", ".join(f"{k}={v}" for k, v in result.drops.items())
+    if total_drops:
+        ui.warn(f"block_id drops: {total_drops} ({detail})")
+    else:
+        ui.echo(f"block_id drops: 0 (clean) - {detail}")
     if result.warnings:
         ui.warn(f"{len(result.warnings)} warning(s):")
         for w in result.warnings:
@@ -258,6 +264,18 @@ def evaluate(
     if target is None:
         ui.error("provide a run directory or results.json (or --list-metrics).")
         raise typer.Exit(code=1)
+
+    if (Path(target) / "experiment.json").is_file():  # whole-experiment re-eval
+        from mulitaminer.experiment import evaluate_experiment
+
+        ev = evaluate_experiment(Path(target), metrics=metrics, force=True,
+                                 threshold=threshold)
+        ui.echo(f"\nRe-evaluated {ev['evaluated']} run(s) across {ev['runs']} total"
+                f"{f', {ev['failed']} skipped (no baseline)' if ev['failed'] else ''}.",
+                style="bold")
+        if ev.get("report"):
+            ui.echo(f"report: {ev['report']}")
+        return
 
     try:
         result = evaluate_run(target, baseline=baseline, metrics=metrics,

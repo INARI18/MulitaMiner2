@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import Counter
 from functools import lru_cache
 
 from pydantic import BaseModel, ConfigDict, ValidationError, create_model
@@ -67,9 +68,19 @@ def extract_blocks(
     usage: TokenUsage,
     debug_sink: list | None = None,
     progress: Progress | None = None,
+    drops: Counter | None = None,
+    retries: Counter | None = None,
 ) -> tuple[list[VulnRecord], list[str]]:
-    """Extract every block; returns (records ordered by block id, warnings)."""
+    """Extract every block; returns (records ordered by block id, warnings).
+
+    drops, if given, is tallied by category (unknown_id, duplicate_id,
+    validation_error, unrecovered); retries is tallied by chunk-failure reason
+    (bad_json, bad_shape). Both feed the run summary."""
     progress = progress or NULL_PROGRESS
+    if drops is None:
+        drops = Counter()
+    if retries is None:
+        retries = Counter()
     prompt = profile.prompt()
     response_model = response_model_for(profile.record_type)
     by_id = {b.id: b for b in blocks}
@@ -102,10 +113,13 @@ def extract_blocks(
         for chunk in chunks:
             unresolved.extend(
                 _extract_chunk(chunk, prompt, response_model, profile, client,
-                               usage, records, warnings, by_id, debug_sink, progress)
+                               usage, records, warnings, by_id, debug_sink, progress,
+                               drops, retries)
             )
         pending = unresolved
 
+    if pending:
+        drops["unrecovered"] += len(pending)
     for block in pending:
         warnings.append(
             f"block {block.id} yielded no record after "
@@ -149,16 +163,26 @@ def _extract_chunk(
     by_id: dict[int, Block],
     debug_sink: list | None,
     progress: Progress = NULL_PROGRESS,
+    drops: Counter | None = None,
+    retries: Counter | None = None,
 ) -> list[Block]:
     """Process one chunk; returns the blocks left unresolved."""
+    if drops is None:
+        drops = Counter()
+    if retries is None:
+        retries = Counter()
     expected = {b.id for b in chunk.blocks}
     send_blocks = _truncate_oversized(chunk, client, warnings)
     try:
         parsed, call_usage = client.extract(prompt, render_chunk(send_blocks), response_model)
     except (json.JSONDecodeError, ValidationError) as exc:
+        # bad_json: response was not valid JSON (usually output truncated at the
+        # token cap). bad_shape: JSON parsed but did not fit the response schema.
+        reason = "bad_json" if isinstance(exc, json.JSONDecodeError) else "bad_shape"
         log.warning("Chunk %d: invalid response (%s); its blocks go to retry",
                     chunk.index, type(exc).__name__)
-        progress.chunk_failed()
+        retries[reason] += 1
+        progress.chunk_failed(reason)
         return chunk.blocks
 
     usage.add(call_usage["prompt_tokens"], call_usage["completion_tokens"],
@@ -167,22 +191,27 @@ def _extract_chunk(
         debug_sink.append({"chunk": chunk.index, "blocks": sorted(expected),
                            "response": call_usage["raw"]})
 
-    returned: set[int] = set()
+    seen: set[int] = set()        # ids already consumed in this response
+    succeeded: set[int] = set()   # ids that produced a valid record
     for item in parsed.items:
         bid = item.block_id
         if bid not in expected:
             warnings.append(f"chunk {chunk.index}: unknown block_id {bid} dropped")
+            drops["unknown_id"] += 1
             continue
-        if bid in returned:
+        if bid in seen:
             warnings.append(f"chunk {chunk.index}: duplicate block_id {bid} dropped")
+            drops["duplicate_id"] += 1
             continue
-        returned.add(bid)
+        seen.add(bid)
         try:
             records[bid] = _to_record(item, by_id[bid], profile)
+            succeeded.add(bid)
         except ValidationError as exc:
             warnings.append(f"block {bid}: record failed validation ({exc.error_count()} errors)")
+            drops["validation_error"] += 1
 
-    missing = expected - returned
-    log.info("Chunk %d: %d/%d blocks extracted", chunk.index, len(returned), len(expected))
-    progress.chunk_done(len(returned), len(expected))
+    missing = expected - succeeded
+    log.info("Chunk %d: %d/%d blocks extracted", chunk.index, len(succeeded), len(expected))
+    progress.chunk_done(len(succeeded), len(expected))
     return [by_id[i] for i in sorted(missing)]

@@ -9,6 +9,8 @@ numbers mean, and what the HTML report shows.
   the run directory.
 - `experiment` evaluates every run the same way and builds a self-contained
   `report.html` over the whole tree.
+- The full output layout (records, run.json, evaluation files) and every field's
+  meaning are documented in [OUTPUT.md](OUTPUT.md).
 
 ## Coverage
 
@@ -56,8 +58,7 @@ Every false positive carries a `category` (`false_positive_kinds` totals them,
 
 `best_baseline`/`best_similarity` give the closest baseline row for context, so a
 name-diverged false positive (high similarity) is easy to tell from a genuinely
-unrelated one (low similarity). Confirmed baseline gaps are tracked in
-[BASELINE_NOTES.md](BASELINE_NOTES.md).
+unrelated one (low similarity).
 
 A false negative is the mirror image: a baseline finding the extraction did not
 recover (or recovered under a name too different to align).
@@ -72,7 +73,7 @@ fits its shape.
 
 | Fields | Metric | Why |
 | --- | --- | --- |
-| `severity`, `port`, `protocol`, `plugin`, `cvss` (OpenVAS) | `exact` | one correct value; partial credit is meaningless. Case- and format-insensitive (`TCP` = `tcp`, `8019` = `8019.0`). |
+| `severity`, `port`, `protocol`, `plugin`, `cvss` (OpenVAS) | `exact` | one correct value; partial credit is meaningless. Case- and format-insensitive (`TCP` = `tcp`, `8019` = `8019.0`). `protocol` is a free str, so each scanner config forces `exact` via `field_metrics` rather than the inferred text metric. |
 | `references` | `set_f1_ids` | an unordered set of ids: `set_f1_ids` canonicalizes each item to its identifier (`CVE-...`, `CWE-N`, `BID-N`) and scores the sets, so `cve: CVE-1` vs `CVE-1` is not a miss. The strict `set_f1` (format-sensitive) is recorded alongside so the report shows whether a gap is content or just formatting. |
 | `cvss` (Tenable, a list of vectors) | `set_f1` | an unordered list of vector strings, scored as a set. |
 | `plugin_details`, `instances` (Tenable) | `structural` | a nested object / list of objects: recurse and score each sub-field. |

@@ -81,6 +81,17 @@ def test_scorers_kinds_split():
     assert SCORERS["set_f1_ids"].kind == "structural"
 
 
+def test_nli_joins_metrics_all_only_on_gpu(monkeypatch):
+    import mulitaminer.evaluation.runner as rn
+
+    monkeypatch.setattr(rn, "gpu_available", lambda: False)
+    cpu = {s.name for s in rn.resolve_metrics("all")}
+    assert "bertscore" in cpu and "nli" not in cpu  # CPU: nli stays opt-out
+
+    monkeypatch.setattr(rn, "gpu_available", lambda: True)
+    assert "nli" in {s.name for s in rn.resolve_metrics("all")}  # GPU: nli joins
+
+
 # --- fields ------------------------------------------------------------------
 
 
@@ -92,7 +103,9 @@ def test_fields_openvas_inference_matches_spec_table():
     plans = field_plans(OpenVASRecord)
     by_name = {p.name: p.metric for p in plans}
     assert by_name["severity"] == "exact"       # Literal
-    assert by_name["protocol"] == "exact"       # Literal | None
+    # protocol is a free str (open set: tcp/udp/icmp/...); type inference gives
+    # "text". Each scanner config overrides it back to "exact" via field_metrics.
+    assert by_name["protocol"] == "text"        # str | None
     assert by_name["cvss"] == "exact"           # float | int | None
     assert by_name["port"] == "exact"           # int | str | None
     assert by_name["name"] == "text"            # str
@@ -148,8 +161,10 @@ def test_fields_builtin_configs_carry_overrides():
     from mulitaminer.scanner_engine import get_scanner
 
     # references is now a by-name default, not a per-scanner override.
-    assert dict(get_scanner("openvas").field_metric_overrides) == {}
-    assert dict(get_scanner("tenable").field_metric_overrides) == {"cvss": "set_f1"}
+    # protocol is a free str, overridden to exact so it is not fuzzy-matched.
+    assert dict(get_scanner("openvas").field_metric_overrides) == {"protocol": "exact"}
+    assert dict(get_scanner("tenable").field_metric_overrides) == {
+        "cvss": "set_f1", "protocol": "exact"}
 
 
 # --- align -------------------------------------------------------------------

@@ -7,8 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, create_model
 
-# Informational tier: OpenVAS emits LOG, Tenable INFO; each scanner keeps its own.
-Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO"]
+# Informational tier: OpenVAS emits LOG, Tenable INFO, Nessus None; each keeps its own.
+Severity = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO", "NONE"]
 
 # Marks fields the LLM is NOT responsible for producing; the pipeline fills
 # them. Used to derive the LLM response contract (see extraction_model_for).
@@ -37,7 +37,7 @@ class VulnRecord(BaseModel):
     # Filled by the pipeline from report context, never by the LLM.
     host: str | None = Field(default=None, **_PIPELINE_FILLED)
     port: int | str | None = None
-    protocol: Literal["tcp", "udp"] | None = None
+    protocol: str | None = None
 
     # Stamped from the scanner profile, never prompted.
     source: str = Field(default="", **_PIPELINE_FILLED)
@@ -142,11 +142,35 @@ class TokenUsage(BaseModel):
         self.cost_usd += cost
 
 
+# block_id reconciliation drop categories, in a fixed order so the output always
+# lists all four (0-filled) and is self-explanatory.
+DROP_CATEGORIES = ("unknown_id", "duplicate_id", "validation_error", "unrecovered")
+
+
+def full_drops(counts: dict | None) -> dict:
+    """Every drop category present, 0-filled, from a partial/empty counter."""
+    counts = counts or {}
+    return {c: int(counts.get(c, 0)) for c in DROP_CATEGORIES}
+
+
+# Chunk-level retry reasons: bad_json (response not valid JSON, usually output
+# truncated at the token cap) vs bad_shape (JSON parsed but failed the schema).
+RETRY_CATEGORIES = ("bad_json", "bad_shape")
+
+
+def full_retries(counts: dict | None) -> dict:
+    """Every retry reason present, 0-filled, from a partial/empty counter."""
+    counts = counts or {}
+    return {c: int(counts.get(c, 0)) for c in RETRY_CATEGORIES}
+
+
 class RunResult(BaseModel):
     """Everything a run produced, in memory. Writers serialize from this."""
 
     records: list[VulnRecord]
     warnings: list[str] = []
+    drops: dict = {}  # block_id reconciliation drops by category
+    retries: dict = {}  # chunk retries by reason (bad_json, bad_shape)
     usage: TokenUsage = Field(default_factory=TokenUsage)
     duration_s: float = 0.0
     block_count: int = 0

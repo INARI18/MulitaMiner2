@@ -191,7 +191,7 @@ class ExperimentView:
             else:
                 t.append("extracting", style="blue")
             if u.jsonerr:
-                t.append(f"  · {u.jsonerr} json-err", style="yellow")
+                t.append(f"  · {u.jsonerr} retry", style="yellow")
             if u.round_no:
                 t.append(f"  · retry {u.round_no}", style="dim")
         else:
@@ -308,7 +308,7 @@ class Progress:
     def segmented(self, total: int) -> None: ...
     def retry_round(self, round_no: int, chunks: int) -> None: ...
     def chunk_done(self, got: int, expected: int) -> None: ...
-    def chunk_failed(self) -> None: ...
+    def chunk_failed(self, reason: str) -> None: ...
 
 
 NULL_PROGRESS = Progress()
@@ -330,7 +330,7 @@ class _UnitProgress(Progress):
     def chunk_done(self, got: int, expected: int) -> None:
         self.view._live_update(self.key, resolved_add=got)
 
-    def chunk_failed(self) -> None:
+    def chunk_failed(self, reason: str) -> None:
         self.view._live_update(self.key, jsonerr_add=1)
 
 
@@ -365,7 +365,7 @@ class ExtractView(Progress):
         self.resolved += got
         self._refresh()
 
-    def chunk_failed(self) -> None:
+    def chunk_failed(self, reason: str) -> None:
         self.jsonerr += 1
         self._refresh()
 
@@ -388,7 +388,7 @@ class ExtractView(Progress):
         else:
             t.append(self._phase, style="blue")
         if self.jsonerr:
-            t.append(f"  · {self.jsonerr} json-err", style="yellow")
+            t.append(f"  · {self.jsonerr} retry", style="yellow")
         if self.round_no:
             t.append(f"  · retry {self.round_no}", style="dim")
         return t

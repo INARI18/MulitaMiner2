@@ -11,12 +11,12 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
+# character ID (CID) to glyph mapping for common ligatures and quotes
 _CID_MAP = {16: '"', 17: '"', 27: "ff", 28: "fi", 29: "fl", 30: "ffi", 31: "ffl"}
 _CTRL_LIGATURES = str.maketrans({chr(cid): glyph for cid, glyph in _CID_MAP.items()})
 _CTRL_STRIP_RE = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 _FOOTER_RE = re.compile(r"Page \d+ of \d+")
-_TENABLE_EXPORT_FOOTER_RE = re.compile(r"Web Application Scanning Detailed Scan Export:[^\n]*")
 _CONTINUATION_RE = re.compile(
     r"^.*(?:\.\s?\.\s?\.\s?)?continue[sd] (?:on next|from previous) page.*$", re.IGNORECASE
 )
@@ -61,6 +61,7 @@ def _clean_page(text: str) -> str:
         .replace("ÔÇÖ", "'")
         .replace("ÔÇ£", '"')
         .replace("ÔÇØ", '"')
+        .replace("￾", "-")  # hyphen at a line wrap comes back as U+FFFE
     )
     cleaned = re.sub(r"[ ]{2,}", " ", cleaned)
     return cleaned.rstrip() + "\n"
@@ -84,7 +85,6 @@ def extract_pdf(path: Path) -> ExtractedDoc:
     text = _CTRL_STRIP_RE.sub("", text.translate(_CTRL_LIGATURES).replace("\r", ""))
     text = unicodedata.normalize("NFKC", text)
     text = _restore_cid_glyphs(text)
-    text = _TENABLE_EXPORT_FOOTER_RE.sub("", text)
     if not text.strip():
         raise ValueError(
             f"No text extracted from {path}; the file may be corrupted or image-only."

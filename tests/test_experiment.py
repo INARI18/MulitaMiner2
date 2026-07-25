@@ -48,9 +48,9 @@ def test_experiment_layout_and_manifest(tmp_path):
         scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
     )
     run_experiment(config)
-    # Layout: <out>/<scanner>/<model>/run_<n>/<stem>/
+    # Layout: <out>/<model>/<scanner>/<stem>/run_<n>/
     for n in (1, 2):
-        d = tmp_path / "exp" / "openvas" / "deepseek" / f"run_{n}" / OPENVAS_PDF.stem
+        d = tmp_path / "exp" / "deepseek" / "openvas" / OPENVAS_PDF.stem / f"run_{n}"
         assert (d / "results.json").is_file() and (d / "run.json").is_file()
         assert (d / "evaluation.json").is_file()  # baseline XLSX exists -> evaluated
 
@@ -73,6 +73,26 @@ def test_experiment_checkpoint_skips_completed(tmp_path):
     # Second invocation: the completed run dir is reused, not re-extracted.
     result = run_experiment(config)
     assert all(r["status"] == "cached" for r in result["records"])
+
+
+def test_evaluate_experiment_reevaluates(tmp_path):
+    from mulitaminer.experiment import evaluate_experiment
+
+    config = ExperimentConfig(
+        reports=[OPENVAS_PDF], models=["deepseek"], runs=1,
+        scanner="openvas", metrics="token_f1", output_dir=tmp_path / "exp",
+    )
+    run_experiment(config)  # extract-all + evaluate-all in one go
+
+    # force=True re-scores from disk (the re-run after a baseline/metric change).
+    ev = evaluate_experiment(tmp_path / "exp", force=True, progress=False)
+    assert ev["evaluated"] == 1 and ev["failed"] == 0
+    assert ev["records"][0]["coverage"]["baseline_count"] == 34
+
+    # force=False is a cheap resume: existing evaluation.json is kept, not re-scored.
+    ev2 = evaluate_experiment(tmp_path / "exp", force=False, progress=False)
+    assert ev2["evaluated"] == 0
+    assert ev2["records"][0]["coverage"]["baseline_count"] == 34
 
 
 def test_experiment_skips_keyless_model(tmp_path, monkeypatch):

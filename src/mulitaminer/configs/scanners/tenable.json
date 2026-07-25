@@ -11,13 +11,14 @@
   "marker_pattern": "(?i)(?:#+\\s+)?(?:\\d+(?:\\.\\d+)*\\s+)?VULNERABILITY\\s+(CRITICAL|HIGH|MEDIUM|LOW|INFO)\\s+PLUGIN\\s+ID\\s+\\d+",
   "name_above_marker": true,
   "name_stop_pattern": "^\\s*(Description|Solution|Risk Information|Plugin Details|Reference Information|Identification|HTTP Info|See Also|BID\\b|CWE\\b|WASC\\b|OWASP\\b|CVE\\b).*$|^\\s*https?://",
+  "discard_patterns": ["Web Application Scanning Detailed Scan Export:.*"],
   "pair": {
     "strip_name_suffix": "\\s*Instances\\s*(\\(\\d+\\))?\\s*$",
     "by": ["plugin"],
     "merge_instances": true
   },
   "evaluation": {
-    "field_metrics": { "cvss": "set_f1" },
+    "field_metrics": { "cvss": "set_f1", "protocol": "exact" },
     "key_parts": ["severity", "plugin"]
   }
 }

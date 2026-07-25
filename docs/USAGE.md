@@ -64,7 +64,7 @@ models run **in parallel** (grouped by the credential or server that enforces
 rate limits). Completed runs are checkpointed, so an interrupted batch resumes
 where it stopped, and a model run on another machine can be dropped into the
 same tree and merged by re-invoking with both model keys (every run cached, no
-API calls). Output lands under `output_experiments/<scanner>/<model>/run_<n>/`,
+API calls). Output lands under `output_experiments/<model>/<scanner>/<report>/run_<n>/`,
 plus an auto-generated `report.html` (see [EVALUATION.md](EVALUATION.md)).
 
 ## Run artifacts
@@ -73,8 +73,8 @@ Each run creates `outputs/runs/<timestamp>_<input>_<model>/`:
 
 | File | Content |
 | --- | --- |
-| `results.json` | Extracted records (primary artifact) |
-| `run.json` | Config snapshot, tokens, cost, duration, warnings, merge log |
+| `results.json` | Extracted records (primary artifact). Every field explained in [OUTPUT.md](OUTPUT.md) |
+| `run.json` | Config snapshot, tokens, cost, duration, warnings, block_id drops, merge log |
 | `results.raw.json` | Pre-consolidation records, only when merges happened |
 | `results.<format>.*` | One file per `--export` |
 | `run.log` | The per-run detailed log (always written; `debug.log` at DEBUG with `--debug`) |

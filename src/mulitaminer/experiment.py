@@ -1,6 +1,6 @@
 """Run X extractions per (scanner, model, report), grouped for parallelism.
 
-Layout: <out>/<scanner>/<model>/run_<n>/<report_stem>/, plus evaluation.json/.md
+Layout: <out>/<model>/<scanner>/<report_stem>/run_<n>/, plus evaluation.json/.md
 when a baseline XLSX sits by the PDF. Parallelism is by capacity bucket (a
 model's api_key_env or, if local, its base_url): buckets run concurrently, runs
 within a bucket sequentially. Complete run dirs are skipped and re-read from
@@ -73,8 +73,8 @@ def _plan(config: ExperimentConfig) -> tuple[list[_Task], list[dict], dict]:
     for model in config.models:
         for run_index in range(1, config.runs + 1):
             for report, scanner in resolved:
-                run_dir = (config.output_dir / scanner / model /
-                           f"run_{run_index}" / report.stem)
+                run_dir = (config.output_dir / model / scanner /
+                           report.stem / f"run_{run_index}")
                 tasks.append(_Task(scanner, model, run_index, report, run_dir))
     return tasks, skipped, docs
 
@@ -83,20 +83,69 @@ def _is_complete(run_dir: Path) -> bool:
     return (run_dir / "results.json").is_file() and (run_dir / "run.json").is_file()
 
 
-def _evaluate(run_dir: Path, report: Path, metrics: str) -> dict | None:
-    """Evaluate a finished run when a baseline XLSX sits next to the report."""
-    baseline = report.with_suffix(".xlsx")
-    if not baseline.is_file():
-        return None
+def evaluate_experiment(
+    output_dir: Path,
+    metrics: str | None = None,
+    force: bool = False,
+    threshold: float = 0.7,
+    rebuild_report: bool = True,
+    progress: bool = True,
+) -> dict:
+    """Evaluate-all phase: score every finished run in an experiment against its
+    baseline, fill coverage back into the manifest, and rebuild the report.
+
+    Reads only from disk (never extracts), so it re-runs cheaply after a baseline
+    or metric change. ``force`` re-scores runs that already have an
+    evaluation.json; otherwise those keep their cached scores. Text scorers load
+    their models once for the whole phase, not per run.
+    """
     from mulitaminer.evaluation import evaluate_run
     from mulitaminer.evaluation.report import write_reports
 
-    result = evaluate_run(run_dir, baseline=baseline, metrics=metrics)
-    write_reports(result, run_dir)
-    return result.coverage
+    manifest_path = output_dir / "experiment.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    metrics = metrics or manifest.get("config", {}).get("metrics", "all")
+    runs = [r for r in manifest["runs"]
+            if r.get("status") in ("ok", "cached") and Path(r["run_dir"]).is_dir()]
+
+    evaluated = failed = 0
+    for i, r in enumerate(runs, 1):
+        run_dir = Path(r["run_dir"])
+        eval_json = run_dir / "evaluation.json"
+        if progress:
+            from mulitaminer.ui import console
+            console.print(f"  evaluating [{i}/{len(runs)}] {run_dir.parent.name}/"
+                          f"{run_dir.name}", style="dim", end="\r")
+        if not force and eval_json.is_file():
+            try:
+                r["coverage"] = json.loads(eval_json.read_text(encoding="utf-8")).get("coverage")
+            except json.JSONDecodeError:
+                r["coverage"] = None
+            continue
+        try:
+            result = evaluate_run(run_dir, metrics=metrics, threshold=threshold)
+            write_reports(result, run_dir)
+            r["coverage"] = result.coverage
+            evaluated += 1
+        except (ValueError, RuntimeError, FileNotFoundError) as exc:
+            r["coverage"] = None  # e.g. no baseline XLSX next to the report
+            failed += 1
+            log.warning("evaluate skipped for %s: %s", run_dir, exc)
+
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    report = None
+    if rebuild_report:
+        try:
+            from mulitaminer.experiment_report import build_report
+            report = str(build_report(output_dir))
+        except Exception as exc:  # noqa: BLE001 - a report failure must not fail eval
+            log.warning("report generation failed: %s", exc)
+    return {"evaluated": evaluated, "failed": failed, "runs": len(runs),
+            "manifest": str(manifest_path), "report": report,
+            "records": manifest["runs"]}
 
 
-def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
+def _cached_outcome(run_dir: Path) -> dict:
     """Rebuild a complete manifest entry for an already-finished run from its own
     files. Without this, a resumed (or cross-host-merged) experiment would list
     cached runs with no coverage/cost, so the report would drop them."""
@@ -111,13 +160,11 @@ def _cached_outcome(run_dir: Path, report: Path, metrics: str) -> dict:
     except (OSError, json.JSONDecodeError):
         pass
     eval_path = run_dir / "evaluation.json"
-    if eval_path.is_file():
+    if eval_path.is_file():  # coverage is (re)filled by the evaluate-all phase
         try:
             outcome["coverage"] = json.loads(eval_path.read_text(encoding="utf-8")).get("coverage")
         except json.JSONDecodeError:
             pass
-    else:
-        outcome["coverage"] = _evaluate(run_dir, report, metrics)
     return outcome
 
 
@@ -130,7 +177,7 @@ def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
             return
         on_start(task)
         if _is_complete(task.run_dir):
-            on_done(task, _cached_outcome(task.run_dir, task.report, config.metrics))
+            on_done(task, _cached_outcome(task.run_dir))
             continue
         client = clients.get(task.model)
         if client is None:
@@ -148,11 +195,12 @@ def _run_bucket(tasks: list[_Task], config: ExperimentConfig, docs: dict,
         except Exception as exc:  # noqa: BLE001 - one bad report must not sink the bucket
             on_done(task, {"status": "failed", "detail": f"{type(exc).__name__}: {exc}"})
             continue
-        coverage = _evaluate(task.run_dir, task.report, config.metrics)
+        # Evaluation is a separate phase (evaluate_experiment) so text scorers
+        # load their models once and score across all runs, not per extraction.
         on_done(task, {"status": "ok", "duration_s": result.duration_s,
                        "cost_usd": result.usage.cost_usd,
                        "records": len(result.records), "block_count": result.block_count,
-                       "warnings": len(result.warnings), "coverage": coverage})
+                       "warnings": len(result.warnings)})
 
 
 def _runnable_models(models: list[str]) -> tuple[list[str], list[dict]]:
@@ -258,14 +306,12 @@ def run_experiment(config: ExperimentConfig) -> dict:
 
     _write_manifest(manifest_path, config, records, skipped, complete=True,
                     skipped_models=skipped_models)
-    report = None
-    try:
-        from mulitaminer.experiment_report import build_report
-        report = str(build_report(config.output_dir))
-    except Exception as exc:  # noqa: BLE001 - a report failure must not fail the batch
-        log.warning("report generation failed: %s", exc)
-    return {"manifest": str(manifest_path), "records": records, "skipped": skipped,
-            "skipped_models": skipped_models, "report": report}
+    # Evaluate-all: score every finished run in one phase (models load once),
+    # fill coverage into the manifest, and build the report.
+    console.print("evaluating runs against baselines...", style="dim")
+    ev = evaluate_experiment(config.output_dir, metrics=config.metrics, force=False)
+    return {"manifest": str(manifest_path), "records": ev["records"], "skipped": skipped,
+            "skipped_models": skipped_models, "report": ev["report"]}
 
 
 def _write_manifest(path: Path, config: ExperimentConfig, records: list[dict],

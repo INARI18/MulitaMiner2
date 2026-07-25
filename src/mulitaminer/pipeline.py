@@ -11,6 +11,7 @@ import logging
 import re
 import threading
 import time
+from collections import Counter
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,7 +19,7 @@ from pathlib import Path
 from mulitaminer import settings
 from mulitaminer.extraction import extract_blocks
 from mulitaminer.llm import FatalLLMError, LLMClient, get_model
-from mulitaminer.models import RunResult, TokenUsage
+from mulitaminer.models import RunResult, TokenUsage, full_drops, full_retries
 from mulitaminer.pdf_reader import extract_pdf
 from mulitaminer.scanner_engine import get_scanner, scanner_for
 from mulitaminer.exporters import get_exporter
@@ -161,8 +162,10 @@ def run(config: RunConfig, client: LLMClient | None = None,
 
         usage = TokenUsage()
         debug_sink: list | None = [] if config.debug else None
+        drops: Counter = Counter()
+        retries: Counter = Counter()
         records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink,
-                                           progress=progress)
+                                           progress=progress, drops=drops, retries=retries)
         raw_count = len(records)
         raw_records = list(records)
         records, merge_log = profile.consolidate(records)
@@ -174,6 +177,8 @@ def run(config: RunConfig, client: LLMClient | None = None,
         result = RunResult(
             records=records,
             warnings=warnings,
+            drops=full_drops(drops),
+            retries=full_retries(retries),
             usage=usage,
             duration_s=round(time.perf_counter() - started, 2),
             block_count=len(blocks),
@@ -199,6 +204,8 @@ def run(config: RunConfig, client: LLMClient | None = None,
                     "usage": usage.model_dump(),
                     "duration_s": result.duration_s,
                     "warnings": warnings,
+                    "drops": full_drops(drops),
+                    "retries": full_retries(retries),
                     "merge_log": merge_log,
                     "pdf": {"pages": doc.page_count, "backend": doc.backend},
                 },
