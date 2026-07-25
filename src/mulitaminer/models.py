@@ -3,15 +3,8 @@ The LLM contract (`extraction_model_for`) is derived from the record model."""
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, create_model
-
-# Informational tier: OpenVAS emits LOG, Tenable INFO, Nessus None; each keeps its own.
-Severity = Literal[
-    "CRITICAL", "HIGH", "MEDIUM", "LOW", "LOG", "INFO", "NONE",
-    "INFORMATION", "BEST PRACTICE",  # Acunetix tiers, kept native (no remapping)
-]
 
 # Marks fields the LLM is NOT responsible for producing; the pipeline fills
 # them. Used to derive the LLM response contract (see extraction_model_for).
@@ -23,7 +16,6 @@ class VulnRecord(BaseModel):
 
     Scanner-specific fields (cvss, plugin, instances, insight, ...) are declared
     in each scanner's JSON config under "fields" and added on top of this core;
-    see docs/SCANNER_CONFIGS.md.
     """
 
     # allow undeclared keys; accept `Name` and `name`; keep post-validation
@@ -35,9 +27,9 @@ class VulnRecord(BaseModel):
     solution: list[str] = []
     impact: list[str] = []
     references: list[str] = []
-    severity: Severity
+    severity: str # prioritization owns the known labels and warns on the rest.
 
-    # Filled by the pipeline from report context, never by the LLM.
+    # Filled by the pipeline from report context, prompt only if not defined in the json.
     host: str | None = Field(default=None, **_PIPELINE_FILLED)
     port: int | str | None = None
     protocol: str | None = None
