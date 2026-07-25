@@ -69,14 +69,18 @@ def extract_blocks(
     debug_sink: list | None = None,
     progress: Progress | None = None,
     drops: Counter | None = None,
+    retries: Counter | None = None,
 ) -> tuple[list[VulnRecord], list[str]]:
     """Extract every block; returns (records ordered by block id, warnings).
 
     drops, if given, is tallied by category (unknown_id, duplicate_id,
-    validation_error, unrecovered) for the run summary."""
+    validation_error, unrecovered); retries is tallied by chunk-failure reason
+    (bad_json, bad_shape). Both feed the run summary."""
     progress = progress or NULL_PROGRESS
     if drops is None:
         drops = Counter()
+    if retries is None:
+        retries = Counter()
     prompt = profile.prompt()
     response_model = response_model_for(profile.record_type)
     by_id = {b.id: b for b in blocks}
@@ -109,7 +113,8 @@ def extract_blocks(
         for chunk in chunks:
             unresolved.extend(
                 _extract_chunk(chunk, prompt, response_model, profile, client,
-                               usage, records, warnings, by_id, debug_sink, progress, drops)
+                               usage, records, warnings, by_id, debug_sink, progress,
+                               drops, retries)
             )
         pending = unresolved
 
@@ -159,18 +164,25 @@ def _extract_chunk(
     debug_sink: list | None,
     progress: Progress = NULL_PROGRESS,
     drops: Counter | None = None,
+    retries: Counter | None = None,
 ) -> list[Block]:
     """Process one chunk; returns the blocks left unresolved."""
     if drops is None:
         drops = Counter()
+    if retries is None:
+        retries = Counter()
     expected = {b.id for b in chunk.blocks}
     send_blocks = _truncate_oversized(chunk, client, warnings)
     try:
         parsed, call_usage = client.extract(prompt, render_chunk(send_blocks), response_model)
     except (json.JSONDecodeError, ValidationError) as exc:
+        # bad_json: response was not valid JSON (usually output truncated at the
+        # token cap). bad_shape: JSON parsed but did not fit the response schema.
+        reason = "bad_json" if isinstance(exc, json.JSONDecodeError) else "bad_shape"
         log.warning("Chunk %d: invalid response (%s); its blocks go to retry",
                     chunk.index, type(exc).__name__)
-        progress.chunk_failed()
+        retries[reason] += 1
+        progress.chunk_failed(reason)
         return chunk.blocks
 
     usage.add(call_usage["prompt_tokens"], call_usage["completion_tokens"],

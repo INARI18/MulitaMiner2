@@ -81,6 +81,20 @@ def test_unknown_and_duplicate_ids_dropped_with_warning():
     assert dict(drops) == {"duplicate_id": 1, "unknown_id": 1}
 
 
+def test_retry_reasons_counted_by_kind():
+    from collections import Counter
+
+    blocks = _blocks(1)
+    client = FakeClient([
+        json.JSONDecodeError("expecting value", "", 0),  # bad_json, goes to retry
+        [_item(0)],                                      # retry succeeds
+    ])
+    retries: Counter = Counter()
+    records, _ = extract_blocks(blocks, PROFILE, client, TokenUsage(), retries=retries)
+    assert len(records) == 1
+    assert dict(retries) == {"bad_json": 1}
+
+
 def test_retry_rounds_shrink_chunks():
     """A chunk that hit the output cap fails identically at the same size -
     retry rounds must re-send progressively smaller groups (4 -> 2 -> 1)."""

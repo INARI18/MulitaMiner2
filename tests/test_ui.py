@@ -17,7 +17,7 @@ def test_experiment_view_live_progress_updates_unit():
     p.segmented(10)
     p.chunk_done(3, 3)
     p.chunk_done(2, 3)
-    p.chunk_failed()
+    p.chunk_failed("bad_json")
     p.retry_round(1, 5)
     assert (u.total, u.resolved, u.jsonerr, u.round_no) == (10, 5, 1, 1)
 
@@ -33,7 +33,7 @@ def test_extract_view_accumulates_progress():
     v = ExtractView("deepseek", "report.pdf")
     v.segmented(6)
     v.chunk_done(4, 4)
-    v.chunk_failed()
+    v.chunk_failed("bad_json")
     v.retry_round(1, 2)
     v.chunk_done(2, 2)
     assert v.total == 6 and v.resolved == 6 and v.jsonerr == 1 and v.round_no == 1

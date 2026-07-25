@@ -153,12 +153,24 @@ def full_drops(counts: dict | None) -> dict:
     return {c: int(counts.get(c, 0)) for c in DROP_CATEGORIES}
 
 
+# Chunk-level retry reasons: bad_json (response not valid JSON, usually output
+# truncated at the token cap) vs bad_shape (JSON parsed but failed the schema).
+RETRY_CATEGORIES = ("bad_json", "bad_shape")
+
+
+def full_retries(counts: dict | None) -> dict:
+    """Every retry reason present, 0-filled, from a partial/empty counter."""
+    counts = counts or {}
+    return {c: int(counts.get(c, 0)) for c in RETRY_CATEGORIES}
+
+
 class RunResult(BaseModel):
     """Everything a run produced, in memory. Writers serialize from this."""
 
     records: list[VulnRecord]
     warnings: list[str] = []
     drops: dict = {}  # block_id reconciliation drops by category
+    retries: dict = {}  # chunk retries by reason (bad_json, bad_shape)
     usage: TokenUsage = Field(default_factory=TokenUsage)
     duration_s: float = 0.0
     block_count: int = 0

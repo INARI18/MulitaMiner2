@@ -85,6 +85,19 @@ def _drops_section(drops: dict) -> list[str]:
             "block yielded no record after retries)", ""]
 
 
+def _retries_section(retries: dict) -> list[str]:
+    """Chunk retries by reason; always shown, 0-filled and clean-labelled."""
+    from mulitaminer.models import full_retries
+
+    retries = full_retries(retries)
+    total = sum(retries.values())
+    detail = ", ".join(f"{k}={v}" for k, v in retries.items())
+    headline = f"- {total} retried ({detail})" if total else f"- 0 (clean): {detail}"
+    return ["## chunk retries", "", headline,
+            "  (bad_json: response not valid JSON, usually output truncated at the "
+            "token cap; bad_shape: JSON parsed but failed the schema)", ""]
+
+
 def render_markdown(result: EvalResult) -> str:
     cov = result.coverage
     lines = [
@@ -103,6 +116,7 @@ def render_markdown(result: EvalResult) -> str:
         f" precision {cov['precision']:.3f})",
         "",
         *_drops_section(result.meta.get("drops") or {}),
+        *_retries_section(result.meta.get("retries") or {}),
         "## Field scores (measured mean — vacuous empty×empty pairs excluded)",
         "",
         "```",

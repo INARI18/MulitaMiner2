@@ -424,6 +424,7 @@ def evaluate_run(
         **provenance,
         "source": source,
         "drops": (run or {}).get("drops", {}),
+        "retries": (run or {}).get("retries", {}),
         "threshold": threshold,
         "text_metrics": [s.name for s in selected_text],
         "unavailable_metrics": {
