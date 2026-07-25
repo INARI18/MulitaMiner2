@@ -13,13 +13,21 @@ from mulitaminer.models import VulnRecord
 log = logging.getLogger(__name__)
 
 
+def _source_last(keys: list[str]) -> list[str]:
+    """`source` is stamped metadata; keep it as the last output column."""
+    return [k for k in keys if k != "source"] + (["source"] if "source" in keys else [])
+
+
 def _dump(records: list[VulnRecord]) -> list[dict]:
-    return [r.model_dump(by_alias=True) for r in records]
+    return [
+        {k: d[k] for k in _source_last(list(d))}
+        for d in (r.model_dump(by_alias=True) for r in records)
+    ]
 
 
 def columns_for(record_type: type[VulnRecord]) -> list[str]:
     """Schema-ordered output columns of one record type (JSON key names)."""
-    return [f.alias or name for name, f in record_type.model_fields.items()]
+    return _source_last([f.alias or name for name, f in record_type.model_fields.items()])
 
 
 def unified_columns(record_types: list[type[VulnRecord]] | None = None) -> list[str]:
@@ -39,7 +47,7 @@ def unified_columns(record_types: list[type[VulnRecord]] | None = None) -> list[
             if col not in seen:
                 seen.add(col)
                 cols.append(col)
-    return cols
+    return _source_last(cols)
 
 
 def write_json(records: list[VulnRecord], path: Path) -> None:
