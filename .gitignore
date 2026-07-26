@@ -33,3 +33,6 @@ outros/
 
 # Local analysis artifacts (metrics-auditor output)
 analysis_reports/
+
+# Local experiment scripts and baseline builders
+experiments/
