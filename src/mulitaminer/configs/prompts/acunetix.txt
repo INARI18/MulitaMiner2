@@ -24,10 +24,17 @@ FIELD EXTRACTION RULES:
 3. description: the paragraphs between the severity line and the first section label
    (each paragraph as an array element; [] if absent).
    impact: from `Impact` up to the next section label.
-   solution: from `Remedy`; remediation steps only.
+   solution: from `Remedy`. Keep everything that tells the reader HOW to fix it, verbatim
+   and complete: numbered steps, configuration snippets (`<System.Web> ...`), header
+   examples (`X-Content-Type-Options: nosniff`), registry keys and command lines. The
+   prose often says "apply the following changes", so dropping the snippet leaves the
+   field pointing at nothing. The two-column layout may print those steps after an HTTP
+   dump; they still belong to the remedy.
 
-4. references: from `External References`, plus any CVE identifier printed near it,
-   ONE reference per element (a link title, a URL, or "CVE-2014-4078"). [] if absent.
+4. references: from BOTH `External References` and `Remedy References`, plus any CVE
+   identifier printed near them. The remediation links are references too, so they go
+   in the same list rather than being dropped. ONE reference per element (a link
+   title, a URL, or "CVE-2014-4078"). [] if absent.
 
 5. cvss: every CVSS line, verbatim, as a list of strings. Typical forms:
    "CVSS 3.0 SCORE", "Base 6.8 (Medium)", "Temporal 6.1 (Medium)", "Environmental 6.1 (Medium)",
@@ -38,7 +45,9 @@ FIELD EXTRACTION RULES:
    ("OWASP API Top 10 2023 API8", "PCI v3.2-6.5.4", "CWE-200", "CAPEC-118", "HIPAA-164.306(a)").
    The label `CLASSIFICATION` itself is not a value. [] if absent.
 
-7. instances: one object per `N.M. <URL>` line under `Vulnerabilities`, with exactly:
+7. instances: one object per `N.M. <URL>` line ANYWHERE in the block. The report is
+   a two-column PDF, so such a line often prints after `Remedy` or between other
+   sections instead of under `Vulnerabilities`; take it wherever it appears. Each with exactly:
    {"instance", "input_type", "input_name", "payload", "proof", "output", "request_method",
     "http_status_code", "http_protocol", "response_content_type"}.
    Map: instance = the URL; request_method = the value under "Method"; input_name = the value
@@ -74,6 +83,8 @@ Remedy
 Upgrading IIS to a higher version is not a standalone operation.
 External References
 The Official Microsoft IIS Site
+Remedy References
+Installing IIS on Windows Server
 CLASSIFICATION
 OWASP API Top 10 2023 API8
 CVSS 3.0 SCORE
@@ -87,6 +98,6 @@ HTTP/1.1 500 Internal Server Error
 ---
 
 Expected extraction object for this block:
-{"block_id":2,"Name":"Out-of-date Version (IIS)","description":["Acunetix 360 identified the target web site is using IIS and detected that it is out of date."],"impact":["Since this is an old version of the software, it may be vulnerable to attacks."],"solution":["Upgrading IIS to a higher version is not a standalone operation."],"references":["CVE-2014-4078","The Official Microsoft IIS Site"],"cvss":["CVSS 3.0 SCORE","Base 6.8 (Medium)","CVSS Vector String","CVSS:3.0/AV:A/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"],"classification":["OWASP API Top 10 2023 API8"],"instances":[{"instance":"http://testaspnet.vulnweb.com/","input_type":"","input_name":"","payload":"","proof":"","output":"","request_method":"","http_status_code":null,"http_protocol":"","response_content_type":""}],"port":null,"protocol":null,"severity":"MEDIUM"}
+{"block_id":2,"Name":"Out-of-date Version (IIS)","description":["Acunetix 360 identified the target web site is using IIS and detected that it is out of date."],"impact":["Since this is an old version of the software, it may be vulnerable to attacks."],"solution":["Upgrading IIS to a higher version is not a standalone operation."],"references":["CVE-2014-4078","The Official Microsoft IIS Site","Installing IIS on Windows Server"],"cvss":["CVSS 3.0 SCORE","Base 6.8 (Medium)","CVSS Vector String","CVSS:3.0/AV:A/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"],"classification":["OWASP API Top 10 2023 API8"],"instances":[{"instance":"http://testaspnet.vulnweb.com/","input_type":"","input_name":"","payload":"","proof":"","output":"","request_method":"","http_status_code":null,"http_protocol":"","response_content_type":""}],"port":null,"protocol":null,"severity":"MEDIUM"}
 
 Respond with a JSON object: {"items": [<one extraction object per block>]}.
