@@ -1,0 +1,1697 @@
+<?xml version="1.0"?>
+<OWASPZAPReport programName="ZAP" version="2.17.0" generated="Sun, 26 Jul 2026 17:47:57" created="2026-07-26T17:47:57.677509254Z">
+	
+		<site name="https://content-signature-2.cdn.mozilla.net" host="content-signature-2.cdn.mozilla.net" port="443" ssl="true">
+			<alerts>
+				
+			</alerts>
+		</site>
+	
+	
+		<site name="http://172.30.45.1:8983" host="172.30.45.1" port="8983" ssl="false">
+			<alerts>
+				
+					<alertitem>
+						<pluginid>6</pluginid>
+						<alertRef>6-5</alertRef>
+						<alert>Path Traversal</alert>
+						<name>Path Traversal</name>
+						<riskcode>3</riskcode>
+						<confidence>1</confidence>
+						<riskdesc>High (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
+						<desc>&lt;p&gt;The Path Traversal attack technique allows an attacker access to files, directories, and commands that potentially reside outside the web document root directory. An attacker may manipulate a URL in such a way that the web site will execute or reveal the contents of arbitrary files anywhere on the web server. Any device that exposes an HTTP-based interface is potentially vulnerable to Path Traversal.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Most web sites restrict user access to a specific portion of the file-system, typically called the &quot;web document root&quot; or &quot;CGI root&quot; directory. These directories contain the files intended for user access and the executable necessary to drive web application functionality. To access files or execute commands anywhere on the file-system, Path Traversal attacks will utilize the ability of special-characters sequences.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;The most basic Path Traversal attack uses the &quot;../&quot; special-character sequence to alter the resource location requested in the URL. Although most popular web servers will prevent this technique from escaping the web document root, alternate encodings of the &quot;../&quot; sequence may help bypass the security filters. These method variations include valid and invalid Unicode-encoding (&quot;..%u2216&quot; or &quot;..%c0%af&quot;) of the forward slash character, backslash characters (&quot;..\&quot;) on Windows-based servers, URL encoded characters &quot;%2e%2e%2f&quot;), and double URL encoding (&quot;..%255c&quot;) of the backslash character.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Even if the web server properly restricts Path Traversal attempts in the URL path, a web application itself may still be vulnerable due to improper handling of user-supplied input. This is a common problem of web applications that use template mechanisms or load static text from files. In variations of the attack, the original URL parameter value is substituted with the file name of one of the web application&apos;s dynamic scripts. Consequently, the results can reveal source code because the file is interpreted as text instead of an executable script. These techniques often employ additional special characters such as the dot (&quot;.&quot;) to reveal the listing of the current working directory, or &quot;%00&quot; NULL characters in order to bypass rudimentary file extension checks.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/threads?_=threads&amp;wt=json</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/threads (_,wt)</nodeName>
+									<method>GET</method>
+									<param>_</param>
+									<attack>threads</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/threads?_=1785087976368&amp;wt=%2Fthreads</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/threads (_,wt)</nodeName>
+									<method>GET</method>
+									<param>wt</param>
+									<attack>/threads</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>2</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Assume all input is malicious. Use an &quot;accept known good&quot; input validation strategy, i.e., use an allow list of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. Do not rely exclusively on looking for malicious or malformed inputs (i.e., do not rely on a deny list). However, deny lists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, &quot;boat&quot; may be syntactically valid because it only contains alphanumeric characters, but it is not valid if you are expecting colors such as &quot;red&quot; or &quot;blue.&quot;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;For filenames, use stringent allow lists that limit the character set to be used. If feasible, only allow a single &quot;.&quot; character in the filename to avoid weaknesses, and exclude directory separators such as &quot;/&quot;. Use an allow list of allowable file extensions.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Warning: if you attempt to cleanse your data, then do so that the end result is not in the form that can be dangerous. A sanitizing mechanism can remove characters such as &apos;.&apos; and &apos;;&apos; which may be required for some exploits. An attacker can try to fool the sanitizing mechanism into &quot;cleaning&quot; data into a dangerous form. Suppose the attacker injects a &apos;.&apos; inside a filename (e.g. &quot;sensi.tiveFile&quot;) and the sanitizing mechanism removes the character resulting in the valid filename, &quot;sensitiveFile&quot;. If the input data are now assumed to be safe, then the file may be compromised. &lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Inputs should be decoded and canonicalized to the application&apos;s current internal representation before being validated. Make sure that your application does not decode the same input twice. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Use a built-in path canonicalization function (such as realpath() in C) that produces the canonical version of the pathname, which effectively removes &quot;..&quot; sequences and symbolic links.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Run your code using the lowest privileges that are required to accomplish the necessary tasks. If possible, create isolated accounts with limited privileges that are only used for a single task. That way, a successful attack will not immediately give the attacker access to the rest of the software or its environment. For example, database applications rarely need to run as the database administrator, especially in day-to-day operations.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;When the set of acceptable objects, such as filenames or URLs, is limited or known, create a mapping from a set of fixed input values (such as numeric IDs) to the actual filenames or URLs, and reject all other inputs.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Run your code in a &quot;jail&quot; or similar sandbox environment that enforces strict boundaries between the process and the operating system. This may effectively restrict which files can be accessed in a particular directory or which commands can be executed by your software.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;OS-level examples include the Unix chroot jail, AppArmor, and SELinux. In general, managed code may provide some protection. For example, java.io.FilePermission in the Java SecurityManager allows you to specify restrictions on file operations.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;This may not be a feasible solution, and it only limits the impact to the operating system; the rest of your application may still be subject to compromise.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/www-community/attacks/Path_Traversal&lt;/p&gt;&lt;p&gt;https://cwe.mitre.org/data/definitions/22.html&lt;/p&gt;</reference>
+						<cweid>22</cweid>
+						<wascid>33</wascid>
+						<sourceid>10982</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>40018</pluginid>
+						<alertRef>40018</alertRef>
+						<alert>SQL Injection</alert>
+						<name>SQL Injection</name>
+						<riskcode>3</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>High (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;SQL injection may be possible.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/cores?_=1785087943585%27+AND+%271%27%3D%271%27+--+&amp;action=CREATE&amp;config=wjHAguvg&amp;dataDir=LVrYEOIT&amp;instanceDir=EmWbQRCi&amp;name=KaMLHPmn&amp;schema=ZxSPIdIs&amp;wt=json</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/cores (_,action,config,dataDir,instanceDir,name,schema,wt)</nodeName>
+									<method>GET</method>
+									<param>_</param>
+									<attack>1785087943585&apos; OR &apos;1&apos;=&apos;1&apos; -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [1785087943585&apos; AND &apos;1&apos;=&apos;1&apos; -- ] and [1785087943585&apos; OR &apos;1&apos;=&apos;1&apos; -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was NOT returned for the original parameter.
+The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Do not trust client side input, even if there is client side validation in place.&lt;/p&gt;&lt;p&gt;In general, type check all data on the server side.&lt;/p&gt;&lt;p&gt;If the application uses JDBC, use PreparedStatement or CallableStatement, with parameters passed by &apos;?&apos;&lt;/p&gt;&lt;p&gt;If the application uses ASP, use ADO Command Objects with strong type checking and parameterized queries.&lt;/p&gt;&lt;p&gt;If database Stored Procedures can be used, use them.&lt;/p&gt;&lt;p&gt;Do *not* concatenate strings into queries in the stored procedure, or use &apos;exec&apos;, &apos;exec immediate&apos;, or equivalent functionality!&lt;/p&gt;&lt;p&gt;Do not create dynamic SQL queries using simple string concatenation.&lt;/p&gt;&lt;p&gt;Escape all data received from the client.&lt;/p&gt;&lt;p&gt;Apply an &apos;allow list&apos; of allowed characters, or a &apos;deny list&apos; of disallowed characters in user input.&lt;/p&gt;&lt;p&gt;Apply the principle of least privilege by using the least privileged database user possible.&lt;/p&gt;&lt;p&gt;In particular, avoid using the &apos;sa&apos; or &apos;db-owner&apos; database users. This does not eliminate SQL injection, but minimizes its impact.&lt;/p&gt;&lt;p&gt;Grant the minimum database access that is necessary for the application.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The page results were successfully manipulated using the boolean conditions [1785087943585&apos; AND &apos;1&apos;=&apos;1&apos; -- ] and [1785087943585&apos; OR &apos;1&apos;=&apos;1&apos; -- ]&lt;/p&gt;&lt;p&gt;The parameter value being modified was stripped from the HTML output for the purposes of the comparison.&lt;/p&gt;&lt;p&gt;Data was NOT returned for the original parameter.&lt;/p&gt;&lt;p&gt;The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html&lt;/p&gt;</reference>
+						<cweid>89</cweid>
+						<wascid>19</wascid>
+						<sourceid>11005</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10003</pluginid>
+						<alertRef>10003</alertRef>
+						<alert>Vulnerable JS Library</alert>
+						<name>Vulnerable JS Library</name>
+						<riskcode>3</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>High (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The identified library appears to be vulnerable.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-cookies.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-cookies.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/*
+ AngularJS v1.3.8</evidence>
+									<otherinfo>The identified library angularjs, version 1.3.8 is vulnerable.
+CVE-2025-2336
+CVE-2022-25869
+CVE-2019-14863
+CVE-2024-21490
+CVE-2025-0716
+CVE-2024-8373
+CVE-2024-8372
+CVE-2023-26117
+CVE-2019-10768
+CVE-2023-26118
+CVE-2023-26116
+CVE-2020-7676
+CVE-2025-4690
+https://github.com/advisories/GHSA-2vrf-hf26-jrp5
+https://www.herodevs.com/vulnerability-directory/cve-2025-2336
+https://nvd.nist.gov/vuln/detail/CVE-2025-0716
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#150-beta1-dense-dispersion-2015-09-29
+https://github.com/advisories/GHSA-j58c-ww9w-pwp5
+https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94
+https://nvd.nist.gov/vuln/detail/CVE-2020-7676
+https://codepen.io/herodevs/full/bGPQgMp/8da9ce87e99403ee13a295c305ebfa0b
+https://github.com/angular/angular.js/pull/15699
+https://nvd.nist.gov/vuln/detail/CVE-2024-8373
+https://github.com/advisories/GHSA-4w4v-5hc9-xrr2
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747
+https://nvd.nist.gov/vuln/detail/CVE-2024-8372
+https://nvd.nist.gov/vuln/detail/CVE-2025-2336
+https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113
+https://codepen.io/herodevs/pen/qEWQmpd/a86a0d29310e12c7a3756768e6c7b915
+https://codepen.io/herodevs/pen/RNNEPzP/751b91eab7730dff277523f3d50e4b77
+https://www.herodevs.com/vulnerability-directory/cve-2024-8373
+https://nvd.nist.gov/vuln/detail/CVE-2025-4690
+https://github.com/advisories/GHSA-2qqx-w9hr-q5gx
+https://www.herodevs.com/vulnerability-directory/cve-2024-8372
+https://codepen.io/herodevs/pen/bNGYaXx/412a3a4218387479898912f60c269c6c
+https://github.com/advisories/GHSA-r5fx-8r73-v86c
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md
+https://github.com/advisories/GHSA-mqm9-c95h-x2p6
+https://github.com/advisories/GHSA-28hp-fgcr-2r4h
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-6241746
+https://nvd.nist.gov/vuln/detail/CVE-2024-21490
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#1230-patronal-resurrection-2016-07-21
+https://github.com/advisories/GHSA-5cp4-xmrw-59wf
+https://github.com/advisories/GHSA-4p4w-6hg8-63wx
+https://github.com/mozilla/addons-linter/issues/1000#issuecomment-282083435
+https://github.com/angular/angular.js
+https://github.com/advisories/GHSA-qwqh-hm9m-p5hr
+https://www.herodevs.com/vulnerability-directory/cve-2025-0716
+http://pastebin.com/raw/kGrdaypP
+https://github.com/advisories/GHSA-hfff-63hg-f47j
+https://github.com/advisories/GHSA-prc3-vjfx-vhm9
+https://github.com/advisories/GHSA-m9gf-397r-hwpg
+https://codepen.io/herodevs/full/xxoQRNL/0072e627abe03e9cda373bc75b4c1017
+https://github.com/angular/angular.js/commit/726f49dcf6c23106ddaf5cfd5e2e592841db743a
+https://www.herodevs.com/vulnerability-directory/cve-2025-4690
+https://docs.angularjs.org/misc/version-support-status
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#179-pollution-eradication-2019-11-19
+https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos
+</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-resource.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-resource.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/*
+ AngularJS v1.3.8</evidence>
+									<otherinfo>The identified library angularjs, version 1.3.8 is vulnerable.
+CVE-2025-2336
+CVE-2022-25869
+CVE-2019-14863
+CVE-2024-21490
+CVE-2025-0716
+CVE-2024-8373
+CVE-2024-8372
+CVE-2023-26117
+CVE-2019-10768
+CVE-2023-26118
+CVE-2023-26116
+CVE-2020-7676
+CVE-2025-4690
+https://github.com/advisories/GHSA-2vrf-hf26-jrp5
+https://www.herodevs.com/vulnerability-directory/cve-2025-2336
+https://nvd.nist.gov/vuln/detail/CVE-2025-0716
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#150-beta1-dense-dispersion-2015-09-29
+https://github.com/advisories/GHSA-j58c-ww9w-pwp5
+https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94
+https://nvd.nist.gov/vuln/detail/CVE-2020-7676
+https://codepen.io/herodevs/full/bGPQgMp/8da9ce87e99403ee13a295c305ebfa0b
+https://github.com/angular/angular.js/pull/15699
+https://nvd.nist.gov/vuln/detail/CVE-2024-8373
+https://github.com/advisories/GHSA-4w4v-5hc9-xrr2
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747
+https://nvd.nist.gov/vuln/detail/CVE-2024-8372
+https://nvd.nist.gov/vuln/detail/CVE-2025-2336
+https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113
+https://codepen.io/herodevs/pen/qEWQmpd/a86a0d29310e12c7a3756768e6c7b915
+https://codepen.io/herodevs/pen/RNNEPzP/751b91eab7730dff277523f3d50e4b77
+https://www.herodevs.com/vulnerability-directory/cve-2024-8373
+https://nvd.nist.gov/vuln/detail/CVE-2025-4690
+https://github.com/advisories/GHSA-2qqx-w9hr-q5gx
+https://www.herodevs.com/vulnerability-directory/cve-2024-8372
+https://codepen.io/herodevs/pen/bNGYaXx/412a3a4218387479898912f60c269c6c
+https://github.com/advisories/GHSA-r5fx-8r73-v86c
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md
+https://github.com/advisories/GHSA-mqm9-c95h-x2p6
+https://github.com/advisories/GHSA-28hp-fgcr-2r4h
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-6241746
+https://nvd.nist.gov/vuln/detail/CVE-2024-21490
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#1230-patronal-resurrection-2016-07-21
+https://github.com/advisories/GHSA-5cp4-xmrw-59wf
+https://github.com/advisories/GHSA-4p4w-6hg8-63wx
+https://github.com/mozilla/addons-linter/issues/1000#issuecomment-282083435
+https://github.com/angular/angular.js
+https://github.com/advisories/GHSA-qwqh-hm9m-p5hr
+https://www.herodevs.com/vulnerability-directory/cve-2025-0716
+http://pastebin.com/raw/kGrdaypP
+https://github.com/advisories/GHSA-hfff-63hg-f47j
+https://github.com/advisories/GHSA-prc3-vjfx-vhm9
+https://github.com/advisories/GHSA-m9gf-397r-hwpg
+https://codepen.io/herodevs/full/xxoQRNL/0072e627abe03e9cda373bc75b4c1017
+https://github.com/angular/angular.js/commit/726f49dcf6c23106ddaf5cfd5e2e592841db743a
+https://www.herodevs.com/vulnerability-directory/cve-2025-4690
+https://docs.angularjs.org/misc/version-support-status
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#179-pollution-eradication-2019-11-19
+https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos
+</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-route.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-route.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/*
+ AngularJS v1.3.8</evidence>
+									<otherinfo>The identified library angularjs, version 1.3.8 is vulnerable.
+CVE-2025-2336
+CVE-2022-25869
+CVE-2019-14863
+CVE-2024-21490
+CVE-2025-0716
+CVE-2024-8373
+CVE-2024-8372
+CVE-2023-26117
+CVE-2019-10768
+CVE-2023-26118
+CVE-2023-26116
+CVE-2020-7676
+CVE-2025-4690
+https://github.com/advisories/GHSA-2vrf-hf26-jrp5
+https://www.herodevs.com/vulnerability-directory/cve-2025-2336
+https://nvd.nist.gov/vuln/detail/CVE-2025-0716
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#150-beta1-dense-dispersion-2015-09-29
+https://github.com/advisories/GHSA-j58c-ww9w-pwp5
+https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94
+https://nvd.nist.gov/vuln/detail/CVE-2020-7676
+https://codepen.io/herodevs/full/bGPQgMp/8da9ce87e99403ee13a295c305ebfa0b
+https://github.com/angular/angular.js/pull/15699
+https://nvd.nist.gov/vuln/detail/CVE-2024-8373
+https://github.com/advisories/GHSA-4w4v-5hc9-xrr2
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747
+https://nvd.nist.gov/vuln/detail/CVE-2024-8372
+https://nvd.nist.gov/vuln/detail/CVE-2025-2336
+https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113
+https://codepen.io/herodevs/pen/qEWQmpd/a86a0d29310e12c7a3756768e6c7b915
+https://codepen.io/herodevs/pen/RNNEPzP/751b91eab7730dff277523f3d50e4b77
+https://www.herodevs.com/vulnerability-directory/cve-2024-8373
+https://nvd.nist.gov/vuln/detail/CVE-2025-4690
+https://github.com/advisories/GHSA-2qqx-w9hr-q5gx
+https://www.herodevs.com/vulnerability-directory/cve-2024-8372
+https://codepen.io/herodevs/pen/bNGYaXx/412a3a4218387479898912f60c269c6c
+https://github.com/advisories/GHSA-r5fx-8r73-v86c
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md
+https://github.com/advisories/GHSA-mqm9-c95h-x2p6
+https://github.com/advisories/GHSA-28hp-fgcr-2r4h
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-6241746
+https://nvd.nist.gov/vuln/detail/CVE-2024-21490
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#1230-patronal-resurrection-2016-07-21
+https://github.com/advisories/GHSA-5cp4-xmrw-59wf
+https://github.com/advisories/GHSA-4p4w-6hg8-63wx
+https://github.com/mozilla/addons-linter/issues/1000#issuecomment-282083435
+https://github.com/angular/angular.js
+https://github.com/advisories/GHSA-qwqh-hm9m-p5hr
+https://www.herodevs.com/vulnerability-directory/cve-2025-0716
+http://pastebin.com/raw/kGrdaypP
+https://github.com/advisories/GHSA-hfff-63hg-f47j
+https://github.com/advisories/GHSA-prc3-vjfx-vhm9
+https://github.com/advisories/GHSA-m9gf-397r-hwpg
+https://codepen.io/herodevs/full/xxoQRNL/0072e627abe03e9cda373bc75b4c1017
+https://github.com/angular/angular.js/commit/726f49dcf6c23106ddaf5cfd5e2e592841db743a
+https://www.herodevs.com/vulnerability-directory/cve-2025-4690
+https://docs.angularjs.org/misc/version-support-status
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#179-pollution-eradication-2019-11-19
+https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos
+</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/**
+ * @license AngularJS v1.3.8</evidence>
+									<otherinfo>The identified library angularjs, version 1.3.8 is vulnerable.
+CVE-2025-2336
+CVE-2022-25869
+CVE-2019-14863
+CVE-2024-21490
+CVE-2025-0716
+CVE-2024-8373
+CVE-2024-8372
+CVE-2023-26117
+CVE-2019-10768
+CVE-2023-26118
+CVE-2023-26116
+CVE-2020-7676
+CVE-2025-4690
+https://github.com/advisories/GHSA-2vrf-hf26-jrp5
+https://www.herodevs.com/vulnerability-directory/cve-2025-2336
+https://nvd.nist.gov/vuln/detail/CVE-2025-0716
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#150-beta1-dense-dispersion-2015-09-29
+https://github.com/advisories/GHSA-j58c-ww9w-pwp5
+https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94
+https://nvd.nist.gov/vuln/detail/CVE-2020-7676
+https://codepen.io/herodevs/full/bGPQgMp/8da9ce87e99403ee13a295c305ebfa0b
+https://github.com/angular/angular.js/pull/15699
+https://nvd.nist.gov/vuln/detail/CVE-2024-8373
+https://github.com/advisories/GHSA-4w4v-5hc9-xrr2
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747
+https://nvd.nist.gov/vuln/detail/CVE-2024-8372
+https://nvd.nist.gov/vuln/detail/CVE-2025-2336
+https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113
+https://codepen.io/herodevs/pen/qEWQmpd/a86a0d29310e12c7a3756768e6c7b915
+https://codepen.io/herodevs/pen/RNNEPzP/751b91eab7730dff277523f3d50e4b77
+https://www.herodevs.com/vulnerability-directory/cve-2024-8373
+https://nvd.nist.gov/vuln/detail/CVE-2025-4690
+https://github.com/advisories/GHSA-2qqx-w9hr-q5gx
+https://www.herodevs.com/vulnerability-directory/cve-2024-8372
+https://codepen.io/herodevs/pen/bNGYaXx/412a3a4218387479898912f60c269c6c
+https://github.com/advisories/GHSA-r5fx-8r73-v86c
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md
+https://github.com/advisories/GHSA-mqm9-c95h-x2p6
+https://github.com/advisories/GHSA-28hp-fgcr-2r4h
+https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-6241746
+https://nvd.nist.gov/vuln/detail/CVE-2024-21490
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#1230-patronal-resurrection-2016-07-21
+https://github.com/advisories/GHSA-5cp4-xmrw-59wf
+https://github.com/advisories/GHSA-4p4w-6hg8-63wx
+https://github.com/mozilla/addons-linter/issues/1000#issuecomment-282083435
+https://github.com/angular/angular.js
+https://github.com/advisories/GHSA-qwqh-hm9m-p5hr
+https://www.herodevs.com/vulnerability-directory/cve-2025-0716
+http://pastebin.com/raw/kGrdaypP
+https://github.com/advisories/GHSA-hfff-63hg-f47j
+https://github.com/advisories/GHSA-prc3-vjfx-vhm9
+https://github.com/advisories/GHSA-m9gf-397r-hwpg
+https://codepen.io/herodevs/full/xxoQRNL/0072e627abe03e9cda373bc75b4c1017
+https://github.com/angular/angular.js/commit/726f49dcf6c23106ddaf5cfd5e2e592841db743a
+https://www.herodevs.com/vulnerability-directory/cve-2025-4690
+https://docs.angularjs.org/misc/version-support-status
+https://github.com/angular/angular.js/blob/master/CHANGELOG.md#179-pollution-eradication-2019-11-19
+https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos
+</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>4</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Upgrade to the latest version of the affected library.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The identified library angularjs, version 1.3.8 is vulnerable.&lt;/p&gt;&lt;p&gt;CVE-2025-2336&lt;/p&gt;&lt;p&gt;CVE-2022-25869&lt;/p&gt;&lt;p&gt;CVE-2019-14863&lt;/p&gt;&lt;p&gt;CVE-2024-21490&lt;/p&gt;&lt;p&gt;CVE-2025-0716&lt;/p&gt;&lt;p&gt;CVE-2024-8373&lt;/p&gt;&lt;p&gt;CVE-2024-8372&lt;/p&gt;&lt;p&gt;CVE-2023-26117&lt;/p&gt;&lt;p&gt;CVE-2019-10768&lt;/p&gt;&lt;p&gt;CVE-2023-26118&lt;/p&gt;&lt;p&gt;CVE-2023-26116&lt;/p&gt;&lt;p&gt;CVE-2020-7676&lt;/p&gt;&lt;p&gt;CVE-2025-4690&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-2vrf-hf26-jrp5&lt;/p&gt;&lt;p&gt;https://www.herodevs.com/vulnerability-directory/cve-2025-2336&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2025-0716&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/blob/master/CHANGELOG.md#150-beta1-dense-dispersion-2015-09-29&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-j58c-ww9w-pwp5&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2020-7676&lt;/p&gt;&lt;p&gt;https://codepen.io/herodevs/full/bGPQgMp/8da9ce87e99403ee13a295c305ebfa0b&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/pull/15699&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2024-8373&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-4w4v-5hc9-xrr2&lt;/p&gt;&lt;p&gt;https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2024-8372&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2025-2336&lt;/p&gt;&lt;p&gt;https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113&lt;/p&gt;&lt;p&gt;https://codepen.io/herodevs/pen/qEWQmpd/a86a0d29310e12c7a3756768e6c7b915&lt;/p&gt;&lt;p&gt;https://codepen.io/herodevs/pen/RNNEPzP/751b91eab7730dff277523f3d50e4b77&lt;/p&gt;&lt;p&gt;https://www.herodevs.com/vulnerability-directory/cve-2024-8373&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2025-4690&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-2qqx-w9hr-q5gx&lt;/p&gt;&lt;p&gt;https://www.herodevs.com/vulnerability-directory/cve-2024-8372&lt;/p&gt;&lt;p&gt;https://codepen.io/herodevs/pen/bNGYaXx/412a3a4218387479898912f60c269c6c&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-r5fx-8r73-v86c&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/blob/master/CHANGELOG.md&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-mqm9-c95h-x2p6&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-28hp-fgcr-2r4h&lt;/p&gt;&lt;p&gt;https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-6241746&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2024-21490&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/blob/master/CHANGELOG.md#1230-patronal-resurrection-2016-07-21&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-5cp4-xmrw-59wf&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-4p4w-6hg8-63wx&lt;/p&gt;&lt;p&gt;https://github.com/mozilla/addons-linter/issues/1000#issuecomment-282083435&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-qwqh-hm9m-p5hr&lt;/p&gt;&lt;p&gt;https://www.herodevs.com/vulnerability-directory/cve-2025-0716&lt;/p&gt;&lt;p&gt;http://pastebin.com/raw/kGrdaypP&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-hfff-63hg-f47j&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-prc3-vjfx-vhm9&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-m9gf-397r-hwpg&lt;/p&gt;&lt;p&gt;https://codepen.io/herodevs/full/xxoQRNL/0072e627abe03e9cda373bc75b4c1017&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/commit/726f49dcf6c23106ddaf5cfd5e2e592841db743a&lt;/p&gt;&lt;p&gt;https://www.herodevs.com/vulnerability-directory/cve-2025-4690&lt;/p&gt;&lt;p&gt;https://docs.angularjs.org/misc/version-support-status&lt;/p&gt;&lt;p&gt;https://github.com/angular/angular.js/blob/master/CHANGELOG.md#179-pollution-eradication-2019-11-19&lt;/p&gt;&lt;p&gt;https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/&lt;/p&gt;</reference>
+						<cweid>1395</cweid>
+						<wascid>-1</wascid>
+						<sourceid>270</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10038</pluginid>
+						<alertRef>10038-1</alertRef>
+						<alert>Content Security Policy (CSP) Header Not Set</alert>
+						<name>Content Security Policy (CSP) Header Not Set</name>
+						<riskcode>2</riskcode>
+						<confidence>3</confidence>
+						<riskdesc>Medium (High)</riskdesc>
+						<confidencedesc>High</confidencedesc>
+						<desc>&lt;p&gt;Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page &#x2014; covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/robots.txt</uri>
+									<nodeName>http://172.30.45.1:8983/robots.txt</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/sitemap.xml..</uri>
+									<nodeName>http://172.30.45.1:8983/sitemap.xml..</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/collection-overview</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/collection-overview</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/files</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/files</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/query</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/query</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP&lt;/p&gt;&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html&lt;/p&gt;&lt;p&gt;https://www.w3.org/TR/CSP/&lt;/p&gt;&lt;p&gt;https://w3c.github.io/webappsec-csp/&lt;/p&gt;&lt;p&gt;https://web.dev/articles/csp&lt;/p&gt;&lt;p&gt;https://caniuse.com/#feat=contentsecuritypolicy&lt;/p&gt;&lt;p&gt;https://content-security-policy.com/&lt;/p&gt;</reference>
+						<cweid>693</cweid>
+						<wascid>15</wascid>
+						<sourceid>7</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>0</pluginid>
+						<alertRef>0</alertRef>
+						<alert>Directory Browsing</alert>
+						<name>Directory Browsing</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;It is possible to view the directory listing. Directory listing may reveal hidden scripts, include files, backup source files, etc. which can be accessed to read sensitive information.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/css/</uri>
+									<nodeName>http://172.30.45.1:8983/solr/css/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack>http://172.30.45.1:8983/solr/css/</attack>
+									<evidence>Parent Directory</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/css/angular/</uri>
+									<nodeName>http://172.30.45.1:8983/solr/css/angular/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack>http://172.30.45.1:8983/solr/css/angular/</attack>
+									<evidence>Parent Directory</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/css/styles/</uri>
+									<nodeName>http://172.30.45.1:8983/solr/css/styles/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack>http://172.30.45.1:8983/solr/css/styles/</attack>
+									<evidence>Parent Directory</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>3</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Disable directory browsing. If this is required, make sure the listed files does not induce risks.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://httpd.apache.org/docs/current/mod/core.html#options&lt;/p&gt;</reference>
+						<cweid>548</cweid>
+						<wascid>48</wascid>
+						<sourceid>11006</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10020</pluginid>
+						<alertRef>10020-1</alertRef>
+						<alert>Missing Anti-clickjacking Header</alert>
+						<name>Missing Anti-clickjacking Header</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The response does not protect against &apos;ClickJacking&apos; attacks. It should include either Content-Security-Policy with &apos;frame-ancestors&apos; directive or X-Frame-Options.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/partials/cores.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/partials/cores.html</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/partials/index.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/partials/index.html</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/partials/java-properties.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/partials/java-properties.html</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/partials/logging.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/partials/logging.html</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/tpl/index.html?_=1785087684471</uri>
+									<nodeName>http://172.30.45.1:8983/solr/tpl/index.html (_)</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.&lt;/p&gt;&lt;p&gt;If you expect the page to be framed only by pages on your server (e.g. it&apos;s part of a FRAMESET) then you&apos;ll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY. Alternatively consider implementing Content Security Policy&apos;s &quot;frame-ancestors&quot; directive.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options&lt;/p&gt;</reference>
+						<cweid>1021</cweid>
+						<wascid>15</wascid>
+						<sourceid>1381</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10003</pluginid>
+						<alertRef>10003</alertRef>
+						<alert>Vulnerable JS Library</alert>
+						<name>Vulnerable JS Library</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The identified library appears to be vulnerable.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>* jQuery JavaScript Library v1.7.1</evidence>
+									<otherinfo>The identified library jquery, version 1.7.1 is vulnerable.
+CVE-2020-11023
+CVE-2015-9251
+CVE-2019-11358
+CVE-2020-7656
+CVE-2012-6708
+https://nvd.nist.gov/vuln/detail/CVE-2012-6708
+https://github.com/jquery/jquery/issues/2432
+http://research.insecurelabs.org/jquery/test/
+https://nvd.nist.gov/vuln/detail/CVE-2019-11358
+https://github.com/advisories/GHSA-rmxg-73gg-4p98
+https://github.com/jquery/jquery.com/issues/162
+https://nvd.nist.gov/vuln/detail/CVE-2020-7656
+http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/
+http://bugs.jquery.com/ticket/11290
+https://research.insecurelabs.org/jquery/test/
+https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/
+https://nvd.nist.gov/vuln/detail/CVE-2015-9251
+https://github.com/advisories/GHSA-q4m3-2j7h-f7xw
+https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b
+https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/
+</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery-2.1.3.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery-2.1.3.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>jquery-2.1.3.min.js</evidence>
+									<otherinfo>The identified library jquery, version 2.1.3 is vulnerable.
+CVE-2020-11023
+CVE-2020-11022
+CVE-2015-9251
+CVE-2019-11358
+https://github.com/jquery/jquery/issues/2432
+http://research.insecurelabs.org/jquery/test/
+http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/
+https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/
+https://nvd.nist.gov/vuln/detail/CVE-2019-11358
+https://github.com/advisories/GHSA-rmxg-73gg-4p98
+https://nvd.nist.gov/vuln/detail/CVE-2015-9251
+https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b
+https://bugs.jquery.com/ticket/11974
+https://github.com/jquery/jquery.com/issues/162
+https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/
+</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>2</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Upgrade to the latest version of the affected library.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The identified library jquery, version 1.7.1 is vulnerable.&lt;/p&gt;&lt;p&gt;CVE-2020-11023&lt;/p&gt;&lt;p&gt;CVE-2015-9251&lt;/p&gt;&lt;p&gt;CVE-2019-11358&lt;/p&gt;&lt;p&gt;CVE-2020-7656&lt;/p&gt;&lt;p&gt;CVE-2012-6708&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2012-6708&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery/issues/2432&lt;/p&gt;&lt;p&gt;http://research.insecurelabs.org/jquery/test/&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2019-11358&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-rmxg-73gg-4p98&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery.com/issues/162&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2020-7656&lt;/p&gt;&lt;p&gt;http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/&lt;/p&gt;&lt;p&gt;http://bugs.jquery.com/ticket/11290&lt;/p&gt;&lt;p&gt;https://research.insecurelabs.org/jquery/test/&lt;/p&gt;&lt;p&gt;https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2015-9251&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-q4m3-2j7h-f7xw&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b&lt;/p&gt;&lt;p&gt;https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/&lt;/p&gt;</reference>
+						<cweid>1395</cweid>
+						<wascid>-1</wascid>
+						<sourceid>250</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>40014</pluginid>
+						<alertRef>40014-2</alertRef>
+						<alert>Cross Site Scripting Weakness (Persistent in JSON Response)</alert>
+						<name>Cross Site Scripting Weakness (Persistent in JSON Response)</name>
+						<riskcode>1</riskcode>
+						<confidence>1</confidence>
+						<riskdesc>Low (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
+						<desc>&lt;p&gt;A XSS attack was found in a JSON response, this might leave content consumers vulnerable to attack if they don&apos;t appropriately handle the data (response).&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/logging?wt=json&amp;since=0&amp;_=1785087978648</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/logging (_,since,wt)</nodeName>
+									<method>GET</method>
+									<param>config</param>
+									<attack>&lt;script&gt;alert(1);&lt;/script&gt;</attack>
+									<evidence></evidence>
+									<otherinfo>Raised with LOW confidence as the Content-Type is not HTML.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/logging?wt=json&amp;since=0&amp;_=1785087978648</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/logging (_,since,wt)</nodeName>
+									<method>GET</method>
+									<param>instanceDir</param>
+									<attack>&lt;script&gt;alert(1);&lt;/script&gt;</attack>
+									<evidence></evidence>
+									<otherinfo>Raised with LOW confidence as the Content-Type is not HTML.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/logging?wt=json&amp;since=0&amp;_=1785087978648</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/logging (_,since,wt)</nodeName>
+									<method>GET</method>
+									<param>name</param>
+									<attack>&lt;script&gt;alert(1);&lt;/script&gt;</attack>
+									<evidence></evidence>
+									<otherinfo>Raised with LOW confidence as the Content-Type is not HTML.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/logging?wt=json&amp;since=0&amp;_=1785087978648</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/logging (_,since,wt)</nodeName>
+									<method>GET</method>
+									<param>since</param>
+									<attack>&lt;script&gt;alert(1);&lt;/script&gt;</attack>
+									<evidence></evidence>
+									<otherinfo>Raised with LOW confidence as the Content-Type is not HTML.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>4</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;Use a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.&lt;/p&gt;&lt;p&gt;Examples of libraries and frameworks that make it easier to generate properly encoded output include Microsoft&apos;s Anti-XSS library, the OWASP ESAPI Encoding module, and Apache Wicket.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Phases: Implementation; Architecture and Design&lt;/p&gt;&lt;p&gt;Understand the context in which your data will be used and the encoding that will be expected. This is especially important when transmitting data between different components, or when generating outputs that can contain multiple encodings at the same time, such as web pages or multi-part mail messages. Study all expected communication protocols and data representations to determine the required encoding strategies.&lt;/p&gt;&lt;p&gt;For any data that will be output to another web page, especially any data that was received from external inputs, use the appropriate encoding on all non-alphanumeric characters.&lt;/p&gt;&lt;p&gt;Consult the XSS Prevention Cheat Sheet for more details on the types of encoding and escaping that are needed.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;For any security checks that are performed on the client side, ensure that these checks are duplicated on the server side, in order to avoid CWE-602. Attackers can bypass the client-side checks by modifying values after the checks have been performed, or by changing the client to remove the client-side checks entirely. Then, these modified values would be submitted to the server.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;If available, use structured mechanisms that automatically enforce the separation between data and code. These mechanisms may be able to provide the relevant quoting, encoding, and validation automatically, instead of relying on the developer to provide this capability at every point where output is generated.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Phase: Implementation&lt;/p&gt;&lt;p&gt;For every web page that is generated, use and specify a character encoding such as ISO-8859-1 or UTF-8. When an encoding is not specified, the web browser may choose a different encoding by guessing which encoding is actually being used by the web page. This can cause the web browser to treat certain sequences as special, opening up the client to subtle XSS attacks. See CWE-116 for more mitigations related to encoding/escaping.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;To help mitigate XSS attacks against the user&apos;s session cookie, set the session cookie to be HttpOnly. In browsers that support the HttpOnly feature (such as more recent versions of Internet Explorer and Firefox), this attribute can prevent the user&apos;s session cookie from being accessible to malicious client-side scripts that use document.cookie. This is not a complete solution, since HttpOnly is not supported by all browsers. More importantly, XMLHTTPRequest and other powerful browser technologies provide read access to HTTP headers, including the Set-Cookie header in which the HttpOnly flag is set.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Assume all input is malicious. Use an &quot;accept known good&quot; input validation strategy, i.e., use an allow list of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. Do not rely exclusively on looking for malicious or malformed inputs (i.e., do not rely on a deny list). However, deny lists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, &quot;boat&quot; may be syntactically valid because it only contains alphanumeric characters, but it is not valid if you are expecting colors such as &quot;red&quot; or &quot;blue.&quot;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Ensure that you perform input validation at well-defined interfaces within the application. This will help protect the application even if a component is reused or moved elsewhere.&lt;/p&gt;&lt;p&gt;	&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;Raised with LOW confidence as the Content-Type is not HTML.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/www-community/attacks/xss/&lt;/p&gt;&lt;p&gt;https://cwe.mitre.org/data/definitions/79.html&lt;/p&gt;</reference>
+						<cweid>79</cweid>
+						<wascid>8</wascid>
+						<sourceid>11003</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10096</pluginid>
+						<alertRef>10096</alertRef>
+						<alert>Timestamp Disclosure - Unix</alert>
+						<name>Timestamp Disclosure - Unix</name>
+						<riskcode>1</riskcode>
+						<confidence>1</confidence>
+						<riskdesc>Low (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
+						<desc>&lt;p&gt;A timestamp was disclosed by the application/web server. - Unix&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/threads?_=1785087849085&amp;wt=json</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/threads (_,wt)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>1691479604</evidence>
+									<otherinfo>1691479604, which evaluates to: 2023-08-08 07:26:44.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/threads?_=1785087736293&amp;wt=json</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/threads (_,wt)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>1765329362</evidence>
+									<otherinfo>1765329362, which evaluates to: 2025-12-10 01:16:02.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/admin/info/threads?_=1785087736293&amp;wt=json</uri>
+									<nodeName>http://172.30.45.1:8983/solr/admin/info/threads (_,wt)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>1986417638</evidence>
+									<otherinfo>1986417638, which evaluates to: 2032-12-11 22:40:38.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>3</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Manually confirm that the timestamp data is not sensitive, and that the data cannot be aggregated to disclose exploitable patterns.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;1691479604, which evaluates to: 2023-08-08 07:26:44.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://cwe.mitre.org/data/definitions/200.html&lt;/p&gt;</reference>
+						<cweid>497</cweid>
+						<wascid>13</wascid>
+						<sourceid>7842</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10021</pluginid>
+						<alertRef>10021</alertRef>
+						<alert>X-Content-Type-Options Header Missing</alert>
+						<name>X-Content-Type-Options Header Missing</name>
+						<riskcode>1</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Low (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The Anti-MIME-Sniffing header X-Content-Type-Options was not set to &apos;nosniff&apos;. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type. Current (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983</uri>
+									<nodeName>http://172.30.45.1:8983</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/</uri>
+									<nodeName>http://172.30.45.1:8983/solr/</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/css/styles/common.css?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/css/styles/common.css (_)</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/img/favicon.ico?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/img/favicon.ico (_)</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/old.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/old.html</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to &apos;nosniff&apos; for all web pages.&lt;/p&gt;&lt;p&gt;If possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.&lt;/p&gt;&lt;p&gt;At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/gg622941(v=vs.85)&lt;/p&gt;&lt;p&gt;https://owasp.org/www-community/Security_Headers&lt;/p&gt;</reference>
+						<cweid>693</cweid>
+						<wascid>15</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>90011</pluginid>
+						<alertRef>90011-1</alertRef>
+						<alert>Charset Mismatch (Header Versus Meta Content-Type Charset)</alert>
+						<name>Charset Mismatch (Header Versus Meta Content-Type Charset)</name>
+						<riskcode>0</riskcode>
+						<confidence>1</confidence>
+						<riskdesc>Informational (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
+						<desc>&lt;p&gt;This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there&apos;s a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content&apos;s correct character set.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;An attacker could manipulate content on the page to be interpreted in an encoding of their choice. For example, if an attacker can control content at the beginning of the page, they could inject script using UTF-7 encoded text and manipulate some browsers into interpreting that text.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/collection-overview</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/collection-overview</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>There was a charset mismatch between the HTTP Header and the META content-type encoding declarations: [iso-8859-1] and [utf-8] do not match.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/collection-overview.</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/collection-overview.</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>There was a charset mismatch between the HTTP Header and the META content-type encoding declarations: [iso-8859-1] and [utf-8] do not match.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/files</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/files</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>There was a charset mismatch between the HTTP Header and the META content-type encoding declarations: [iso-8859-1] and [utf-8] do not match.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/%23/%7B%7BcurrentCollection.name%7D%7D/query</uri>
+									<nodeName>http://172.30.45.1:8983/solr/#/{{currentCollection.name}}/query</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>There was a charset mismatch between the HTTP Header and the META content-type encoding declarations: [iso-8859-1] and [utf-8] do not match.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>4</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Force UTF-8 for all text content in both the HTTP header and meta tags in HTML or encoding declarations in XML.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;There was a charset mismatch between the HTTP Header and the META content-type encoding declarations: [iso-8859-1] and [utf-8] do not match.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://code.google.com/archive/p/browsersec/wikis/Part2.wiki#Character_set_handling_and_detection&lt;/p&gt;</reference>
+						<cweid>436</cweid>
+						<wascid>15</wascid>
+						<sourceid>21</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10027</pluginid>
+						<alertRef>10027</alertRef>
+						<alert>Information Disclosure - Suspicious Comments</alert>
+						<name>Information Disclosure - Suspicious Comments</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The response appears to contain suspicious comments which may help an attacker.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/app.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/app.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo .attr( &apos;title&apos;, &apos;/a</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 2 times, the first in likely comment: &quot;// @todo .attr( &apos;title&apos;, &apos;/admin/ping is not configured (&apos; + xhr.status + &apos;: &apos; + error_thrown + &apos;)&apos; );&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/analysis.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/analysis.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo - set defaultSearch</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;// @todo - set defaultSearchField either to context[&quot;analysis.fieldname&quot;] or context[&quot;analysis.fieldtype&quot;]&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/cloud.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/cloud.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo fix horrid means to</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;// @todo fix horrid means to parse JSON&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/cloud.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/cloud.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ebug_element = $( &apos;#debug&apos;, cloud_element );
+</evidence>
+									<otherinfo>The following pattern was used: \bDEBUG\b and was detected in likely comment: &quot;/*
+
+========================
+var init_debug = function( cloud_element )
+{
+  var debug_element = $( &apos;#debug&apos;, cloud_element );
+  &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/collections.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/collections.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo test optimize (dele</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 2 times, the first in likely comment: &quot;// @todo test optimize (delete stuff, watch button appear, test button/form)&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/cores.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/cores.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo test optimize (dele</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 2 times, the first in likely comment: &quot;// @todo test optimize (delete stuff, watch button appear, test button/form)&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/cores.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/cores.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ects = $( &apos;#actions select&apos;, cores_element );
+</evidence>
+									<otherinfo>The following pattern was used: \bSELECT\b and was detected in likely comment: &quot;/**************
+  &apos;cores_load_data&apos;,
+  function( event, params )
+  {
+    $.ajax
+    (
+      {
+        url : app.config.solr_path&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/cores.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/cores.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ore&apos; to distinguish from /solr/:core/</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;// use &apos;corename&apos; not &apos;core&apos; to distinguish from /solr/:core/&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/dataimport.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/dataimport.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/* @todo this pretty printin</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;/* @todo this pretty printing is hard to work out how to do in an Angularesque way:
+        info.text = info.text.replace(/\d{4,&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/dataimport.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/dataimport.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// also enable Debug checkbox</evidence>
+									<otherinfo>The following pattern was used: \bDEBUG\b and was detected in likely comment: &quot;// also enable Debug checkbox&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/documents.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/documents.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>//TODO: handle dynamic fie</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;//TODO: handle dynamic fields&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/index.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/index.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo These should really</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;// @todo These should really be an AngularJS Filter: {{ javaMemoryUsed | bytes }}&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/logging.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/logging.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/* @todo sticky_mode
+       </evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;/* @todo sticky_mode
+        // state element is in viewport
+        sticky_mode = ( state.position().top &lt;= $( window ).scrollT&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/angular/controllers/query.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/angular/controllers/query.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// @todo read URL parameters</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;// @todo read URL parameters into scope&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>  * in the browser, where it may have many mo</evidence>
+									<otherinfo>The following pattern was used: \bWHERE\b and was detected 26 times, the first in likely comment: &quot;/*
+         * Queues a dependency for checking after the loader is out of a
+         * &quot;paused&quot; state, for example while a scrip&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected 50 times, the first in likely comment: &quot;/*
+
+MIT License
+-----------
+
+Copyright (c) 2010-2011, The Dojo Foundation
+
+Permission is hereby granted, free of charge, to any &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/ key/values into a query string</evidence>
+									<otherinfo>The following pattern was used: \bQUERY\b and was detected in likely comment: &quot;// key/values into a query string&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// TODO: Stop taunting the </evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 2 times, the first in likely comment: &quot;// TODO: Stop taunting the data cache; remove global events and always attach to document&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// XXX &apos;this&apos; does not alw</evidence>
+									<otherinfo>The following pattern was used: \bXXX\b and was detected in likely comment: &quot;// XXX &apos;this&apos; does not always have a nodeName when running the&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ails in this jQuery bug:</evidence>
+									<otherinfo>The following pattern was used: \bBUG\b and was detected 11 times, the first in likely comment: &quot;//When that browser dies, this can be removed. Details in this jQuery bug:&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>dataType: null,
+    username: null,
+    password</evidence>
+									<otherinfo>The following pattern was used: \bUSERNAME\b and was detected 2 times, the first in likely comment: &quot;/*
+    timeout: 0,
+    data: null,
+    dataType: null,
+    username: null,
+    password: null,
+    cache: null,
+    traditional:&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>n internal data and user-defined</evidence>
+									<otherinfo>The following pattern was used: \bUSER\b and was detected 2 times, the first in likely comment: &quot;// cache in order to avoid key collisions between internal data and user-defined&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/js/require.js?_=6.6.6</uri>
+									<nodeName>http://172.30.45.1:8983/solr/js/require.js (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>the URL mapping for later.</evidence>
+									<otherinfo>The following pattern was used: \bLATER\b and was detected 9 times, the first in likely comment: &quot;//Store the URL mapping for later.&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-chosen.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-chosen.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+The MIT License
+
+Copyright (c) 2013 Localytics http://www.localytics.com
+
+Permission is hereby granted, free of charge, to an&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-cookies.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-cookies.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+The MIT License
+
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+
+Permission is hereby granted, free of charge, to &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-resource.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-resource.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+The MIT License
+
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+
+Permission is hereby granted, free of charge, to &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/angular-route.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/angular-route.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+The MIT License
+
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+
+Permission is hereby granted, free of charge, to &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/chosen.jquery.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/chosen.jquery.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+
+Chosen
+
+- by Patrick Filler for Harvest http://getharvest.com
+- Copyright (c) 2011-2013 by Harvest
+
+Available for use under &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/chosen.jquery.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/chosen.jquery.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// Chosen, a Select Box Enhancer for jQ</evidence>
+									<otherinfo>The following pattern was used: \bSELECT\b and was detected in likely comment: &quot;// Chosen, a Select Box Enhancer for jQuery and Prototype&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/d3.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/d3.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> products
+  derived from this software witho</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected 22 times, the first in likely comment: &quot;/*
+
+Copyright (c) 2013, Michael Bostock
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/d3.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/d3.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>, [right,
+ * top]], where left is the minimum</evidence>
+									<otherinfo>The following pattern was used: \bWHERE\b and was detected 2 times, the first in likely comment: &quot;/**
+ * Given a GeoJSON object, returns the corresponding bounding box. The bounding
+ * box is represented by a two-dimensional a&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/d3.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/d3.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>/ Note: Opera has a bug reordering object l</evidence>
+									<otherinfo>The following pattern was used: \bBUG\b and was detected 2 times, the first in likely comment: &quot;// Note: Opera has a bug reordering object literal properties!&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/d3.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/d3.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// TODO align</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 37 times, the first in likely comment: &quot;// TODO align&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/d3.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/d3.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// https://bugs.webkit.org/show_bug</evidence>
+									<otherinfo>The following pattern was used: \bBUGS\b and was detected 2 times, the first in likely comment: &quot;// https://bugs.webkit.org/show_bug.cgi?id=44083&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/highlight.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/highlight.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>te products derived from this software 
+    </evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+
+Copyright (c) 2006, Ivan Sagalaev
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+m&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery-2.1.3.min.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery-2.1.3.min.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM, OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*!
+
+Copyright 2014 jQuery Foundation and other contributors
+http://jquery.com/
+
+Permission is hereby granted, free of charge, t&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected 2 times, the first in likely comment: &quot;/*
+
+The MIT License (MIT)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and ass&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// TODO: find a more elegan</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 3 times, the first in likely comment: &quot;// TODO: find a more elegant approach to syncronizing returning requests&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// where is the type stores </evidence>
+									<otherinfo>The following pattern was used: \bWHERE\b and was detected in likely comment: &quot;// where is the type stores (the rel attribute of the LI element)&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ecated + there is a bug in IE)</evidence>
+									<otherinfo>The following pattern was used: \bBUG\b and was detected in likely comment: &quot;// code is copied form jQuery ($.browser is deprecated + there is a bug in IE)&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/jquery.jstree.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ing/moving nodes by user interaction.
+ */</evidence>
+									<otherinfo>The following pattern was used: \bUSER\b and was detected in likely comment: &quot;/* 
+ * jsTree CRRM plugin 1.0
+ * Handles creating/renaming/removing/moving nodes by user interaction.
+ */&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/libs/ngtimeago.js</uri>
+									<nodeName>http://172.30.45.1:8983/solr/libs/ngtimeago.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> OTHERWISE, ARISING FROM, OUT OF OR IN CONNE</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/*
+Copyright (c) 2014 Uttesh Kumar
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this softwar&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>42</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The following pattern was used: \bTODO\b and was detected 2 times, the first in likely comment: &quot;// @todo .attr( &apos;title&apos;, &apos;/admin/ping is not configured (&apos; + xhr.status + &apos;: &apos; + error_thrown + &apos;)&apos; );&quot;, see evidence field for the suspicious comment/snippet.&lt;/p&gt;</otherinfo>
+						<reference></reference>
+						<cweid>615</cweid>
+						<wascid>13</wascid>
+						<sourceid>285</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10109</pluginid>
+						<alertRef>10109</alertRef>
+						<alert>Modern Web Application</alert>
+						<name>Modern Web Application</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983</uri>
+									<nodeName>http://172.30.45.1:8983</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a ng-click=&quot;dumpCloud()&quot;&gt;Dump&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/</uri>
+									<nodeName>http://172.30.45.1:8983/solr/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a ng-click=&quot;dumpCloud()&quot;&gt;Dump&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/partials/index.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/partials/index.html</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a class=&quot;reload&quot; ng-click=&quot;reload()&quot;&gt;&lt;span&gt;reload&lt;/span&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/partials/logging.html</uri>
+									<nodeName>http://172.30.45.1:8983/solr/partials/logging.html</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a&gt;&lt;span&gt;{{ timezone == &quot;UTC&quot; ? event.utc_time : event.local_time }}&lt;/span&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr/tpl/index.html?_=1785087684471</uri>
+									<nodeName>http://172.30.45.1:8983/solr/tpl/index.html (_)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a class=&quot;reload&quot;&gt;&lt;span&gt;reload&lt;/span&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;This is an informational alert and so no changes are required.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.&lt;/p&gt;</otherinfo>
+						<reference></reference>
+						<cweid>-1</cweid>
+						<wascid>-1</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10104</pluginid>
+						<alertRef>10104</alertRef>
+						<alert>User Agent Fuzzer</alert>
+						<name>User Agent Fuzzer</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/</uri>
+									<nodeName>http://172.30.45.1:8983/</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/</uri>
+									<nodeName>http://172.30.45.1:8983/</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.45.1:8983/solr</uri>
+									<nodeName>http://172.30.45.1:8983/solr</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>3</count>
+						<systemic>true</systemic>
+						<solution></solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/wstg&lt;/p&gt;</reference>
+						<cweid>0</cweid>
+						<wascid>0</wascid>
+						<sourceid>11019</sourceid>
+					</alertitem>
+				
+			</alerts>
+		</site>
+	
+	
+</OWASPZAPReport>

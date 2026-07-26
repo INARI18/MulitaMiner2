@@ -1,0 +1,18 @@
+{
+  "name": "zap",
+  "source": "ZAP",
+  "fields": {
+    "plugin": "int",
+    "instances": "[Instance]"
+  },
+  "max_vulns_per_chunk": 3,
+  "marker_pattern": "^(High|Medium|Low|Informational)\\s+[A-Za-z]",
+  "discard_patterns": [
+    "ZAP by Checkmarx",
+    "ZAP by Checkmarx Scanning"
+  ],
+  "evaluation": {
+    "field_metrics": { "protocol": "exact" },
+    "key_parts": ["severity", "plugin"]
+  }
+}
