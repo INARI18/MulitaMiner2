@@ -1,0 +1,786 @@
+<?xml version="1.0"?>
+<OWASPZAPReport programName="ZAP" version="2.17.0" generated="Sun, 26 Jul 2026 17:53:33" created="2026-07-26T17:53:33.553864379Z">
+	
+		<site name="https://172.30.19.1:5601" host="172.30.19.1" port="5601" ssl="true">
+			<alerts>
+				
+			</alerts>
+		</site>
+	
+	
+		<site name="https://content-signature-2.cdn.mozilla.net" host="content-signature-2.cdn.mozilla.net" port="443" ssl="true">
+			<alerts>
+				
+			</alerts>
+		</site>
+	
+	
+		<site name="http://172.30.19.1:5601" host="172.30.19.1" port="5601" ssl="false">
+			<alerts>
+				
+					<alertitem>
+						<pluginid>10038</pluginid>
+						<alertRef>10038-1</alertRef>
+						<alert>Content Security Policy (CSP) Header Not Set</alert>
+						<name>Content Security Policy (CSP) Header Not Set</name>
+						<riskcode>2</riskcode>
+						<confidence>3</confidence>
+						<riskdesc>Medium (High)</riskdesc>
+						<confidencedesc>High</confidencedesc>
+						<desc>&lt;p&gt;Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page &#x2014; covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601</uri>
+									<nodeName>http://172.30.19.1:5601</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/</uri>
+									<nodeName>http://172.30.19.1:5601/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/app/kibana</uri>
+									<nodeName>http://172.30.19.1:5601/app/kibana</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/status</uri>
+									<nodeName>http://172.30.19.1:5601/status</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>4</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP&lt;/p&gt;&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html&lt;/p&gt;&lt;p&gt;https://www.w3.org/TR/CSP/&lt;/p&gt;&lt;p&gt;https://w3c.github.io/webappsec-csp/&lt;/p&gt;&lt;p&gt;https://web.dev/articles/csp&lt;/p&gt;&lt;p&gt;https://caniuse.com/#feat=contentsecuritypolicy&lt;/p&gt;&lt;p&gt;https://content-security-policy.com/&lt;/p&gt;</reference>
+						<cweid>693</cweid>
+						<wascid>15</wascid>
+						<sourceid>8</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>0</pluginid>
+						<alertRef>0</alertRef>
+						<alert>Directory Browsing</alert>
+						<name>Directory Browsing</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;It is possible to view the directory listing. Directory listing may reveal hidden scripts, include files, backup source files, etc. which can be accessed to read sensitive information.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/node_modules/</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/node_modules/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack>http://172.30.19.1:5601/bundles/node_modules/</attack>
+									<evidence>Parent Directory</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/node_modules/font-awesome/</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/node_modules/font-awesome/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack>http://172.30.19.1:5601/bundles/node_modules/font-awesome/</attack>
+									<evidence>Parent Directory</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/src/ui/public/</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/src/ui/public/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack>http://172.30.19.1:5601/bundles/src/ui/public/</attack>
+									<evidence>Parent Directory</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>3</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Disable directory browsing. If this is required, make sure the listed files does not induce risks.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://httpd.apache.org/docs/current/mod/core.html#options&lt;/p&gt;</reference>
+						<cweid>548</cweid>
+						<wascid>48</wascid>
+						<sourceid>141</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10106</pluginid>
+						<alertRef>10106</alertRef>
+						<alert>HTTP Only Site</alert>
+						<name>HTTP Only Site</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The site is only served under HTTP and not HTTPS.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/</uri>
+									<nodeName>https://172.30.19.1:5601/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>Failed to connect.
+ZAP attempted to connect via: https://172.30.19.1:5601/</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Configure your web or application server to use SSL (https).&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;Failed to connect.&lt;/p&gt;&lt;p&gt;ZAP attempted to connect via: https://172.30.19.1:5601/&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html&lt;/p&gt;&lt;p&gt;https://letsencrypt.org/&lt;/p&gt;</reference>
+						<cweid>311</cweid>
+						<wascid>4</wascid>
+						<sourceid>146</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10020</pluginid>
+						<alertRef>10020-1</alertRef>
+						<alert>Missing Anti-clickjacking Header</alert>
+						<name>Missing Anti-clickjacking Header</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The response does not protect against &apos;ClickJacking&apos; attacks. It should include either Content-Security-Policy with &apos;frame-ancestors&apos; directive or X-Frame-Options.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601</uri>
+									<nodeName>http://172.30.19.1:5601</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/</uri>
+									<nodeName>http://172.30.19.1:5601/</nodeName>
+									<method>GET</method>
+									<param>x-frame-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>2</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.&lt;/p&gt;&lt;p&gt;If you expect the page to be framed only by pages on your server (e.g. it&apos;s part of a FRAMESET) then you&apos;ll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY. Alternatively consider implementing Content Security Policy&apos;s &quot;frame-ancestors&quot; directive.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Frame-Options&lt;/p&gt;</reference>
+						<cweid>1021</cweid>
+						<wascid>15</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10003</pluginid>
+						<alertRef>10003</alertRef>
+						<alert>Vulnerable JS Library</alert>
+						<name>Vulnerable JS Library</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The identified library appears to be vulnerable.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>* jQuery JavaScript Library v2.1.4</evidence>
+									<otherinfo>The identified library jquery, version 2.1.4 is vulnerable.
+CVE-2020-11023
+CVE-2020-11022
+CVE-2015-9251
+CVE-2019-11358
+https://github.com/jquery/jquery/issues/2432
+http://research.insecurelabs.org/jquery/test/
+http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/
+https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/
+https://nvd.nist.gov/vuln/detail/CVE-2019-11358
+https://github.com/advisories/GHSA-rmxg-73gg-4p98
+https://nvd.nist.gov/vuln/detail/CVE-2015-9251
+https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b
+https://bugs.jquery.com/ticket/11974
+https://github.com/jquery/jquery.com/issues/162
+https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/
+</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Upgrade to the latest version of the affected library.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The identified library jquery, version 2.1.4 is vulnerable.&lt;/p&gt;&lt;p&gt;CVE-2020-11023&lt;/p&gt;&lt;p&gt;CVE-2020-11022&lt;/p&gt;&lt;p&gt;CVE-2015-9251&lt;/p&gt;&lt;p&gt;CVE-2019-11358&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery/issues/2432&lt;/p&gt;&lt;p&gt;http://research.insecurelabs.org/jquery/test/&lt;/p&gt;&lt;p&gt;http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/&lt;/p&gt;&lt;p&gt;https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2019-11358&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-rmxg-73gg-4p98&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2015-9251&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b&lt;/p&gt;&lt;p&gt;https://bugs.jquery.com/ticket/11974&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery.com/issues/162&lt;/p&gt;&lt;p&gt;https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/&lt;/p&gt;</reference>
+						<cweid>1395</cweid>
+						<wascid>-1</wascid>
+						<sourceid>16</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10096</pluginid>
+						<alertRef>10096</alertRef>
+						<alert>Timestamp Disclosure - Unix</alert>
+						<name>Timestamp Disclosure - Unix</name>
+						<riskcode>1</riskcode>
+						<confidence>1</confidence>
+						<riskdesc>Low (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
+						<desc>&lt;p&gt;A timestamp was disclosed by the application/web server. - Unix&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/api/status</uri>
+									<nodeName>http://172.30.19.1:5601/api/status</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>1533203125</evidence>
+									<otherinfo>1533203125, which evaluates to: 2018-08-02 09:45:25.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Manually confirm that the timestamp data is not sensitive, and that the data cannot be aggregated to disclose exploitable patterns.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;1533203125, which evaluates to: 2018-08-02 09:45:25.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://cwe.mitre.org/data/definitions/200.html&lt;/p&gt;</reference>
+						<cweid>497</cweid>
+						<wascid>13</wascid>
+						<sourceid>45</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10021</pluginid>
+						<alertRef>10021</alertRef>
+						<alert>X-Content-Type-Options Header Missing</alert>
+						<name>X-Content-Type-Options Header Missing</name>
+						<riskcode>1</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Low (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The Anti-MIME-Sniffing header X-Content-Type-Options was not set to &apos;nosniff&apos;. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type. Current (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601</uri>
+									<nodeName>http://172.30.19.1:5601</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/</uri>
+									<nodeName>http://172.30.19.1:5601/</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/api/status</uri>
+									<nodeName>http://172.30.19.1:5601/api/status</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/src/ui/public/images/elk.ico</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/src/ui/public/images/elk.ico</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/statusPage.style.css?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/statusPage.style.css (v)</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to &apos;nosniff&apos; for all web pages.&lt;/p&gt;&lt;p&gt;If possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.&lt;/p&gt;&lt;p&gt;At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/gg622941(v=vs.85)&lt;/p&gt;&lt;p&gt;https://owasp.org/www-community/Security_Headers&lt;/p&gt;</reference>
+						<cweid>693</cweid>
+						<wascid>15</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10027</pluginid>
+						<alertRef>10027</alertRef>
+						<alert>Information Disclosure - Suspicious Comments</alert>
+						<name>Information Disclosure - Suspicious Comments</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The response appears to contain suspicious comments which may help an attacker.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>	dataType: null,
+			username: null,
+			password:</evidence>
+									<otherinfo>The following pattern was used: \bUSERNAME\b and was detected in likely comment: &quot;/*
+			timeout: 0,
+			data: null,
+			dataType: null,
+			username: null,
+			password: null,
+			cache: null,
+			throws: false,
+			t&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> the database by an administrator.&lt;/p&gt;
+	     *    &lt;/d</evidence>
+									<otherinfo>The following pattern was used: \bADMINISTRATOR\b and was detected in likely comment: &quot;/**
+	     * @ngdoc service
+	     * @name $interpolate
+	     * @kind function
+	     *
+	     * @requires $parse
+	     * @requires &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence> to global for call from export context</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected 425 times, the first in likely comment: &quot;// bind timers to global for call from export context&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// FIXME: Couldn&apos;t find a wa</evidence>
+									<otherinfo>The following pattern was used: \bFIXME\b and was detected in likely comment: &quot;// FIXME: Couldn&apos;t find a way to test for browser compatibility without&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// IE 8- don&apos;t enum bug keys</evidence>
+									<otherinfo>The following pattern was used: \bBUG\b and was detected 36 times, the first in likely comment: &quot;// IE 8- don&apos;t enum bug keys&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// See http://bugs.jquery.com/ticket/1</evidence>
+									<otherinfo>The following pattern was used: \bBUGS\b and was detected 13 times, the first in likely comment: &quot;// See http://bugs.jquery.com/ticket/13378&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// later invocations of the </evidence>
+									<otherinfo>The following pattern was used: \bLATER\b and was detected 34 times, the first in likely comment: &quot;// later invocations of the iterator.&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// locations where there is no enclosi</evidence>
+									<otherinfo>The following pattern was used: \bWHERE\b and was detected 72 times, the first in likely comment: &quot;// locations where there is no enclosing try statement.&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>a id=&quot;link-5&quot; name=&quot;xxx&quot; ng-click=&quot;value = </evidence>
+									<otherinfo>The following pattern was used: \bXXX\b and was detected 3 times, the first in likely comment: &quot;/**
+	 * @ngdoc directive
+	 * @name ngHref
+	 * @restrict A
+	 * @priority 99
+	 *
+	 * @description
+	 * Using Angular markup like `{&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>alue(&apos;ADMIN_USER&apos;, &apos;admin&apos;);
+	 *
+	 *   $provi</evidence>
+									<otherinfo>The following pattern was used: \bADMIN\b and was detected in likely comment: &quot;/**
+	 * @ngdoc method
+	 * @name $provide#value
+	 * @description
+	 *
+	 * Register a **value service** with the {@link auto.$injec&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>bject The object to query.
+	     * @param {Ar</evidence>
+									<otherinfo>The following pattern was used: \bQUERY\b and was detected 105 times, the first in likely comment: &quot;/**
+	     * The base implementation of `get` without support for string paths
+	     * and default values.
+	     *
+	     * @priva&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>ject.observe(models.todo, todoChanges);
+	   </evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected 45 times, the first in likely comment: &quot;/**
+	     * Creates a debounced function that delays invoking `func` until after `wait`
+	     * milliseconds have elapsed since &quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>nt application with debug information turned </evidence>
+									<otherinfo>The following pattern was used: \bDEBUG\b and was detected 11 times, the first in likely comment: &quot;/**
+	 * @ngdoc function
+	 * @name angular.reloadWithDebugInfo
+	 * @module ng
+	 * @description
+	 * Use this function to reload th&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>or POS matching in `select`</evidence>
+									<otherinfo>The following pattern was used: \bSELECT\b and was detected 38 times, the first in likely comment: &quot;// We use this for POS matching in `select`&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/commons.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/commons.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>rs = [
+	     *   { &apos;user&apos;: &apos;barney&apos;,  &apos;activ</evidence>
+									<otherinfo>The following pattern was used: \bUSER\b and was detected 151 times, the first in likely comment: &quot;/**
+	     * This method is like `_.find` except that it returns the index of the first
+	     * element `predicate` returns truth&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/bundles/statusPage.bundle.js?v=10247</uri>
+									<nodeName>http://172.30.19.1:5601/bundles/statusPage.bundle.js (v)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>}
+	 * includes code from:
+	 *  - elasticsear</evidence>
+									<otherinfo>The following pattern was used: \bFROM\b and was detected in likely comment: &quot;/**
+	 * Test entry file
+	 *
+	 * This is programatically created and updated, do not modify
+	 *
+	 * context: {&quot;env&quot;:&quot;production&quot;,&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>16</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The following pattern was used: \bUSERNAME\b and was detected in likely comment: &quot;/*&lt;/p&gt;&lt;p&gt;			timeout: 0,&lt;/p&gt;&lt;p&gt;			data: null,&lt;/p&gt;&lt;p&gt;			dataType: null,&lt;/p&gt;&lt;p&gt;			username: null,&lt;/p&gt;&lt;p&gt;			password: null,&lt;/p&gt;&lt;p&gt;			cache: null,&lt;/p&gt;&lt;p&gt;			throws: false,&lt;/p&gt;&lt;p&gt;			t&quot;, see evidence field for the suspicious comment/snippet.&lt;/p&gt;</otherinfo>
+						<reference></reference>
+						<cweid>615</cweid>
+						<wascid>13</wascid>
+						<sourceid>16</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10109</pluginid>
+						<alertRef>10109</alertRef>
+						<alert>Modern Web Application</alert>
+						<name>Modern Web Application</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601</uri>
+									<nodeName>http://172.30.19.1:5601</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;script&gt;var hashRoute = &apos;/app/kibana&apos;;
+var defaultRoute = &apos;/app/kibana&apos;;
+
+var hash = window.location.hash;
+if (hash.length) {
+  window.location = hashRoute + hash;
+} else {
+  window.location = defaultRoute;
+}&lt;/script&gt;</evidence>
+									<otherinfo>No links have been found while there are scripts, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/</uri>
+									<nodeName>http://172.30.19.1:5601/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;script&gt;var hashRoute = &apos;/app/kibana&apos;;
+var defaultRoute = &apos;/app/kibana&apos;;
+
+var hash = window.location.hash;
+if (hash.length) {
+  window.location = hashRoute + hash;
+} else {
+  window.location = defaultRoute;
+}&lt;/script&gt;</evidence>
+									<otherinfo>No links have been found while there are scripts, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/app/kibana</uri>
+									<nodeName>http://172.30.19.1:5601/app/kibana</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;script&gt;window.__KBN__ = {&quot;app&quot;:{&quot;id&quot;:&quot;statusPage&quot;,&quot;title&quot;:&quot;Server Status&quot;,&quot;main&quot;:&quot;plugins/statusPage/statusPage&quot;,&quot;url&quot;:&quot;/status&quot;},&quot;nav&quot;:[{&quot;id&quot;:&quot;kibana&quot;,&quot;title&quot;:&quot;Kibana&quot;,&quot;description&quot;:&quot;the kibana you know and love&quot;,&quot;main&quot;:&quot;plugins/kibana/kibana&quot;,&quot;url&quot;:&quot;/app/kibana&quot;}],&quot;version&quot;:&quot;4.6.6&quot;,&quot;buildNum&quot;:10247,&quot;buildSha&quot;:&quot;d344b80b0fe4183467093aedbeed7a5351a0f537&quot;,&quot;basePath&quot;:&quot;&quot;,&quot;vars&quot;:{&quot;kbnIndex&quot;:&quot;.kibana&quot;,&quot;esRequestTimeout&quot;:30000,&quot;esShardTimeout&quot;:0,&quot;esApiVersion&quot;:&quot;2.0&quot;}};&lt;/script&gt;</evidence>
+									<otherinfo>No links have been found while there are scripts, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/status</uri>
+									<nodeName>http://172.30.19.1:5601/status</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;script&gt;window.__KBN__ = {&quot;app&quot;:{&quot;id&quot;:&quot;statusPage&quot;,&quot;title&quot;:&quot;Server Status&quot;,&quot;main&quot;:&quot;plugins/statusPage/statusPage&quot;,&quot;url&quot;:&quot;/status&quot;},&quot;nav&quot;:[{&quot;id&quot;:&quot;kibana&quot;,&quot;title&quot;:&quot;Kibana&quot;,&quot;description&quot;:&quot;the kibana you know and love&quot;,&quot;main&quot;:&quot;plugins/kibana/kibana&quot;,&quot;url&quot;:&quot;/app/kibana&quot;}],&quot;version&quot;:&quot;4.6.6&quot;,&quot;buildNum&quot;:10247,&quot;buildSha&quot;:&quot;d344b80b0fe4183467093aedbeed7a5351a0f537&quot;,&quot;basePath&quot;:&quot;&quot;,&quot;vars&quot;:{&quot;kbnIndex&quot;:&quot;.kibana&quot;,&quot;esRequestTimeout&quot;:30000,&quot;esShardTimeout&quot;:0,&quot;esApiVersion&quot;:&quot;2.0&quot;}};&lt;/script&gt;</evidence>
+									<otherinfo>No links have been found while there are scripts, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>4</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;This is an informational alert and so no changes are required.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;No links have been found while there are scripts, which is an indication that this is a modern web application.&lt;/p&gt;</otherinfo>
+						<reference></reference>
+						<cweid>-1</cweid>
+						<wascid>-1</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10104</pluginid>
+						<alertRef>10104</alertRef>
+						<alert>User Agent Fuzzer</alert>
+						<name>User Agent Fuzzer</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/api/status</uri>
+									<nodeName>http://172.30.19.1:5601/api/status</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/api/status</uri>
+									<nodeName>http://172.30.19.1:5601/api/status</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.30.19.1:5601/api/status</uri>
+									<nodeName>http://172.30.19.1:5601/api/status</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>3</count>
+						<systemic>true</systemic>
+						<solution></solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/wstg&lt;/p&gt;</reference>
+						<cweid>0</cweid>
+						<wascid>0</wascid>
+						<sourceid>150</sourceid>
+					</alertitem>
+				
+			</alerts>
+		</site>
+	
+	
+</OWASPZAPReport>

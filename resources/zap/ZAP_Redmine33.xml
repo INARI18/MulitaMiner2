@@ -1,0 +1,1823 @@
+<?xml version="1.0"?>
+<OWASPZAPReport programName="ZAP" version="2.17.0" generated="Sun, 26 Jul 2026 17:38:00" created="2026-07-26T17:38:00.988317881Z">
+	
+		<site name="https://content-signature-2.cdn.mozilla.net" host="content-signature-2.cdn.mozilla.net" port="443" ssl="true">
+			<alerts>
+				
+			</alerts>
+		</site>
+	
+	
+		<site name="http://172.31.1.95:3000" host="172.31.1.95" port="3000" ssl="false">
+			<alerts>
+				
+					<alertitem>
+						<pluginid>40018</pluginid>
+						<alertRef>40018</alertRef>
+						<alert>SQL Injection</alert>
+						<name>SQL Injection</name>
+						<riskcode>3</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>High (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;SQL injection may be possible.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=3-2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets)</nodeName>
+									<method>GET</method>
+									<param>show_changesets</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=3-2&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_changesets</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=2%2F2&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_documents</param>
+									<attack>2/2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [2/2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=1&amp;show_files=1+AND+1%3D1+--+&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_files</param>
+									<attack>1 AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [1 AND 1=1 -- ] and [1 AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=2%2F2&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_messages</param>
+									<attack>2/2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [2/2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1+AND+1%3D1+--+&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_news</param>
+									<attack>1 AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [1 AND 1=1 -- ] and [1 AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=3-2&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_time_entries</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=3-2&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_wiki_edits</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93+AND+1%3D1+--+</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>utf8</param>
+									<attack>&#x2713; OR 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [&#x2713; AND 1=1 -- ] and [&#x2713; OR 1=1 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was NOT returned for the original parameter.
+The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_documents=3-2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_documents)</nodeName>
+									<method>GET</method>
+									<param>show_documents</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_files=3-2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_files)</nodeName>
+									<method>GET</method>
+									<param>show_files</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_issues=3-2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_issues)</nodeName>
+									<method>GET</method>
+									<param>show_issues</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_messages=3-2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_messages)</nodeName>
+									<method>GET</method>
+									<param>show_messages</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_news=3-2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_news)</nodeName>
+									<method>GET</method>
+									<param>show_news</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_time_entries=2%2F2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_time_entries)</nodeName>
+									<method>GET</method>
+									<param>show_time_entries</param>
+									<attack>2/2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [2/2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom?show_wiki_edits=2%2F2</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom (show_wiki_edits)</nodeName>
+									<method>GET</method>
+									<param>show_wiki_edits</param>
+									<attack>2/2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [2/2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?available_columns%5B%5D=parent+AND+1%3D1+--+&amp;c%5B%5D=description&amp;group_by=project&amp;set_filter=1&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>available_columns[0]</param>
+									<attack>parent AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [parent AND 1=1 -- ] and [parent AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?available_columns%5B%5D=parent&amp;c%5B%5D=description&amp;group_by=project+AND+1%3D1+--+&amp;set_filter=1&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>group_by</param>
+									<attack>project OR 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [project AND 1=1 -- ] and [project OR 1=1 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was NOT returned for the original parameter.
+The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?available_columns%5B%5D=parent&amp;c%5B%5D=description&amp;group_by=project&amp;set_filter=1&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93+AND+1%3D1+--+</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>utf8</param>
+									<attack>&#x2713; AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [&#x2713; AND 1=1 -- ] and [&#x2713; AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project+AND+1%3D1+--+&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>c[0]</param>
+									<attack>project AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [project AND 1=1 -- ] and [project AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker+AND+1%3D1+--+&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>c[1]</param>
+									<attack>tracker AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [tracker AND 1=1 -- ] and [tracker AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description+AND+1%3D1+--+&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>f[0]</param>
+									<attack>description AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [description AND 1=1 -- ] and [description AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates+AND+1%3D1+--+&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>f[2]</param>
+									<attack>duplicates AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [duplicates AND 1=1 -- ] and [duplicates AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=+AND+1%3D1+--+&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>f[3]</param>
+									<attack> AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [ AND 1=1 -- ] and [ AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=+AND+1%3D1+--+&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>group_by</param>
+									<attack> OR 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [ AND 1=1 -- ] and [ OR 1=1 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was NOT returned for the original parameter.
+The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1+AND+1%3D1+--+&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>set_filter</param>
+									<attack>1 AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [1 AND 1=1 -- ] and [1 AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93+AND+1%3D1+--+&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>utf8</param>
+									<attack>&#x2713; AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [&#x2713; AND 1=1 -- ] and [&#x2713; AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=description&amp;f%5B%5D=due_date&amp;f%5B%5D=duplicates&amp;f%5B%5D=&amp;group_by=&amp;op%5Bdescription%5D=%7E&amp;op%5Bdue_date%5D=%21*&amp;op%5Bduplicates%5D=%21o&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93&amp;v%5Bdescription%5D%5B%5D=JtxVbGyc+AND+1%3D1+--+</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],f[],f[],f[],group_by,op[description],op[due_date],op[duplicates],set_filter,t[],utf8,v[description][])</nodeName>
+									<method>GET</method>
+									<param>v[description][0]</param>
+									<attack>JtxVbGyc AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [JtxVbGyc AND 1=1 -- ] and [JtxVbGyc AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project+AND+1%3D1+--+&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=&amp;group_by=&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>c[0]</param>
+									<attack>project AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [project AND 1=1 -- ] and [project AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status+AND+1%3D1+--+&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=&amp;group_by=&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>c[2]</param>
+									<attack>status OR 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [status AND 1=1 -- ] and [status OR 1=1 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was NOT returned for the original parameter.
+The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority+AND+1%3D1+--+&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=&amp;group_by=&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>c[3]</param>
+									<attack>priority AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [priority AND 1=1 -- ] and [priority AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to+AND+1%3D1+--+&amp;c%5B%5D=updated_on&amp;f%5B%5D=&amp;group_by=&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>c[5]</param>
+									<attack>assigned_to AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [assigned_to AND 1=1 -- ] and [assigned_to AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on+AND+1%3D1+--+&amp;f%5B%5D=&amp;group_by=&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>c[6]</param>
+									<attack>updated_on AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [updated_on AND 1=1 -- ] and [updated_on AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=&amp;group_by=+AND+1%3D1+--+&amp;set_filter=1&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>group_by</param>
+									<attack> AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [ AND 1=1 -- ] and [ AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.atom?c%5B%5D=project&amp;c%5B%5D=tracker&amp;c%5B%5D=status&amp;c%5B%5D=priority&amp;c%5B%5D=subject&amp;c%5B%5D=assigned_to&amp;c%5B%5D=updated_on&amp;f%5B%5D=&amp;group_by=&amp;set_filter=3-2&amp;t%5B%5D=&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.atom (c[],c[],c[],c[],c[],c[],c[],f[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>set_filter</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.pdf?available_columns%5B%5D=parent+AND+1%3D1+--+&amp;c%5B%5D=description&amp;group_by=project&amp;set_filter=1&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.pdf (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>available_columns[0]</param>
+									<attack>parent AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [parent AND 1=1 -- ] and [parent AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.pdf?available_columns%5B%5D=parent&amp;c%5B%5D=description+AND+1%3D1+--+&amp;group_by=project&amp;set_filter=1&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.pdf (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>c[0]</param>
+									<attack>description AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [description AND 1=1 -- ] and [description AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.pdf?available_columns%5B%5D=parent&amp;c%5B%5D=description&amp;group_by=project&amp;set_filter=3-2&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/issues.pdf (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>set_filter</param>
+									<attack>3-2</attack>
+									<evidence></evidence>
+									<otherinfo>The original page results were successfully replicated using the expression [3-2] as the parameter value
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues.pdf?available_columns%5B%5D=parent&amp;c%5B%5D=description&amp;group_by=project&amp;set_filter=1&amp;t%5B%5D=estimated_hours&amp;utf8=%E2%9C%93+AND+1%3D1+--+</uri>
+									<nodeName>http://172.31.1.95:3000/issues.pdf (available_columns[],c[],group_by,set_filter,t[],utf8)</nodeName>
+									<method>GET</method>
+									<param>utf8</param>
+									<attack>&#x2713; AND 1=1 -- </attack>
+									<evidence></evidence>
+									<otherinfo>The page results were successfully manipulated using the boolean conditions [&#x2713; AND 1=1 -- ] and [&#x2713; AND 1=2 -- ]
+The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
+Data was returned for the original parameter.
+The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>39</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Do not trust client side input, even if there is client side validation in place.&lt;/p&gt;&lt;p&gt;In general, type check all data on the server side.&lt;/p&gt;&lt;p&gt;If the application uses JDBC, use PreparedStatement or CallableStatement, with parameters passed by &apos;?&apos;&lt;/p&gt;&lt;p&gt;If the application uses ASP, use ADO Command Objects with strong type checking and parameterized queries.&lt;/p&gt;&lt;p&gt;If database Stored Procedures can be used, use them.&lt;/p&gt;&lt;p&gt;Do *not* concatenate strings into queries in the stored procedure, or use &apos;exec&apos;, &apos;exec immediate&apos;, or equivalent functionality!&lt;/p&gt;&lt;p&gt;Do not create dynamic SQL queries using simple string concatenation.&lt;/p&gt;&lt;p&gt;Escape all data received from the client.&lt;/p&gt;&lt;p&gt;Apply an &apos;allow list&apos; of allowed characters, or a &apos;deny list&apos; of disallowed characters in user input.&lt;/p&gt;&lt;p&gt;Apply the principle of least privilege by using the least privileged database user possible.&lt;/p&gt;&lt;p&gt;In particular, avoid using the &apos;sa&apos; or &apos;db-owner&apos; database users. This does not eliminate SQL injection, but minimizes its impact.&lt;/p&gt;&lt;p&gt;Grant the minimum database access that is necessary for the application.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The original page results were successfully replicated using the expression [3-2] as the parameter value&lt;/p&gt;&lt;p&gt;The parameter value being modified was stripped from the HTML output for the purposes of the comparison.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html&lt;/p&gt;</reference>
+						<cweid>89</cweid>
+						<wascid>19</wascid>
+						<sourceid>3657</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10038</pluginid>
+						<alertRef>10038-1</alertRef>
+						<alert>Content Security Policy (CSP) Header Not Set</alert>
+						<name>Content Security Policy (CSP) Header Not Set</name>
+						<riskcode>2</riskcode>
+						<confidence>3</confidence>
+						<riskdesc>Medium (High)</riskdesc>
+						<confidencedesc>High</confidencedesc>
+						<desc>&lt;p&gt;Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page &#x2014; covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000</uri>
+									<nodeName>http://172.31.1.95:3000</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/</uri>
+									<nodeName>http://172.31.1.95:3000/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/robots.txt</uri>
+									<nodeName>http://172.31.1.95:3000/robots.txt</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/search</uri>
+									<nodeName>http://172.31.1.95:3000/search</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>4</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP&lt;/p&gt;&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html&lt;/p&gt;&lt;p&gt;https://www.w3.org/TR/CSP/&lt;/p&gt;&lt;p&gt;https://w3c.github.io/webappsec-csp/&lt;/p&gt;&lt;p&gt;https://web.dev/articles/csp&lt;/p&gt;&lt;p&gt;https://caniuse.com/#feat=contentsecuritypolicy&lt;/p&gt;&lt;p&gt;https://content-security-policy.com/&lt;/p&gt;</reference>
+						<cweid>693</cweid>
+						<wascid>15</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10003</pluginid>
+						<alertRef>10003</alertRef>
+						<alert>Vulnerable JS Library</alert>
+						<name>Vulnerable JS Library</name>
+						<riskcode>2</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Medium (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The identified library appears to be vulnerable.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/javascripts/jquery-1.11.1-ui-1.11.0-ujs-3.1.4.js</uri>
+									<nodeName>http://172.31.1.95:3000/javascripts/jquery-1.11.1-ui-1.11.0-ujs-3.1.4.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>jquery-1.11.1-ui-1.11.0-ujs-3.1.4.js</evidence>
+									<otherinfo>The identified library jquery, version 1.11.1-ui-1.11.0-ujs-3.1.4 is vulnerable.
+CVE-2020-11023
+CVE-2015-9251
+CVE-2019-11358
+https://github.com/jquery/jquery/issues/2432
+http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/
+http://research.insecurelabs.org/jquery/test/
+https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/
+https://nvd.nist.gov/vuln/detail/CVE-2019-11358
+https://github.com/advisories/GHSA-rmxg-73gg-4p98
+https://nvd.nist.gov/vuln/detail/CVE-2015-9251
+https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b
+https://bugs.jquery.com/ticket/11974
+https://github.com/jquery/jquery.com/issues/162
+https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/
+</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Upgrade to the latest version of the affected library.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The identified library jquery, version 1.11.1-ui-1.11.0-ujs-3.1.4 is vulnerable.&lt;/p&gt;&lt;p&gt;CVE-2020-11023&lt;/p&gt;&lt;p&gt;CVE-2015-9251&lt;/p&gt;&lt;p&gt;CVE-2019-11358&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery/issues/2432&lt;/p&gt;&lt;p&gt;http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/&lt;/p&gt;&lt;p&gt;http://research.insecurelabs.org/jquery/test/&lt;/p&gt;&lt;p&gt;https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2019-11358&lt;/p&gt;&lt;p&gt;https://github.com/advisories/GHSA-rmxg-73gg-4p98&lt;/p&gt;&lt;p&gt;https://nvd.nist.gov/vuln/detail/CVE-2015-9251&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b&lt;/p&gt;&lt;p&gt;https://bugs.jquery.com/ticket/11974&lt;/p&gt;&lt;p&gt;https://github.com/jquery/jquery.com/issues/162&lt;/p&gt;&lt;p&gt;https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/&lt;/p&gt;</reference>
+						<cweid>1395</cweid>
+						<wascid>-1</wascid>
+						<sourceid>27</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10054</pluginid>
+						<alertRef>10054-1</alertRef>
+						<alert>Cookie without SameSite Attribute</alert>
+						<name>Cookie without SameSite Attribute</name>
+						<riskcode>1</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Low (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;A cookie has been set without the SameSite attribute, which means that the cookie can be sent as a result of a &apos;cross-site&apos; request. The SameSite attribute is an effective counter measure to cross-site request forgery, cross-site script inclusion, and timing attacks.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000</uri>
+									<nodeName>http://172.31.1.95:3000</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>Set-Cookie: _redmine_session</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/</uri>
+									<nodeName>http://172.31.1.95:3000/</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>Set-Cookie: _redmine_session</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues/gantt</uri>
+									<nodeName>http://172.31.1.95:3000/issues/gantt</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>Set-Cookie: _redmine_session</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/projects</uri>
+									<nodeName>http://172.31.1.95:3000/projects</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>Set-Cookie: _redmine_session</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/search</uri>
+									<nodeName>http://172.31.1.95:3000/search</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>Set-Cookie: _redmine_session</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that the SameSite attribute is set to either &apos;lax&apos; or ideally &apos;strict&apos; for all cookies.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-cookie-same-site&lt;/p&gt;</reference>
+						<cweid>1275</cweid>
+						<wascid>13</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10036</pluginid>
+						<alertRef>10036-2</alertRef>
+						<alert>Server Leaks Version Information via &quot;Server&quot; HTTP Response Header Field</alert>
+						<name>Server Leaks Version Information via &quot;Server&quot; HTTP Response Header Field</name>
+						<riskcode>1</riskcode>
+						<confidence>3</confidence>
+						<riskdesc>Low (High)</riskdesc>
+						<confidencedesc>High</confidencedesc>
+						<desc>&lt;p&gt;The web/application server is leaking version information via the &quot;Server&quot; HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/favicon.ico</uri>
+									<nodeName>http://172.31.1.95:3000/favicon.ico</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>WEBrick/1.3.1 (Ruby/2.3.8/2018-10-18)</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues/gantt</uri>
+									<nodeName>http://172.31.1.95:3000/issues/gantt</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>WEBrick/1.3.1 (Ruby/2.3.8/2018-10-18)</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/robots.txt</uri>
+									<nodeName>http://172.31.1.95:3000/robots.txt</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>WEBrick/1.3.1 (Ruby/2.3.8/2018-10-18)</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/sitemap.xml</uri>
+									<nodeName>http://172.31.1.95:3000/sitemap.xml</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>WEBrick/1.3.1 (Ruby/2.3.8/2018-10-18)</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/stylesheets/application.css</uri>
+									<nodeName>http://172.31.1.95:3000/stylesheets/application.css</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>WEBrick/1.3.1 (Ruby/2.3.8/2018-10-18)</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that your web server, application server, load balancer, etc. is configured to suppress the &quot;Server&quot; header or provide generic details.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://httpd.apache.org/docs/current/mod/core.html#servertokens&lt;/p&gt;&lt;p&gt;https://learn.microsoft.com/en-us/previous-versions/msp-n-p/ff648552(v=pandp.10)&lt;/p&gt;&lt;p&gt;https://www.troyhunt.com/shhh-dont-let-your-response-headers/&lt;/p&gt;</reference>
+						<cweid>497</cweid>
+						<wascid>13</wascid>
+						<sourceid>35</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10021</pluginid>
+						<alertRef>10021</alertRef>
+						<alert>X-Content-Type-Options Header Missing</alert>
+						<name>X-Content-Type-Options Header Missing</name>
+						<riskcode>1</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Low (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The Anti-MIME-Sniffing header X-Content-Type-Options was not set to &apos;nosniff&apos;. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type. Current (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/favicon.ico</uri>
+									<nodeName>http://172.31.1.95:3000/favicon.ico</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/javascripts/responsive.js</uri>
+									<nodeName>http://172.31.1.95:3000/javascripts/responsive.js</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/stylesheets/application.css</uri>
+									<nodeName>http://172.31.1.95:3000/stylesheets/application.css</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/stylesheets/jquery/jquery-ui-1.11.0.css</uri>
+									<nodeName>http://172.31.1.95:3000/stylesheets/jquery/jquery-ui-1.11.0.css</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/stylesheets/responsive.css</uri>
+									<nodeName>http://172.31.1.95:3000/stylesheets/responsive.css</nodeName>
+									<method>GET</method>
+									<param>x-content-type-options</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.
+At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to &apos;nosniff&apos; for all web pages.&lt;/p&gt;&lt;p&gt;If possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.&lt;/p&gt;&lt;p&gt;At &quot;High&quot; threshold this scan rule will not alert on client or server error responses.&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/gg622941(v=vs.85)&lt;/p&gt;&lt;p&gt;https://owasp.org/www-community/Security_Headers&lt;/p&gt;</reference>
+						<cweid>693</cweid>
+						<wascid>15</wascid>
+						<sourceid>35</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10111</pluginid>
+						<alertRef>10111</alertRef>
+						<alert>Authentication Request Identified</alert>
+						<name>Authentication Request Identified</name>
+						<riskcode>0</riskcode>
+						<confidence>3</confidence>
+						<riskdesc>Informational (High)</riskdesc>
+						<confidencedesc>High</confidencedesc>
+						<desc>&lt;p&gt;The given request has been identified as an authentication request. The &apos;Other Info&apos; field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to &quot;Auto-Detect&quot; then this rule will change the authentication to match the request identified.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/login</uri>
+									<nodeName>http://172.31.1.95:3000/login ()(authenticity_token,back_url,login,password,username,utf8)</nodeName>
+									<method>POST</method>
+									<param>login</param>
+									<attack></attack>
+									<evidence>password</evidence>
+									<otherinfo>userParam=login
+userValue=Login &#xbb;
+passwordParam=password
+referer=http://172.31.1.95:3000/login
+csrfToken=authenticity_token</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;This is an informational alert rather than a vulnerability and so there is nothing to fix.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;userParam=login&lt;/p&gt;&lt;p&gt;userValue=Login &#xbb;&lt;/p&gt;&lt;p&gt;passwordParam=password&lt;/p&gt;&lt;p&gt;referer=http://172.31.1.95:3000/login&lt;/p&gt;&lt;p&gt;csrfToken=authenticity_token&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/&lt;/p&gt;</reference>
+						<cweid>-1</cweid>
+						<wascid>-1</wascid>
+						<sourceid>105</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10027</pluginid>
+						<alertRef>10027</alertRef>
+						<alert>Information Disclosure - Suspicious Comments</alert>
+						<name>Information Disclosure - Suspicious Comments</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The response appears to contain suspicious comments which may help an attacker.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/javascripts/context_menu.js</uri>
+									<nodeName>http://172.31.1.95:3000/javascripts/context_menu.js</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>// TODO</evidence>
+									<otherinfo>The following pattern was used: \bTODO\b and was detected in likely comment: &quot;// TODO&quot;, see evidence field for the suspicious comment/snippet.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;The following pattern was used: \bTODO\b and was detected in likely comment: &quot;// TODO&quot;, see evidence field for the suspicious comment/snippet.&lt;/p&gt;</otherinfo>
+						<reference></reference>
+						<cweid>615</cweid>
+						<wascid>13</wascid>
+						<sourceid>171</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10109</pluginid>
+						<alertRef>10109</alertRef>
+						<alert>Modern Web Application</alert>
+						<name>Modern Web Application</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000</uri>
+									<nodeName>http://172.31.1.95:3000</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a href=&quot;#&quot; class=&quot;mobile-toggle-button js-flyout-menu-toggle-button&quot;&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/</uri>
+									<nodeName>http://172.31.1.95:3000/</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a href=&quot;#&quot; class=&quot;mobile-toggle-button js-flyout-menu-toggle-button&quot;&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a href=&quot;#&quot; class=&quot;mobile-toggle-button js-flyout-menu-toggle-button&quot;&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity</uri>
+									<nodeName>http://172.31.1.95:3000/activity</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a href=&quot;#&quot; class=&quot;mobile-toggle-button js-flyout-menu-toggle-button&quot;&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/projects</uri>
+									<nodeName>http://172.31.1.95:3000/projects</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>&lt;a href=&quot;#&quot; class=&quot;mobile-toggle-button js-flyout-menu-toggle-button&quot;&gt;&lt;/a&gt;</evidence>
+									<otherinfo>Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>5</count>
+						<systemic>true</systemic>
+						<solution>&lt;p&gt;This is an informational alert and so no changes are required.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;Links have been found that do not have traditional href attributes, which is an indication that this is a modern web application.&lt;/p&gt;</otherinfo>
+						<reference></reference>
+						<cweid>-1</cweid>
+						<wascid>-1</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10112</pluginid>
+						<alertRef>10112</alertRef>
+						<alert>Session Management Response Identified</alert>
+						<name>Session Management Response Identified</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The given response has been identified as containing a session management token. The &apos;Other Info&apos; field contains a set of header tokens that can be used in the Header Based Session Management Method. If the request is in a context which has a Session Management Method set to &quot;Auto-Detect&quot; then this rule will change the session management to use the tokens identified.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000</uri>
+									<nodeName>http://172.31.1.95:3000</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/</uri>
+									<nodeName>http://172.31.1.95:3000/</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/lost_password</uri>
+									<nodeName>http://172.31.1.95:3000/account/lost_password</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity</uri>
+									<nodeName>http://172.31.1.95:3000/activity</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?from=2026-06-26</uri>
+									<nodeName>http://172.31.1.95:3000/activity (from)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_changesets=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_changesets)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_documents=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_documents)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_issues=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_issues)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_messages=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_messages)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_news=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_news)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity.atom</uri>
+									<nodeName>http://172.31.1.95:3000/activity.atom</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/issues/calendar</uri>
+									<nodeName>http://172.31.1.95:3000/issues/calendar</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/login</uri>
+									<nodeName>http://172.31.1.95:3000/login</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/login?back_url=http%3A%2F%2F172.31.1.95%3A3000%2Fissues%2Fgantt</uri>
+									<nodeName>http://172.31.1.95:3000/login (back_url)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/news.atom</uri>
+									<nodeName>http://172.31.1.95:3000/news.atom</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/projects</uri>
+									<nodeName>http://172.31.1.95:3000/projects</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/search</uri>
+									<nodeName>http://172.31.1.95:3000/search</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/search?q=ZAP&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/search (q,utf8)</nodeName>
+									<method>GET</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>_redmine_session</param>
+									<attack></attack>
+									<evidence>_redmine_session</evidence>
+									<otherinfo>cookie:_redmine_session</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>20</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;This is an informational alert rather than a vulnerability and so there is nothing to fix.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;cookie:_redmine_session&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id/&lt;/p&gt;</reference>
+						<cweid>-1</cweid>
+						<wascid>-1</wascid>
+						<sourceid>1</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10104</pluginid>
+						<alertRef>10104</alertRef>
+						<alert>User Agent Fuzzer</alert>
+						<name>User Agent Fuzzer</name>
+						<riskcode>0</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Informational (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000</uri>
+									<nodeName>http://172.31.1.95:3000</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/</uri>
+									<nodeName>http://172.31.1.95:3000/</nodeName>
+									<method>GET</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/lost_password</uri>
+									<nodeName>http://172.31.1.95:3000/account/lost_password ()(authenticity_token,commit,mail,utf8)</nodeName>
+									<method>POST</method>
+									<param>Header User-Agent</param>
+									<attack>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)</attack>
+									<evidence></evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>3</count>
+						<systemic>true</systemic>
+						<solution></solution>
+						<otherinfo></otherinfo>
+						<reference>&lt;p&gt;https://owasp.org/wstg&lt;/p&gt;</reference>
+						<cweid>0</cweid>
+						<wascid>0</wascid>
+						<sourceid>3690</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>10031</pluginid>
+						<alertRef>10031</alertRef>
+						<alert>User Controllable HTML Element Attribute (Potential XSS)</alert>
+						<name>User Controllable HTML Element Attribute (Potential XSS)</name>
+						<riskcode>0</riskcode>
+						<confidence>1</confidence>
+						<riskdesc>Informational (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
+						<desc>&lt;p&gt;This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?from=2026-06-26</uri>
+									<nodeName>http://172.31.1.95:3000/activity (from)</nodeName>
+									<method>GET</method>
+									<param>from</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?from=2026-06-26
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+from=2026-06-26
+
+The user-controlled value was:
+2026-06-26</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_changesets=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_changesets)</nodeName>
+									<method>GET</method>
+									<param>show_changesets</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_changesets=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_changesets=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>show_changesets</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_changesets=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_changesets,show_documents,show_files,show_issues,show_messages,show_news,show_time_entries,show_wiki_edits,submit,utf8)</nodeName>
+									<method>GET</method>
+									<param>submit</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_changesets=1&amp;show_documents=1&amp;show_files=1&amp;show_issues=1&amp;show_messages=1&amp;show_news=1&amp;show_time_entries=1&amp;show_wiki_edits=1&amp;submit=Apply&amp;utf8=%E2%9C%93
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+submit=Apply
+
+The user-controlled value was:
+apply</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_documents=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_documents)</nodeName>
+									<method>GET</method>
+									<param>show_documents</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_documents=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_documents=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_files=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_files)</nodeName>
+									<method>GET</method>
+									<param>show_files</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_files=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_files=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_issues=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_issues)</nodeName>
+									<method>GET</method>
+									<param>show_issues</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_issues=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_issues=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_messages=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_messages)</nodeName>
+									<method>GET</method>
+									<param>show_messages</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_messages=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_messages=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_news=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_news)</nodeName>
+									<method>GET</method>
+									<param>show_news</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_news=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_news=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/activity?show_wiki_edits=1</uri>
+									<nodeName>http://172.31.1.95:3000/activity (show_wiki_edits)</nodeName>
+									<method>GET</method>
+									<param>show_wiki_edits</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/activity?show_wiki_edits=1
+
+appears to include user input in:
+a(n) [meta] tag [content] attribute
+
+The user input found was:
+show_wiki_edits=1
+
+The user-controlled value was:
+width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/login?back_url=http%3A%2F%2F172.31.1.95%3A3000%2Fissues%2Fgantt</uri>
+									<nodeName>http://172.31.1.95:3000/login (back_url)</nodeName>
+									<method>GET</method>
+									<param>back_url</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/login?back_url=http%3A%2F%2F172.31.1.95%3A3000%2Fissues%2Fgantt
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+back_url=http://172.31.1.95:3000/issues/gantt
+
+The user-controlled value was:
+http://172.31.1.95:3000/issues/gantt</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/search?q=ZAP&amp;utf8=%E2%9C%93</uri>
+									<nodeName>http://172.31.1.95:3000/search (q,utf8)</nodeName>
+									<method>GET</method>
+									<param>q</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/search?q=ZAP&amp;utf8=%E2%9C%93
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+q=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>commit</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [type] attribute
+
+The user input found was:
+commit=Submit
+
+The user-controlled value was:
+submit</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[firstname]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+user[firstname]=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[language]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [html] tag [lang] attribute
+
+The user input found was:
+user[language]=en
+
+The user-controlled value was:
+en</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[lastname]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+user[lastname]=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[login]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+user[login]=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[mail]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+user[mail]=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[password]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+user[password]=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://172.31.1.95:3000/account/register</uri>
+									<nodeName>http://172.31.1.95:3000/account/register ()(authenticity_token,commit,pref[hide_mail],user[firstname],user[language],user[lastname],user[login],user[mail],user[password],user[password_confirmation],utf8)</nodeName>
+									<method>POST</method>
+									<param>user[password_confirmation]</param>
+									<attack></attack>
+									<evidence></evidence>
+									<otherinfo>User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:
+
+http://172.31.1.95:3000/account/register
+
+appears to include user input in:
+a(n) [input] tag [value] attribute
+
+The user input found was:
+user[password_confirmation]=ZAP
+
+The user-controlled value was:
+zap</otherinfo>
+								</instance>
+							
+						</instances>
+						<count>20</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Validate all input and sanitize output it before writing to any HTML attributes.&lt;/p&gt;</solution>
+						<otherinfo>&lt;p&gt;User-controlled HTML attribute values were found. Try injecting special characters to see if XSS might be possible. The page at the following URL:&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;http://172.31.1.95:3000/activity?from=2026-06-26&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;appears to include user input in:&lt;/p&gt;&lt;p&gt;a(n) [input] tag [value] attribute&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;The user input found was:&lt;/p&gt;&lt;p&gt;from=2026-06-26&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;The user-controlled value was:&lt;/p&gt;&lt;p&gt;2026-06-26&lt;/p&gt;</otherinfo>
+						<reference>&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html&lt;/p&gt;</reference>
+						<cweid>20</cweid>
+						<wascid>20</wascid>
+						<sourceid>84</sourceid>
+					</alertitem>
+				
+			</alerts>
+		</site>
+	
+	
+</OWASPZAPReport>
