@@ -2,7 +2,7 @@
   "name": "qualys",
   "source": "QUALYS",
   "max_vulns_per_chunk": 3,
-  "marker_pattern": "^\\s*([1-5])\\s+[A-Za-z]",
+  "marker_pattern": "(?:^|-CR-)\\s*([1-5])\\s+[A-Za-z]",
   "fields": {
     "category": "str",
     "plugin": "int"
