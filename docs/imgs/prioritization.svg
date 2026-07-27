@@ -1,0 +1,86 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1320' height='685' viewBox='0 0 1320 685'><rect width='1320' height='685' fill='#fbf6ef'/>
+<text x='40' y='60' font-size='26' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='5' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>PRIORITIZATION</text>
+<text x='40' y='90' font-size='13.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Add up one point value from each card below, then read the total on the scale: that is the finding&#39;s remediation</text>
+<text x='40' y='109' font-size='13.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>category.</text>
+<text x='1280' y='104' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='end' letter-spacing='1.1' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>CATEGORIES</text>
+<text x='1280' y='82' font-size='15' fill='#2c2a27' font-weight='bold' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>4</text>
+<text x='1170' y='104' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='end' letter-spacing='1.1' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>SIGNALS</text>
+<text x='1170' y='82' font-size='15' fill='#2c2a27' font-weight='bold' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>3</text>
+<line x1='40' y1='136' x2='1280' y2='136' stroke='#e8dccb' stroke-width='1'/>
+<line x1='40' y1='162' x2='436' y2='162' stroke='#e0572a' stroke-width='1'/>
+<text x='40' y='176' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>01 · EXPLOITATION</text>
+<line x1='462' y1='162' x2='858' y2='162' stroke='#e0572a' stroke-width='1'/>
+<text x='462' y='176' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>02 · EXPOSURE</text>
+<line x1='884' y1='162' x2='1280' y2='162' stroke='#e0572a' stroke-width='1'/>
+<text x='884' y='176' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>03 · SEVERITY</text>
+<rect x='40' y='198' width='396' height='240' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='58' y='228' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Exploitation</text>
+<text x='418' y='228' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>kev · epss</text>
+<rect x='58' y='254' width='34' height='34' rx='10' fill='#2c2a27' stroke='#2c2a27' stroke-width='1'/>
+<text x='75' y='271' font-size='15' fill='#fbf6ef' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>3</text>
+<text x='104' y='264' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>active</text>
+<text x='104' y='280' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>a CVE is in the KEV catalog</text>
+<rect x='58' y='296' width='34' height='34' rx='10' fill='#e0572a' stroke='#e0572a' stroke-width='1'/>
+<text x='75' y='313' font-size='15' fill='#ffffff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>2</text>
+<text x='104' y='306' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>likely · unknown</text>
+<text x='104' y='322' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>EPSS ≥ 0.10, or no CVE at all</text>
+<rect x='58' y='338' width='34' height='34' rx='10' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='75' y='355' font-size='15' fill='#6e655b' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1</text>
+<text x='104' y='348' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>none</text>
+<text x='104' y='364' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>has a CVE, no evidence either way</text>
+<rect x='462' y='198' width='396' height='240' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='480' y='228' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Exposure</text>
+<text x='840' y='228' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>host</text>
+<rect x='480' y='254' width='34' height='34' rx='10' fill='#2c2a27' stroke='#2c2a27' stroke-width='1'/>
+<text x='497' y='271' font-size='15' fill='#fbf6ef' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1</text>
+<text x='526' y='264' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>exposed</text>
+<text x='526' y='280' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>anything not provably private</text>
+<rect x='480' y='296' width='34' height='34' rx='10' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='497' y='313' font-size='15' fill='#6e655b' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>0</text>
+<text x='526' y='306' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>internal</text>
+<text x='526' y='322' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>private IP, single-label or .local name</text>
+<text x='480' y='344' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>The heuristic can only move a finding to internal, never</text>
+<text x='480' y='361' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>downgrade a public asset.</text>
+<rect x='884' y='198' width='396' height='240' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='902' y='228' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Severity</text>
+<text x='1262' y='228' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>cvss</text>
+<rect x='902' y='254' width='34' height='34' rx='10' fill='#2c2a27' stroke='#2c2a27' stroke-width='1'/>
+<text x='919' y='271' font-size='15' fill='#fbf6ef' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>2</text>
+<text x='948' y='264' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>high</text>
+<text x='948' y='280' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>CVSS ≥ 7</text>
+<rect x='902' y='296' width='34' height='34' rx='10' fill='#e0572a' stroke='#e0572a' stroke-width='1'/>
+<text x='919' y='313' font-size='15' fill='#ffffff' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1</text>
+<text x='948' y='306' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>medium</text>
+<text x='948' y='322' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>CVSS ≥ 4</text>
+<rect x='902' y='338' width='34' height='34' rx='10' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='919' y='355' font-size='15' fill='#6e655b' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>0</text>
+<text x='948' y='348' font-size='14' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>low</text>
+<text x='948' y='364' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>CVSS below 4</text>
+<text x='902' y='386' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Without a numeric CVSS the scanner label picks the band;</text>
+<text x='902' y='403' font-size='12' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>unknown labels rank low and are reported.</text>
+<text x='40' y='472' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>04 · TOTAL</text>
+<text x='286.833' y='472' font-size='18' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1</text>
+<text x='468.5' y='472' font-size='18' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>2</text>
+<text x='650.167' y='472' font-size='18' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>3</text>
+<text x='831.833' y='472' font-size='18' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>4</text>
+<text x='1013.5' y='472' font-size='18' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>5</text>
+<text x='1195.17' y='472' font-size='18' fill='#2c2a27' font-weight='bold' text-anchor='middle' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>6</text>
+<text x='40' y='523' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>signals summed</text>
+<rect x='202' y='492' width='351.333' height='62' rx='12' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='220' y='514' font-size='17' fill='#6e655b' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Track</text>
+<text x='220' y='534' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>no action for now</text>
+<rect x='565.333' y='492' width='169.667' height='62' rx='12' fill='#fffdfa' stroke='#e0572a' stroke-width='1'/>
+<text x='583.333' y='514' font-size='17' fill='#e0572a' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Track*</text>
+<text x='583.333' y='534' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>monitor, act if it worsens</text>
+<rect x='747' y='492' width='169.667' height='62' rx='12' fill='#e0572a' stroke='#e0572a' stroke-width='1'/>
+<text x='765' y='514' font-size='17' fill='#ffffff' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Attend</text>
+<text x='765' y='534' font-size='12.5' fill='#fbddce' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>supervised action soon</text>
+<rect x='928.667' y='492' width='351.333' height='62' rx='12' fill='#2c2a27' stroke='#2c2a27' stroke-width='1'/>
+<text x='946.667' y='514' font-size='17' fill='#fbf6ef' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Act</text>
+<text x='946.667' y='534' font-size='12.5' fill='#a79c8e' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>remediate now</text>
+<line x1='40' y1='580' x2='1280' y2='580' stroke='#e8dccb' stroke-width='1'/>
+<text x='40' y='601' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>EXAMPLE</text>
+<text x='140' y='601' font-size='12.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>active on an internal host, medium severity = 3 + 0 + 1 = 4, so Attend.</text>
+<text x='40' y='623' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>ORDER</text>
+<text x='140' y='623' font-size='12.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Category first, then EPSS descending, then CVSS descending. No CVE scores like likely: absence of a CVE is not evidence of safety.</text>
+</svg>

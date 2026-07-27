@@ -4,6 +4,8 @@ Ranks a run's findings into a remediation queue using three public signals.
 Deterministic and auditable: no LLM in the ranking, and every signal behind a
 decision is a column in the output, so a category can be re-derived by hand.
 
+![Prioritization scoring](imgs/prioritization.svg)
+
 | Signal | Source | Meaning |
 | --- | --- | --- |
 | KEV | [CISA Known Exploited Vulnerabilities](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) | The CVE is exploited in the wild |
@@ -81,7 +83,7 @@ Branch on exploitation, then exposure, then severity, to one of four actions.
 `unknown` (no CVE) follows the same branch as `likely`: no CVE is absence of
 evidence, not evidence of safety, so it is never discounted as safe.
 
-![SSVC decision tree](imgs/decision_tree.svg)
+![SSVC decision tree](imgs/priorization.svg)
 
 The diagram is generated from the actual decision table by
 `tools/render_decision_tree.py`, so it cannot drift from the code. Regenerate
