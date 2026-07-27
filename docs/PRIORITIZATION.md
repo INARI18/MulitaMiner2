@@ -4,7 +4,7 @@ Ranks a run's findings into a remediation queue using three public signals.
 Deterministic and auditable: no LLM in the ranking, and every signal behind a
 decision is a column in the output, so a category can be re-derived by hand.
 
-![Prioritization scoring](imgs/prioritization.svg)
+![Prioritization scoring](imgs/priorization.svg)
 
 | Signal | Source | Meaning |
 | --- | --- | --- |
@@ -84,9 +84,9 @@ Branch on exploitation, then exposure, then severity, to one of four actions.
 evidence, not evidence of safety, so it is never discounted as safe.
 
 The scoring diagram at the top of this page encodes the same table as a points
-sum. Its generator (`tools/render_priority_points.py`) asserts the equivalence
+sum. Its generator (`tools/render_decision_tree.py`) asserts the equivalence
 against the real decision table before drawing, so it cannot drift from the
-code. Regenerate with `uv run python tools/render_priority_points.py`.
+code. Regenerate with `uv run python tools/render_decision_tree.py`.
 
 ## Categories
 
