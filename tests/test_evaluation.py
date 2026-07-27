@@ -81,15 +81,14 @@ def test_scorers_kinds_split():
     assert SCORERS["set_f1_ids"].kind == "structural"
 
 
-def test_nli_joins_metrics_all_only_on_gpu(monkeypatch):
+def test_nli_joins_metrics_all_on_any_device(monkeypatch):
+    # xsmall NLI (~45 pairs/s CPU) made the old GPU-only opt-in unnecessary;
+    # see experiments/negation_model_bench.
     import mulitaminer.evaluation.runner as rn
 
     monkeypatch.setattr(rn, "gpu_available", lambda: False)
     cpu = {s.name for s in rn.resolve_metrics("all")}
-    assert "bertscore" in cpu and "nli" not in cpu  # CPU: nli stays opt-out
-
-    monkeypatch.setattr(rn, "gpu_available", lambda: True)
-    assert "nli" in {s.name for s in rn.resolve_metrics("all")}  # GPU: nli joins
+    assert "bertscore" in cpu and "nli" in cpu
 
 
 # --- fields ------------------------------------------------------------------
@@ -516,9 +515,43 @@ def test_scorers_set_f1_ids_canonicalizes_format_jitter():
     assert ids(["CVE-2022-1111"], ["CVE-2022-2222"]) == 0.0
 
 
+def test_parse_cell_salvages_malformed_list_strings():
+    # the three real failure shapes found in the GT XLSX (2026-07): bare item,
+    # Excel-doubled quotes, apostrophe inside single-quoted item
+    from mulitaminer.evaluation.runner import _parse_cell
+
+    assert _parse_cell("[Tiki Wiki is prone to: - An unspecified vulnerability']") == [
+        "Tiki Wiki is prone to: - An unspecified vulnerability"
+    ]
+    assert _parse_cell("['It was possible to login.', \"\"As the timeout is reported.\"\"]") == [
+        "It was possible to login.",
+        "As the timeout is reported.",
+    ]
+    assert _parse_cell("['the client's session token is set.']") == [
+        "the client's session token is set."
+    ]
+    # valid literals still parse exactly, no salvage involved
+    assert _parse_cell("['a', 'b']") == ["a", "b"]
+
+
+def test_nli_identical_text_short_circuits_without_model():
+    # whitespace-identical pairs never touch the model: identical text cannot
+    # contradict itself (the model misfires on verbatim telegraphic sentences)
+    from mulitaminer.evaluation.scorers import _nli_batch
+
+    assert _nli_batch([(["Same  text.", "wrapped line"], "Same text.\nwrapped line")]) == [1.0]
+
+
+def test_nli_sentence_split_spares_abbreviations_and_hard_wrap():
+    from mulitaminer.evaluation.scorers import _SENT_SPLIT_RE
+
+    s = "Probing the host (e.g. SNMP). It consolidates\nthe list."
+    parts = [p.strip() for p in _SENT_SPLIT_RE.split(s) if p and p.strip()]
+    assert parts == ["Probing the host (e.g. SNMP).", "It consolidates\nthe list."]
+
+
 def test_scorers_nli_unavailable_is_safe():
     nli = SCORERS["nli"]
-    assert nli.in_all is False  # never runs implicitly via --metrics all
     if nli.available:
         pytest.skip("transformers installed in this environment")
     with pytest.raises(RuntimeError, match="eval"):

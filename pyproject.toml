@@ -33,7 +33,7 @@ dev = [
 # Heavy optional metrics (torch + transformers): uv sync --group eval
 eval = [
     "bert-score>=0.3.13",
-    # DeBERTa-v3 NLI tokenizer requirements (nli scorer)
+    # DeBERTa-v3 tokenizer requirements (nli scorer: cross-encoder/nli-deberta-v3-xsmall)
     "sentencepiece>=0.2",
     "protobuf>=4",
 ]

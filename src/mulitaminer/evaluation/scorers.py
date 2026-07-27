@@ -188,11 +188,19 @@ def _bertscore_missing(a: Any, b: Any) -> float:
     raise RuntimeError(f"bertscore is unavailable — {BERTSCORE_HINT}")
 
 
-# NLI: sentence-level contradiction check. Chosen model is trained on
-# MNLI+FEVER+ANLI — ANLI stresses exactly the one-word negation flips that
-# lexical metrics and BERTScore barely penalize ("no auth" vs "auth").
-NLI_MODEL = "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"
-_SENT_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|\n+")
+# NLI: sentence-level contradiction check, catching the one-word negation flips
+# that lexical metrics and BERTScore barely penalize ("no auth" vs "auth").
+# Model picked by experiments/negation_model_bench (2026-07-27): AUC 0.986 on
+# synthetic flips of real scanner sentences, ~45 pairs/s on CPU, 3-class labels.
+NLI_MODEL = "cross-encoder/nli-deberta-v3-xsmall"
+# Split on sentence enders and blank lines only. Single \n is scanner hard-wrap
+# (~70 cols), not a boundary: splitting there yields mid-sentence fragments like
+# "...is self-signed and was not", which NLI reads as contradictions. The
+# lookbehinds keep common abbreviations ("e.g. SNMP") from splitting the same way.
+_SENT_SPLIT_RE = re.compile(
+    r"(?<=[.!?])(?<!\be\.g\.)(?<!\bi\.e\.)(?<!\betc\.)(?<!\bvs\.)\s+|\n{2,}"
+)
+_WS_RE = re.compile(r"\s+")
 
 _nli_pipeline = None  # loaded once per process
 
@@ -205,29 +213,43 @@ def _nli_batch(pairs: list[tuple[Any, Any]]) -> list[float]:
     baseline side keeps hypotheses inside the model's 512-token window and
     localizes which sentence flipped. All pairs' sentence-hypotheses are flattened
     into one call, then reduced back per pair.
+
+    Whitespace-identical pairs short-circuit to 1.0 without touching the model:
+    identical text cannot contradict itself, and the model occasionally misreads
+    verbatim telegraphic sentences ("The X setting is enumerated.") as
+    contradictions. This also skips the model for the common copied-text case.
     """
     global _nli_pipeline
     if not pairs:
         return []
-    if _nli_pipeline is None:
-        from transformers import pipeline
-
-        _nli_pipeline = pipeline("text-classification", model=NLI_MODEL, top_k=None)
     inputs: list[dict] = []
     spans: list[tuple[int, int]] = []  # each pair's [start, end) slice of inputs
+    IDENTICAL = (-1, -1)  # sentinel span: pair short-circuits to 1.0
     for a, b in pairs:
         premise = render_text(a)
-        sentences = [s.strip() for s in _SENT_SPLIT_RE.split(render_text(b)) if s.strip()]
+        base_text = render_text(b)
+        if premise and base_text and (
+            _WS_RE.sub(" ", premise).strip() == _WS_RE.sub(" ", base_text).strip()
+        ):
+            spans.append(IDENTICAL)
+            continue
+        sentences = [s.strip() for s in _SENT_SPLIT_RE.split(base_text) if s.strip()]
         start = len(inputs)
         if premise and sentences:
             inputs.extend({"text": premise, "text_pair": s} for s in sentences)
         spans.append((start, len(inputs)))
-    results = (
-        _nli_pipeline(inputs, truncation=True, max_length=512, batch_size=32)
-        if inputs else []
-    )
+    results = []
+    if inputs:
+        if _nli_pipeline is None:
+            from transformers import pipeline
+
+            _nli_pipeline = pipeline("text-classification", model=NLI_MODEL, top_k=None)
+        results = _nli_pipeline(inputs, truncation=True, max_length=512, batch_size=32)
     out: list[float] = []
     for start, end in spans:
+        if (start, end) == IDENTICAL:
+            out.append(1.0)
+            continue
         if end <= start:
             out.append(0.0)
             continue
@@ -254,8 +276,8 @@ class Scorer:
     fn: Callable[[Any, Any], float] = field(repr=False)
     available: bool = True
     hint: str = ""
-    # Whether --metrics all includes this scorer. nli opts out on CPU (~seconds
-    # per pair) but opts back in when a GPU makes the batched pass cheap.
+    # Whether --metrics all includes this scorer. All current scorers opt in;
+    # in_all_gpu lets a future heavy scorer join only when CUDA is present.
     in_all: bool = True
     in_all_gpu: bool = False  # join --metrics all only when a CUDA device is present
     # Model-backed scorers set this to score a whole batch of (ext, base) pairs
@@ -289,8 +311,6 @@ SCORERS: dict[str, Scorer] = {
         _nli if _NLI_AVAILABLE else _nli_missing,
         available=_NLI_AVAILABLE,
         hint="" if _NLI_AVAILABLE else EVAL_GROUP_HINT,
-        in_all=False,
-        in_all_gpu=True,
         batch_fn=_nli_batch if _NLI_AVAILABLE else None,
     ),
 }

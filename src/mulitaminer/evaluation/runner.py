@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import statistics
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -53,6 +54,19 @@ class EvalResult:
 # --- loaders -----------------------------------------------------------------
 
 
+# Item boundary inside a malformed list string: quote(s), comma, quote(s).
+_ITEM_BOUNDARY_RE = re.compile(r"['\"]+\s*,\s*['\"]+")
+
+
+def _salvage_list_string(s: str) -> list[str]:
+    """Text recovery for GT cells that look like a list but are not a valid
+    Python literal (hand-built quoting, Excel-doubled quotes, bare items).
+    Metrics only need the text, so strip the bracket/quote shell and split on
+    item boundaries instead of failing back to the raw bracketed string."""
+    items = _ITEM_BOUNDARY_RE.split(s[1:-1].strip())
+    return [t for t in (i.strip().strip("'\"").strip() for i in items) if t]
+
+
 def _parse_cell(value: Any) -> Any:
     """XLSX cell -> Python value; the GT serializes lists/dicts as repr strings."""
     if value is None or (isinstance(value, float) and value != value):
@@ -63,6 +77,8 @@ def _parse_cell(value: Any) -> Any:
             try:
                 return ast.literal_eval(s)
             except (ValueError, SyntaxError):
+                if s.startswith("[") and s.endswith("]"):
+                    return _salvage_list_string(s)
                 return value
     return value
 
