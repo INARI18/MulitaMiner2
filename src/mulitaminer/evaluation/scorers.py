@@ -261,6 +261,13 @@ def _nli_batch(pairs: list[tuple[Any, Any]]) -> list[float]:
     return out
 
 
+def nli_scores(pairs: list[tuple[Any, Any]]) -> list[float]:
+    """Public batched nli scoring, 1 - max P(contradiction) per (text,
+    reference) pair. The supported entry point for callers outside the
+    evaluator (the extraction-side negation gate)."""
+    return _nli_batch(pairs)
+
+
 def _nli(a: Any, b: Any) -> float:
     return _nli_batch([(a, b)])[0]
 

@@ -128,7 +128,8 @@ def extract_blocks(
             f"block {block.id} yielded no record after "
             f"{settings.RETRY_ROUNDS + 1} attempts; dropped"
         )
-    negation_flags = gate_records(records, by_id)
+    negation_flags = gate_records(records, by_id,
+                                  dict(profile.field_metric_overrides))
     if negation_flags:
         warnings.append(
             f"negation gate: {len(negation_flags)} flip candidate(s) flagged; "

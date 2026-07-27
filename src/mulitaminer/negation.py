@@ -2,10 +2,13 @@
 source block (flip candidates). Flag-only: nothing is modified or retried."""
 from __future__ import annotations
 
+import logging
 import re
 from typing import Any
 
 from mulitaminer.models import Block, VulnRecord
+
+log = logging.getLogger(__name__)
 
 # Cue lexicon: function-word negations plus the lexical forms scanners use.
 # Multi-word cues ("fails to") are matched by the regex; their words are also
@@ -28,12 +31,18 @@ _SENT_RE = re.compile(
 )
 _WORD_RE = re.compile(r"[a-z0-9']+")
 
-# Record fields that never hold prose worth gating.
-_SKIP_FIELDS = {"host", "port", "protocol", "source", "references"}
-
 # Aligned-sentence content overlap (Jaccard) required before claiming the pair
 # describes the same statement.
 _MIN_OVERLAP = 0.5
+
+
+def _text_fields(record_type: type[VulnRecord], overrides: dict[str, str]) -> set[str]:
+    """Fields worth gating: the same type + field_metrics classification the
+    evaluator uses, so prose fields are gated and exact/set fields are not.
+    Lazy import keeps the extraction path free of evaluation imports."""
+    from mulitaminer.evaluation.fields import field_plans
+
+    return {p.name for p in field_plans(record_type, overrides) if p.metric == "text"}
 
 
 def _render(value: Any) -> str:
@@ -85,12 +94,19 @@ def _flag_field(field: str, extracted: str, source_sents: list[tuple[str, frozen
 def gate_records(
     records: dict[int, VulnRecord],
     blocks_by_id: dict[int, Block],
+    field_overrides: dict[str, str] | None = None,
     confirm: bool = True,
 ) -> list[dict]:
     """Lexical cue-asymmetry check of each record's prose against its source
-    block; sentences are aligned by content-word overlap. With confirm=True,
-    flagged pairs are scored by the nli scorer when its deps are installed
-    (nli_score close to 0 = contradiction confirmed; None = not scored)."""
+    block; sentences are aligned by content-word overlap. Which fields count as
+    prose comes from the evaluator's field classification (type inference plus
+    the scanner's field_metrics overrides). With confirm=True, flagged pairs are
+    scored by the nli scorer when its deps are installed (nli_score close to 0 =
+    contradiction confirmed; None = not scored)."""
+    if not records:
+        return []
+    record_type = type(next(iter(records.values())))
+    gated = _text_fields(record_type, field_overrides or {})
     flags: list[dict] = []
     for bid, record in records.items():
         block = blocks_by_id.get(bid)
@@ -102,7 +118,7 @@ def gate_records(
             for s in _sentences(source_text)
         ]
         for field, value in record.model_dump().items():
-            if field in _SKIP_FIELDS:
+            if field not in gated:
                 continue
             text = _render(value)
             # cheap pre-check: no cue on either side of this field = no flip
@@ -118,14 +134,21 @@ def gate_records(
 
 
 def _confirm(flags: list[dict]) -> None:
-    """Attach nli scores in place; silently skipped when eval deps are absent."""
+    """Attach nli scores in place. The gate is optional by design: missing eval
+    deps skip silently, and any model failure (download on an offline box, load
+    error) logs a warning instead of killing an extraction that already paid
+    for its LLM calls."""
     try:
-        from mulitaminer.evaluation.scorers import _nli_batch
+        from mulitaminer.evaluation.scorers import nli_scores
 
-        scores = _nli_batch(
+        scores = nli_scores(
             [(f["extracted_sentence"], f["source_sentence"]) for f in flags]
         )
     except ImportError:
+        return
+    except Exception as exc:  # noqa: BLE001 - degrade to unscored flags
+        log.warning("negation gate: nli confirm unavailable (%s); "
+                    "flags left unscored", exc)
         return
     for f, s in zip(flags, scores):
         f["nli_score"] = round(float(s), 4)
