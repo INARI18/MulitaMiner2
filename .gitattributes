@@ -1,0 +1,3 @@
+# Scanner reports and ground-truth baselines are data, not project code;
+# keep them out of GitHub's language statistics.
+resources/** linguist-vendored

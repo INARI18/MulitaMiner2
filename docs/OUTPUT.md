@@ -86,6 +86,7 @@ Run metadata, one per run.
 | `warnings` | Human-readable strings for every drop, truncation, and validation miss. |
 | `drops` | block_id reconciliation drops by category (see below). Absent/empty on a clean run. |
 | `merge_log` | What consolidation merged, one line per merge. |
+| `negation_flags` | Flip candidates from the negation gate: extracted sentences whose negation cues disagree with the source block. Each flag has `block_id`, `field`, `kind` (`dropped`/`invented`), the two sentences, `overlap`, and `nli_score` (close to 0 = contradiction confirmed by the NLI model; `null` when the eval deps are not installed). Flag-only: the record itself is not changed. |
 | `pdf` | `{pages, backend}` of the PDF read. |
 
 ### drops

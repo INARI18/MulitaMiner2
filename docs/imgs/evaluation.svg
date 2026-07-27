@@ -1,0 +1,79 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1320' height='537' viewBox='0 0 1320 537'><rect width='1320' height='537' fill='#fbf6ef'/>
+<text x='40' y='60' font-size='26' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='5' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>EVALUATION</text>
+<text x='1280' y='80' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='end' letter-spacing='1.1' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>MATCH CUTOFF</text>
+<text x='1280' y='58' font-size='15' fill='#2c2a27' font-weight='bold' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>0.70</text>
+<text x='1154.8' y='80' font-size='11.5' fill='#9b8e7d' font-weight='normal' text-anchor='end' letter-spacing='1.1' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>PAIRING</text>
+<text x='1154.8' y='58' font-size='15' fill='#2c2a27' font-weight='bold' text-anchor='end' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>1:1</text>
+<line x1='40' y1='92' x2='1280' y2='92' stroke='#e8dccb' stroke-width='1'/>
+<line x1='40' y1='118' x2='320' y2='118' stroke='#dccdb7' stroke-width='1'/>
+<text x='40' y='132' font-size='10.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>01 · INPUT</text>
+<line x1='346' y1='118' x2='626' y2='118' stroke='#e0572a' stroke-width='1'/>
+<text x='346' y='132' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>02 · ALIGN</text>
+<line x1='652' y1='118' x2='932' y2='118' stroke='#dccdb7' stroke-width='1'/>
+<text x='652' y='132' font-size='10.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>03 · OUTCOME</text>
+<line x1='958' y1='118' x2='1280' y2='118' stroke='#dccdb7' stroke-width='1'/>
+<text x='958' y='132' font-size='10.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>04 · SCORE</text>
+<rect x='40' y='154' width='280' height='101' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='56' y='182' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Extraction</text>
+<g transform='translate(280,170) scale(1)' stroke='#e0572a' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M9 4c-3 0-1 7-4 8 3 1 1 8 4 8'/><path d='M15 4c3 0 1 7 4 8-3 1-1 8-4 8'/><circle  cx='12' cy='12' r='1.3' fill='#e0572a'/></g>
+<text x='56' y='208' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>results.json</text>
+<text x='56' y='230' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>One record per finding block.</text>
+<rect x='40' y='269' width='280' height='101' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='56' y='297' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Baseline</text>
+<g transform='translate(280,285) scale(1)' stroke='#e0572a' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><rect  x='3' y='4' width='18' height='16' rx='2'/><path d='M3 9h18M9 9v11'/></g>
+<text x='56' y='323' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>baseline.xlsx</text>
+<text x='56' y='345' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Gold standard, one row per finding.</text>
+<path d='M 329 257.5 L 335.5 262 L 329 266.5' fill='none' stroke='#e0572a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+<rect x='346' y='154' width='280' height='212' rx='14' fill='#fffdfa' stroke='#e0572a' stroke-width='1'/>
+<text x='362' y='182' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Alignment</text>
+<g transform='translate(586,170) scale(1)' stroke='#e0572a' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M3 6h3c5 0 5 6 10 6'/><path d='M3 18h3c5 0 5-6 10-6'/><path d='M17 9l3 3-3 3'/></g>
+<text x='362' y='213' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>composite key + fuzzy name</text>
+<text x='362' y='240' font-size='12.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Hungarian 1-to-1 assignment over the</text>
+<text x='362' y='257' font-size='12.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>score matrix.</text>
+<text x='362' y='282' font-size='12.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Pairs below 0.70 are cut.</text>
+<text x='362' y='307' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Conflicting keys penalize the name</text>
+<text x='362' y='324' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>score, so two findings on different</text>
+<text x='362' y='341' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>ports do not pair by accident.</text>
+<path d='M 635 255.5 L 641.5 260 L 635 264.5' fill='none' stroke='#e0572a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+<rect x='652' y='154' width='280' height='72' rx='14' fill='#2c2a27' stroke='#2c2a27' stroke-width='1'/>
+<text x='666' y='180' font-size='16.5' fill='#fbf6ef' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Matched pairs</text>
+<g transform='translate(894,168) scale(1)' stroke='#f19267' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M4 7h6M4 17h6'/><path d='M14 7h6M14 17h6'/><path d='M10 7c2 0 2 10 4 10'/><path d='M10 17c2 0 2-10 4-10'/></g>
+<text x='666' y='205' font-size='11' fill='#f19267' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>scored per field</text>
+<rect x='652' y='238' width='280' height='95' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='666' y='264' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>False positives</text>
+<g transform='translate(894,252) scale(1)' stroke='#e0572a' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><rect  x='3' y='4' width='12' height='14' rx='2'/><path d='M17 9h4v11H9'/><path d='M6 9l6 6M12 9l-6 6'/></g>
+<text x='666' y='289' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>invention · duplicate</text>
+<text x='666' y='310' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Closest baseline row kept for context.</text>
+<rect x='652' y='345' width='280' height='95' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='666' y='371' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>False negatives</text>
+<g transform='translate(894,359) scale(1)' stroke='#e0572a' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><rect  x='3' y='4' width='18' height='16' rx='2'/><path d='M3 9h18'/><path d='M8 14h8'/></g>
+<text x='666' y='396' font-size='11' fill='#e0572a' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>unrecovered</text>
+<text x='666' y='417' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Baseline rows with no extracted match.</text>
+<path d='M 941 185.5 L 947.5 190 L 941 194.5' fill='none' stroke='#e0572a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+<rect x='958' y='154' width='322' height='218' rx='14' fill='#fffdfa' stroke='#e8dccb' stroke-width='1'/>
+<text x='974' y='182' font-size='16.5' fill='#2c2a27' font-weight='bold' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Per-field metrics</text>
+<g transform='translate(1240,170) scale(1)' stroke='#e0572a' stroke-width='1.7' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M4 20V10M10 20V4M16 20v-7M22 20H2'/></g>
+<text x='974' y='214' font-size='10' fill='#a2937f' font-weight='normal' text-anchor='start' letter-spacing='1.6' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>STRUCTURAL</text>
+<rect x='974' y='229' width='49.5' height='22' rx='6' fill='#f4e9db'/>
+<text x='982' y='240' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>exact</text>
+<rect x='1029.5' y='229' width='56.2' height='22' rx='6' fill='#f4e9db'/>
+<text x='1037.5' y='240' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>set_f1</text>
+<rect x='1091.7' y='229' width='83' height='22' rx='6' fill='#f4e9db'/>
+<text x='1099.7' y='240' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>set_f1_ids</text>
+<rect x='1180.7' y='229' width='83' height='22' rx='6' fill='#f4e9db'/>
+<text x='1188.7' y='240' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>structural</text>
+<text x='974' y='271' font-size='10' fill='#a2937f' font-weight='normal' text-anchor='start' letter-spacing='1.6' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>TEXT</text>
+<rect x='974' y='286' width='69.6' height='22' rx='6' fill='#fbebe1'/>
+<text x='982' y='297' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>token_f1</text>
+<rect x='1049.6' y='286' width='62.9' height='22' rx='6' fill='#fbebe1'/>
+<text x='1057.6' y='297' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>rouge_l</text>
+<rect x='1118.5' y='286' width='76.3' height='22' rx='6' fill='#fbebe1'/>
+<text x='1126.5' y='297' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>bertscore</text>
+<rect x='1200.8' y='286' width='36.1' height='22' rx='6' fill='#fbebe1'/>
+<text x='1208.8' y='297' font-size='11' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>nli</text>
+<text x='974' y='330' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>Only matched pairs are scored. Metric follows</text>
+<text x='974' y='347' font-size='12.5' fill='#9b8e7d' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>the field type.</text>
+<line x1='40' y1='466' x2='1280' y2='466' stroke='#e8dccb' stroke-width='1'/>
+<text x='40' y='487' font-size='10.5' fill='#e0572a' font-weight='bold' text-anchor='start' letter-spacing='1.7' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' dominant-baseline='middle'>COVERAGE</text>
+<text x='132' y='487' font-size='12.5' fill='#6e655b' font-weight='normal' text-anchor='start' font-family='Helvetica,ui-sans-serif,-apple-system,Segoe UI,Arial,sans-serif' dominant-baseline='middle'>recall = matched / baseline rows · precision = matched / extracted records. Alignment fidelity, not invention: the finding count is fixed before any LLM call.</text>
+</svg>

@@ -3,6 +3,8 @@
 How `evaluate` and `experiment` score an extraction against a baseline, what the
 numbers mean, and what the HTML report shows.
 
+![Evaluation flow](imgs/evaluation.svg)
+
 ## What gets produced
 
 - `evaluate` writes `evaluation.json` (machine) and `evaluation.md` (human) into
@@ -97,7 +99,15 @@ Prose fields are judged from several angles because each metric has a blind spot
 - **`nli`**: a contradiction check. It is the safety net for `bertscore`'s blind
   spot: an extraction that negates the baseline ("does not use a weak
   algorithm") shares almost every token, so `bertscore` scores it very high, yet
-  the meaning is the opposite. `nli` flags it. Optional and heavy.
+  the meaning is the opposite. `nli` flags it. The model is
+  `cross-encoder/nli-deberta-v3-xsmall`, picked over lighter and heavier
+  candidates by benchmarking on synthetic negation flips of real scanner
+  sentences (AUC 0.986, ~45 pairs/s on CPU). The score is
+  `1 - max P(contradiction)` over the baseline's sentences; whitespace-identical
+  pairs short-circuit to 1.0 without the model, and it also catches non-negation
+  factual flips (a swapped version number or CVE id) that every other text
+  metric misses. Optional (`uv sync --group eval`), but light enough to run on
+  CPU.
 
 So `bertscore` measures fidelity of wording; `nli` guards against a fluent,
 similar-looking record that flipped the meaning. They are complementary, not
