@@ -83,11 +83,10 @@ Branch on exploitation, then exposure, then severity, to one of four actions.
 `unknown` (no CVE) follows the same branch as `likely`: no CVE is absence of
 evidence, not evidence of safety, so it is never discounted as safe.
 
-![SSVC decision tree](imgs/priorization.svg)
-
-The diagram is generated from the actual decision table by
-`tools/render_decision_tree.py`, so it cannot drift from the code. Regenerate
-with `uv run python tools/render_decision_tree.py`.
+The scoring diagram at the top of this page encodes the same table as a points
+sum. Its generator (`tools/render_priority_points.py`) asserts the equivalence
+against the real decision table before drawing, so it cannot drift from the
+code. Regenerate with `uv run python tools/render_priority_points.py`.
 
 ## Categories
 
