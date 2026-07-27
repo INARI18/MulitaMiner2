@@ -11,11 +11,12 @@ touched only for final run artifacts and optional `--debug` dumps.
 
 | Module | Responsibility |
 | --- | --- |
-| `pdf_reader.py` | PDF text extraction (pypdfium2 default, pdfplumber fallback) + cleanup |
+| `pdf_reader.py` | PDF text extraction (pypdfium2) + cleanup |
 | `scanner_engine.py` | Builds a ScannerProfile (segmenter + consolidator) from a JSON config |
 | `chunking.py` | Packs whole blocks into token-budgeted chunks; blocks are never split |
 | `llm.py` | One OpenAI-compatible client; structured output; usage accounting |
 | `extraction.py` | Block-anchored loop: block_id reconciliation, shrinking retries, truncation |
+| `negation.py` | Flag-only negation gate: cue asymmetry between record prose and its source block, NLI-confirmed when the eval deps are installed; flags land in run.json |
 | `consolidate.py` | Pairing, severity normalization, merge of fully identical records |
 | `models.py` | VulnRecord and subclasses; the LLM contract is derived from them |
 | `writers.py` / `exporters/` | results.json plus the `--export` formats |

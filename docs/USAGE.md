@@ -28,10 +28,9 @@ uv run mulitaminer extract report.pdf --scanner openvas --model deepseek
 | --- | --- |
 | `-s, --scanner` | Scanner profile (`mulitaminer scanners`); omit on a directory or single file to auto-detect |
 | `-m, --model` | Model profile (`mulitaminer models`), default `deepseek` |
-| `--model-name` | Provider model id override, for `ollama`/`lmstudio` |
+| `--model-name` | Provider model id override for local/OpenAI-compatible profiles |
 | `-e, --export` | Extra output format, repeatable (`mulitaminer formats`) |
 | `--xlsx` / `--csv` | Shorthands for `-e xlsx` / `-e csv` |
-| `--pdf-backend` | `pypdfium2` (default) or `pdfplumber` |
 | `--output-dir` | Run artifacts root, default `outputs/runs/` |
 | `--debug` | Also dump layout, blocks and raw LLM traffic |
 
@@ -46,8 +45,10 @@ PDF, or `--baseline`) and writes `evaluation.json` + `evaluation.md` into the
 run directory: coverage (recall/precision, false negatives/false positives) and
 per-field scores. Metrics are derived from the record schema: exact match for
 numeric/categorical fields, set F1 for reference lists, token F1 and ROUGE-L for
-text. Select with `--metrics`, list them with `--list-metrics`. BERTScore and an
-NLI contradiction check are optional and heavy: `uv sync --group eval`.
+text. Select with `--metrics`, list them with `--list-metrics`. BERTScore and
+the NLI contradiction check need the optional eval deps (`uv sync --group
+eval`); BERTScore is the heavy one, the NLI model is light enough for CPU.
+Both join `--metrics all` once installed.
 
 See [EVALUATION.md](EVALUATION.md) for what the numbers mean, the false-positive
 taxonomy (invention vs duplicate), and the HTML report.
@@ -55,7 +56,7 @@ taxonomy (invention vs duplicate), and the HTML report.
 ## experiment
 
 ```bash
-uv run mulitaminer experiment <dir> --models deepseek,ollama --runs 5
+uv run mulitaminer experiment <dir> --models deepseek,qwen2.5-1.5b --runs 5
 ```
 
 Runs X extractions per (model, report) over a directory of PDFs (scanner
@@ -74,7 +75,7 @@ Each run creates `outputs/runs/<timestamp>_<input>_<model>/`:
 | File | Content |
 | --- | --- |
 | `results.json` | Extracted records (primary artifact). Every field explained in [OUTPUT.md](OUTPUT.md) |
-| `run.json` | Config snapshot, tokens, cost, duration, warnings, block_id drops, merge log |
+| `run.json` | Config snapshot, tokens, cost, duration, warnings, block_id drops, merge log, negation flags |
 | `results.raw.json` | Pre-consolidation records, only when merges happened |
 | `results.<format>.*` | One file per `--export` |
 | `run.log` | The per-run detailed log (always written; `debug.log` at DEBUG with `--debug`) |
@@ -84,7 +85,7 @@ Each run creates `outputs/runs/<timestamp>_<input>_<model>/`:
 
 ```bash
 # Local model via Ollama, no API key
-uv run mulitaminer extract report.pdf -s tenable -m ollama --model-name qwen3
+uv run mulitaminer extract report.pdf -s tenable -m qwen2.5-1.5b
 
 # Multiple exports at extraction time
 uv run mulitaminer extract report.pdf -s openvas -m deepseek -e sarif -e generic
@@ -100,5 +101,5 @@ uv run mulitaminer evaluate outputs/runs/<run_dir> --metrics token_f1,rouge_l
 uv run mulitaminer evaluate --list-metrics
 
 # Batch experiment: 5 runs each of two models over a folder, in parallel
-uv run mulitaminer experiment resources --models deepseek,ollama --runs 5
+uv run mulitaminer experiment resources --models deepseek,qwen2.5-1.5b --runs 5
 ```

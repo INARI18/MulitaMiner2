@@ -40,22 +40,19 @@ built-in `haiku.json` (`base_url` `https://api.anthropic.com/v1/`, key in
 ## Local model
 
 Ollama and LM Studio expose an OpenAI-compatible server on localhost and need
-no key: their configs simply **have no `api_key_env` field**. The two
-built-in profiles (`ollama`, `lmstudio`) are generic: pick the actual model at
-runtime with `--model-name`.
+no key: local configs simply **have no `api_key_env` field**. The built-in
+local profiles (`qwen2.5-*`, `nuextract*`) are per-model JSONs pointing at the
+Ollama endpoint; `--model-name` overrides the provider model id at runtime
+when the server hosts something else.
 
 ```bash
-# Ollama, any pulled model
-uv run mulitaminer extract report.pdf -s openvas -m ollama --model-name qwen3
-
-# LM Studio, whatever is loaded
-uv run mulitaminer extract report.pdf -s openvas -m lmstudio --model-name my-model
+# Local model via Ollama, no API key
+uv run mulitaminer extract report.pdf -s openvas -m qwen2.5-1.5b
 ```
 
-**The generic profiles are for quick experiments.** They carry one-size
-metadata (32k context, 8k output), and `max_output_tokens` drives chunk
-sizing, so for serious use of a specific local model, give it its own
-profile with that model's honest numbers. `qwen3.json`:
+**One profile per model is the pattern**: `max_output_tokens` drives chunk
+sizing, so each local model should carry its own honest numbers rather than
+one-size metadata. `qwen3.json`:
 
 ```json
 {
@@ -68,9 +65,8 @@ profile with that model's honest numbers. `qwen3.json`:
 }
 ```
 
-The registry is per-model by design: `ollama`/`lmstudio` are deliberate
-catch-alls, not the pattern to follow. Any other OpenAI-compatible server
-works by setting `base_url` to its address.
+Any other OpenAI-compatible server (vLLM, llama.cpp, TGI, LM Studio) works by
+setting `base_url` to its address.
 
 ## Structured output: the one field that matters
 

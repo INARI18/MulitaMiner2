@@ -10,12 +10,14 @@ profile reads one env var; local profiles need none.
 | `DEEPSEEK_API_KEY` | `deepseek` |
 | `OPENAI_API_KEY` | `gpt-4o`, `gpt-4o-mini` |
 | `GROQ_API_KEY` | `llama-3.3-70b` |
+| `CLAUDE_API_KEY` | `haiku` |
 
 ## Model profiles
 
-Profiles are declared in `src/mulitaminer/llm.py` (`MODELS`). Adding a model,
-cloud or local, is one entry. Full guide with examples and the structured
-output tradeoff: [ADDING_A_MODEL.md](ADDING_A_MODEL.md).
+Profiles are JSON files in `src/mulitaminer/configs/llms/`; plug your own with
+the `MULITAMINER2_LLMS_DIR` env var. Adding a model, cloud or local, is one
+JSON file, no Python. Full guide with examples and the structured output
+tradeoff: [ADDING_A_MODEL.md](ADDING_A_MODEL.md).
 
 ## Scanners
 
