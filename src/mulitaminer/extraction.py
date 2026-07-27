@@ -14,6 +14,7 @@ from mulitaminer import settings
 from mulitaminer.chunking import pack
 from mulitaminer.llm import LLMClient
 from mulitaminer.models import Block, Chunk, TokenUsage, VulnRecord, extraction_model_for
+from mulitaminer.negation import gate_records
 from mulitaminer.scanner_engine import ScannerProfile
 from mulitaminer.ui import NULL_PROGRESS, Progress
 
@@ -70,12 +71,14 @@ def extract_blocks(
     progress: Progress | None = None,
     drops: Counter | None = None,
     retries: Counter | None = None,
-) -> tuple[list[VulnRecord], list[str]]:
-    """Extract every block; returns (records ordered by block id, warnings).
+) -> tuple[list[VulnRecord], list[str], list[dict]]:
+    """Extract every block; returns (records ordered by block id, warnings,
+    negation flags).
 
     drops, if given, is tallied by category (unknown_id, duplicate_id,
     validation_error, unrecovered); retries is tallied by chunk-failure reason
-    (bad_json, bad_shape). Both feed the run summary."""
+    (bad_json, bad_shape). Both feed the run summary. Negation flags come from
+    the flag-only gate in mulitaminer.negation, run against the source blocks."""
     progress = progress or NULL_PROGRESS
     if drops is None:
         drops = Counter()
@@ -125,8 +128,14 @@ def extract_blocks(
             f"block {block.id} yielded no record after "
             f"{settings.RETRY_ROUNDS + 1} attempts; dropped"
         )
+    negation_flags = gate_records(records, by_id)
+    if negation_flags:
+        warnings.append(
+            f"negation gate: {len(negation_flags)} flip candidate(s) flagged; "
+            "see negation_flags in run.json"
+        )
     ordered = [records[i] for i in sorted(records)]
-    return ordered, warnings
+    return ordered, warnings, negation_flags
 
 
 def _truncate_oversized(chunk: Chunk, client: LLMClient, warnings: list[str]) -> list[Block]:

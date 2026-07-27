@@ -164,8 +164,9 @@ def run(config: RunConfig, client: LLMClient | None = None,
         debug_sink: list | None = [] if config.debug else None
         drops: Counter = Counter()
         retries: Counter = Counter()
-        records, warnings = extract_blocks(blocks, profile, client, usage, debug_sink,
-                                           progress=progress, drops=drops, retries=retries)
+        records, warnings, negation_flags = extract_blocks(
+            blocks, profile, client, usage, debug_sink,
+            progress=progress, drops=drops, retries=retries)
         raw_count = len(records)
         raw_records = list(records)
         records, merge_log = profile.consolidate(records)
@@ -207,6 +208,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
                     "drops": full_drops(drops),
                     "retries": full_retries(retries),
                     "merge_log": merge_log,
+                    "negation_flags": negation_flags,
                     "pdf": {"pages": doc.page_count, "backend": doc.backend},
                 },
                 ensure_ascii=False,
