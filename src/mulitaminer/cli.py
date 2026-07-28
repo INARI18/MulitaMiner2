@@ -270,9 +270,9 @@ def evaluate(
 
         ev = evaluate_experiment(Path(target), metrics=metrics, force=True,
                                  threshold=threshold)
-        ui.echo(f"\nRe-evaluated {ev['evaluated']} run(s) across {ev['runs']} total"
-                f"{f', {ev['failed']} skipped (no baseline)' if ev['failed'] else ''}.",
-                style="bold")
+        skipped = f", {ev['failed']} skipped (no baseline)" if ev["failed"] else ""
+        ui.echo(f"\nRe-evaluated {ev['evaluated']} run(s) across {ev['runs']} "
+                f"total{skipped}.", style="bold")
         if ev.get("report"):
             ui.echo(f"report: {ev['report']}")
         return
