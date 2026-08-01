@@ -1,9 +1,9 @@
 <div align="center">
 
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="imgs/MulitaMiner_logo_light.png">
-    <source media="(prefers-color-scheme: light)" srcset="imgs/MulitaMiner_logo_dark.png">
-    <img src="imgs/MulitaMiner_logo_light.png" width="500" alt="MulitaMiner logo">
+    <source media="(prefers-color-scheme: dark)" srcset="imgs/MulitaMiner_logo_light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="imgs/MulitaMiner_logo_dark.svg">
+    <img src="imgs/MulitaMiner_logo_light.png" width="150" alt="MulitaMiner logo" style="margin-bottom: 1.5rem;">
   </picture>
 
 **Vulnerability Extraction from Security Reports using LLMs**
