@@ -1,0 +1,8 @@
+{
+  "key": "llama3.2-1b",
+  "model": "llama3.2:1b",
+  "base_url": "http://localhost:11434/v1",
+  "context_window": 16000,
+  "max_output_tokens": 8000,
+  "supports_json_schema": true
+}
