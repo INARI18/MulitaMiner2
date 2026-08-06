@@ -41,6 +41,10 @@ class ModelProfile:
     price_in: float = 0.0         # USD per 1M input tokens (0 for local)
     price_out: float = 0.0
     reasoning_tags: bool = False  # strip <think>…</think> from responses
+    # Hybrid-reasoning models (Qwen3) think by default; appends the model's
+    # /no_think soft switch to the system prompt so it answers directly. This is
+    # inference-time, independent of fine-tuning.
+    disable_thinking: bool = False
     temperature: float = 0.0      # deterministic extraction
     encoding: str = "cl100k_base"
 
@@ -153,6 +157,11 @@ class LLMClient:
             # json_object mode: providers require the word "JSON" in the
             # conversation; both prompt templates mention it.
             response_format = {"type": "json_object"}
+
+        if self.profile.disable_thinking:
+            # Qwen3's soft switch: honored by the model regardless of the serving
+            # layer, so it works through the OpenAI-compatible endpoint.
+            system_prompt = f"{system_prompt}\n/no_think"
 
         try:
             response = self._client.chat.completions.create(
