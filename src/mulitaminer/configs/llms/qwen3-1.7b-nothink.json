@@ -6,5 +6,5 @@
   "max_output_tokens": 8000,
   "supports_json_schema": true,
   "reasoning_tags": true,
-  "disable_thinking": true
+  "reasoning_effort": "none"
 }

@@ -41,10 +41,8 @@ class ModelProfile:
     price_in: float = 0.0         # USD per 1M input tokens (0 for local)
     price_out: float = 0.0
     reasoning_tags: bool = False  # strip <think>…</think> from responses
-    # Hybrid-reasoning models (Qwen3) think by default; appends the model's
-    # /no_think soft switch to the system prompt so it answers directly. This is
-    # inference-time, independent of fine-tuning.
-    disable_thinking: bool = False
+    # "high"/"medium"/"low"/"none" for thinking models; "none" disables thinking.
+    reasoning_effort: str | None = None
     temperature: float = 0.0      # deterministic extraction
     encoding: str = "cl100k_base"
 
@@ -158,10 +156,10 @@ class LLMClient:
             # conversation; both prompt templates mention it.
             response_format = {"type": "json_object"}
 
-        if self.profile.disable_thinking:
-            # Qwen3's soft switch: honored by the model regardless of the serving
-            # layer, so it works through the OpenAI-compatible endpoint.
-            system_prompt = f"{system_prompt}\n/no_think"
+        extra_body = (
+            {"reasoning_effort": self.profile.reasoning_effort}
+            if self.profile.reasoning_effort else None
+        )
 
         try:
             response = self._client.chat.completions.create(
@@ -173,6 +171,7 @@ class LLMClient:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content},
                 ],
+                extra_body=extra_body,
             )
         except (AuthenticationError, PermissionDeniedError) as exc:
             raise FatalLLMError(
