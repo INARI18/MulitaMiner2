@@ -156,10 +156,13 @@ class LLMClient:
             # conversation; both prompt templates mention it.
             response_format = {"type": "json_object"}
 
-        extra_body = (
-            {"reasoning_effort": self.profile.reasoning_effort}
-            if self.profile.reasoning_effort else None
-        )
+        extra_body: dict = {}
+        if self.profile.reasoning_effort:
+            extra_body["reasoning_effort"] = self.profile.reasoning_effort
+        if self.profile.is_local:
+            # Ollama truncates to num_ctx (default 4096); set it per request so a
+            # chunk that outgrows the default is not silently cut.
+            extra_body["options"] = {"num_ctx": self.profile.context_window}
 
         try:
             response = self._client.chat.completions.create(
@@ -171,7 +174,7 @@ class LLMClient:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content},
                 ],
-                extra_body=extra_body,
+                extra_body=extra_body or None,
             )
         except (AuthenticationError, PermissionDeniedError) as exc:
             raise FatalLLMError(
