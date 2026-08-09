@@ -4,7 +4,7 @@
   "base_url": "http://localhost:11434/v1",
   "context_window": 16000,
   "max_output_tokens": 8000,
-  "supports_json_schema": true,
+  "supports_json_schema": false,
   "reasoning_tags": true,
   "reasoning_effort": "none"
 }
