@@ -132,7 +132,7 @@ class LLMClient:
         self._client = transport or OpenAI(
             base_url=profile.base_url,
             api_key=_resolve_api_key(profile),
-            max_retries=3,
+            max_retries=settings.SDK_MAX_RETRIES,
             timeout=settings.REQUEST_TIMEOUT_S,
         )
 

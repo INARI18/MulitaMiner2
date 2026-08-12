@@ -18,6 +18,7 @@ from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
+from mulitaminer import settings
 from mulitaminer.llm import FatalLLMError, LLMClient, get_model
 from mulitaminer.pipeline import RunConfig, run
 from mulitaminer.scanner_engine import scanner_for
@@ -87,7 +88,7 @@ def evaluate_experiment(
     output_dir: Path,
     metrics: str | None = None,
     force: bool = False,
-    threshold: float = 0.7,
+    threshold: float = settings.DEFAULT_ALIGN_THRESHOLD,
     rebuild_report: bool = True,
     progress: bool = True,
 ) -> dict:

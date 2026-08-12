@@ -32,6 +32,7 @@ from mulitaminer.evaluation.scorers import (
     render_text,
     text_scorers,
 )
+from mulitaminer import settings
 from mulitaminer.models import record_type_for_source
 
 # Convenience aliases accepted by --metrics.
@@ -409,7 +410,7 @@ def evaluate_run(
     target: Path,
     baseline: Path | None = None,
     metrics: str | None = "all",
-    threshold: float = 0.7,
+    threshold: float = settings.DEFAULT_ALIGN_THRESHOLD,
 ) -> EvalResult:
     results_path, run = _resolve_target(Path(target))
     baseline_path = baseline or discover_baseline(run)
