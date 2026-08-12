@@ -26,3 +26,9 @@ FALLBACK_CHARS_PER_TOKEN = 3.5
 # Rounds of targeted re-sends for blocks whose IDs are missing from the LLM
 # response, before giving up with a warning. (v2 design §6)
 RETRY_ROUNDS = 2
+
+# Per-request deadline (seconds). A local call slower than this is almost
+# certainly a degenerate generation running toward the output cap; cutting it
+# early is cheaper than waiting. Cloud calls finish well under it. On timeout
+# the chunk goes to retry (see extraction.py), never fatal.
+REQUEST_TIMEOUT_S = 120.0

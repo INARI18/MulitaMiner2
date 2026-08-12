@@ -17,6 +17,8 @@ from pathlib import Path
 from openai import APIStatusError, AuthenticationError, OpenAI, PermissionDeniedError
 from pydantic import BaseModel, ValidationError
 
+from mulitaminer import settings
+
 log = logging.getLogger(__name__)
 
 _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL | re.IGNORECASE)
@@ -131,7 +133,7 @@ class LLMClient:
             base_url=profile.base_url,
             api_key=_resolve_api_key(profile),
             max_retries=3,
-            timeout=600.0,
+            timeout=settings.REQUEST_TIMEOUT_S,
         )
 
     def extract(
