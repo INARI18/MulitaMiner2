@@ -149,8 +149,9 @@ def full_drops(counts: dict | None) -> dict:
 
 
 # Chunk-level retry reasons: bad_json (response not valid JSON, usually output
-# truncated at the token cap) vs bad_shape (JSON parsed but failed the schema).
-RETRY_CATEGORIES = ("bad_json", "bad_shape")
+# truncated at the token cap), bad_shape (JSON parsed but failed the schema),
+# timeout (call outran the client deadline; a slow model on a heavy block).
+RETRY_CATEGORIES = ("bad_json", "bad_shape", "timeout")
 
 
 def full_retries(counts: dict | None) -> dict:

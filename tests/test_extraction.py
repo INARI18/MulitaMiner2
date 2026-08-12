@@ -116,6 +116,44 @@ def test_retry_rounds_shrink_chunks():
     assert client.calls[3].count("### BLOCK") == 1  # round 2 capped at 1
 
 
+def _timeout() -> Exception:
+    import httpx
+    from openai import APITimeoutError
+
+    return APITimeoutError(request=httpx.Request("POST", "http://local"))
+
+
+def test_timeout_is_a_chunk_failure_not_fatal():
+    """A call that outruns the client deadline must go to retry like bad JSON,
+    never crash the whole run (a slow model on one heavy block should cost at
+    most that block)."""
+    from collections import Counter
+
+    blocks = _blocks(1)
+    client = FakeClient([_timeout(), [_item(0)]])  # timeout, then retry succeeds
+    retries: Counter = Counter()
+    records, _, _ = extract_blocks(blocks, PROFILE, client, TokenUsage(), retries=retries)
+    assert len(records) == 1
+    assert dict(retries) == {"timeout": 1}
+
+
+def test_persistent_timeout_drops_block_run_survives():
+    blocks = _blocks(2)
+    # block-0 chunk always times out; block-1 succeeds on the first round
+    client = FakeClient([_timeout(), _timeout(), _timeout(), _timeout()])
+
+    def extract(system_prompt, user_content, response_model, _orig=client.extract):
+        if "### BLOCK 1" in user_content and "### BLOCK 0" not in user_content:
+            parsed = response_model.model_validate({"items": [_item(1)]})
+            return parsed, {"prompt_tokens": 1, "completion_tokens": 1, "cost_usd": 0.0, "raw": "{}"}
+        raise _timeout()
+
+    client.extract = extract
+    records, warnings, _ = extract_blocks(blocks, PROFILE, client, TokenUsage())
+    assert [r.name for r in records] == ["Vuln"]  # block 1 survived
+    assert any("block 0 yielded no record" in w for w in warnings)
+
+
 def test_invalid_json_retries_then_gives_up_with_warning():
     blocks = _blocks(1)
     bad = json.JSONDecodeError("bad", "doc", 0)

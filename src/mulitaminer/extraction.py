@@ -8,6 +8,7 @@ import logging
 from collections import Counter
 from functools import lru_cache
 
+from openai import APITimeoutError
 from pydantic import BaseModel, ConfigDict, ValidationError, create_model
 
 from mulitaminer import settings
@@ -185,10 +186,18 @@ def _extract_chunk(
     send_blocks = _truncate_oversized(chunk, client, warnings)
     try:
         parsed, call_usage = client.extract(prompt, render_chunk(send_blocks), response_model)
-    except (json.JSONDecodeError, ValidationError) as exc:
+    except (json.JSONDecodeError, ValidationError, APITimeoutError) as exc:
         # bad_json: response was not valid JSON (usually output truncated at the
         # token cap). bad_shape: JSON parsed but did not fit the response schema.
-        reason = "bad_json" if isinstance(exc, json.JSONDecodeError) else "bad_shape"
+        # timeout: the call outran the client deadline (a slow model on a heavy
+        # block generating toward the output cap). All three are chunk-level
+        # failures: the blocks go to retry (smaller next round), never fatal.
+        if isinstance(exc, json.JSONDecodeError):
+            reason = "bad_json"
+        elif isinstance(exc, APITimeoutError):
+            reason = "timeout"
+        else:
+            reason = "bad_shape"
         log.warning("Chunk %d: invalid response (%s); its blocks go to retry",
                     chunk.index, type(exc).__name__)
         retries[reason] += 1

@@ -95,7 +95,8 @@ def _retries_section(retries: dict) -> list[str]:
     headline = f"- {total} retried ({detail})" if total else f"- 0 (clean): {detail}"
     return ["## chunk retries", "", headline,
             "  (bad_json: response not valid JSON, usually output truncated at the "
-            "token cap; bad_shape: JSON parsed but failed the schema)", ""]
+            "token cap; bad_shape: JSON parsed but failed the schema; "
+            "timeout: call outran the client deadline)", ""]
 
 
 def render_markdown(result: EvalResult) -> str:
