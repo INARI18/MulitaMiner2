@@ -3,9 +3,7 @@ each run's evaluation.json and renders one offline inline-SVG dashboard (no JS
 deps, no external assets), styled after the project's cream/orange deck.
 
 A *target* is one report (its baseline XLSX is the gold); a *model* is an LLM
-profile; spread is across the N runs. The similarity categories in the
-distribution are a presentation binning (thresholds shown), not a pipeline
-metric.
+profile; spread is across the N runs.
 """
 from __future__ import annotations
 
@@ -21,6 +19,7 @@ from mulitaminer.evaluation.scorers import SCORERS
 # with no edit. "structural" is the extra label nested/dict fields carry.
 _TEXT = tuple(n for n, s in SCORERS.items() if s.kind == "text")
 _DET = tuple(n for n, s in SCORERS.items() if s.kind == "structural") + ("structural",)
+_TEXT_SET = frozenset(_TEXT)
 
 
 def _ms(values: list[float]) -> dict:
@@ -69,8 +68,6 @@ def _aggregate(experiment_dir: Path) -> dict:
             fp = len(cv.get("false_positives", cv.get("spurious", [])))
             cov[key]["false_negatives"].append(fn)
             cov[key]["false_positives"].append(fp)
-            bc = cv.get("baseline_count") or 0
-            cov[key]["absent"].append(fn / bc if bc else 0.0)
         if "cost_usd" in r:
             cov[key]["cost"].append(r["cost_usd"])
         if "duration_s" in r:
@@ -105,14 +102,15 @@ def _aggregate(experiment_dir: Path) -> dict:
                     sev_by_scanner[r["scanner"]][s] += 1
 
     tsorted = sorted(targets)
-    text_present = [m for m in _TEXT if any(m in ms for ms in field_metrics.values())]
-    det_present = [m for m in _DET if any(m in ms for ms in field_metrics.values())]
-    sem_fields = sorted(f for f, ms in field_metrics.items() if ms & set(_TEXT))
-    det_fields = sorted(f for f, ms in field_metrics.items() if not (ms & set(_TEXT)))
+    seen_metrics = set().union(*field_metrics.values())
+    text_present = [m for m in _TEXT if m in seen_metrics]
+    det_present = [m for m in _DET if m in seen_metrics]
+    sem_fields = sorted(f for f, ms in field_metrics.items() if ms & _TEXT_SET)
+    det_fields = sorted(f for f, ms in field_metrics.items() if not (ms & _TEXT_SET))
     omit_fields = sorted({f for c in fill.values() for f in c})
 
     def pooled(model, key):
-        return [v for (t, m), c in cov.items() if m == model for v in c[key]]
+        return [v for (t, m), c in cov.items() if m == model for v in c.get(key, ())]
 
     overall = {m: {k: _ms(pooled(m, k)) for k in
                    ("recall", "precision", "false_negatives", "false_positives",
@@ -122,8 +120,7 @@ def _aggregate(experiment_dir: Path) -> dict:
                          "precision": _ms(cov[(t, m)]["precision"])}
                      for m in models} for t in tsorted}
     time_cost = {t: {m: {"cost": round(sum(cov[(t, m)]["cost"]), 4),
-                         "dur": round(sum(cov[(t, m)]["duration"]), 1),
-                         "runs": len(cov[(t, m)]["recall"])}
+                         "dur": round(sum(cov[(t, m)]["duration"]), 1)}
                      for m in models} for t in tsorted}
 
     def field_block(fields, metrics):
@@ -138,44 +135,10 @@ def _aggregate(experiment_dir: Path) -> dict:
         return {metric: {m: _box([v for t in tsorted for v in pairsc[(t, m)].get(metric, [])])
                          for m in models} for metric in metrics}
 
-    def _cat(scores, ab):
-        matched = 1.0 - ab
-        if not scores:
-            return [0, 0, 0, 0, round(ab, 4)]
-        n = len(scores)
-        hi = sum(v >= 0.9 for v in scores) / n
-        mo = sum(0.8 <= v < 0.9 for v in scores) / n
-        sl = sum(0.7 <= v < 0.8 for v in scores) / n
-        dv = sum(v < 0.7 for v in scores) / n
-        return [round(x, 4) for x in (hi * matched, mo * matched, sl * matched, dv * matched, ab)]
-
-    def dist_cat(metrics):
-        # [High>=.9, Moderate>=.8, Slight>=.7, Divergent<.7, Absent] over the baseline.
-        out: dict = {}
-        for metric in metrics:
-            out[metric] = {}
-            for m in models:
-                scores = [v for t in tsorted for v in pairsc[(t, m)].get(metric, [])]
-                ab = statistics.fmean(pooled(m, "absent")) if pooled(m, "absent") else 0.0
-                out[metric][m] = _cat(scores, ab)
-        return out
-
     def dist_box_bt(metrics):
         # Per-report box, same shape as dist: {metric: {target: {model: box}}}
         return {metric: {t: {m: _box(pairsc[(t, m)].get(metric, []))
                              for m in models} for t in tsorted} for metric in metrics}
-
-    def dist_cat_bt(metrics):
-        out: dict = {}
-        for metric in metrics:
-            out[metric] = {}
-            for t in tsorted:
-                out[metric][t] = {}
-                for m in models:
-                    absent = cov[(t, m)]["absent"]
-                    ab = statistics.fmean(absent) if absent else 0.0
-                    out[metric][t][m] = _cat(pairsc[(t, m)].get(metric, []), ab)
-        return out
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -189,9 +152,8 @@ def _aggregate(experiment_dir: Path) -> dict:
         "text_fields": field_block(sem_fields, text_present),
         "det_field_block": field_block(det_fields, det_present),
         "omission": omission,
-        "dist": dist_box(text_present), "dist_cat": dist_cat(text_present),
+        "dist": dist_box(text_present),
         "dist_by_target": dist_box_bt(text_present),
-        "dist_cat_by_target": dist_cat_bt(text_present),
     }
 
 
@@ -533,18 +495,6 @@ function scatter(pts,{W=760,H=520,min=0.5}={}){
 function ramp(v,min,max,hue){const t=Math.max(0,Math.min(1,(v-min)/(max-min)));const L=(a,b)=>Math.round(a+(b-a)*t);
   const to=hue==='red'?[176,26,69]:[26,94,99];
   return{bg:`rgb(${L(244,to[0])},${L(241,to[1])},${L(234,to[2])})`,tx:t>0.5?'#faf8f2':'#1a1a17'};}
-
-function heatTable(tableId,fields,getCell,colorFn){
-  const tbl=el(tableId);
-  if(!fields.length){tbl.innerHTML='<tbody><tr><td class="empty">no data</td></tr></tbody>';return;}
-  let h=`<thead><tr><th class="l">Field</th>${M.map(m=>`<th><span class="dot" style="width:7px;height:7px;background:${MC[m]};margin-right:4px"></span>${esc(m)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>`;
-  fields.forEach(f=>{h+=`<tr><td class="l">${esc(f)}</td>`;const row=[];
-    M.forEach(m=>{const d=getCell(f,m),v=d.m;if(v==null){h+=`<td>-</td>`;return;}row.push(v);const c=colorFn(v);
-      h+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}<s>±${(d.s||0).toFixed(2)}</s></td>`;});
-    const a=avg(row),ac=a==null?null:colorFn(a);
-    h+=a==null?`<td>-</td></tr>`:`<td style="background:${ac.bg};color:${ac.tx};font-weight:700">${a.toFixed(2)}</td></tr>`;});
-  tbl.innerHTML=h+'</tbody>';
-}
 
 function legend(id,items){el(id).innerHTML=items.map(([l,c])=>
   `<span><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('');}
