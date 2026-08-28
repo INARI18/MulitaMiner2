@@ -19,6 +19,7 @@ from typing import Any
 import pandas as pd
 from rapidfuzz import fuzz
 
+from mulitaminer import settings
 from mulitaminer.evaluation.align import (
     AlignmentResult, align, classify_false_positives,
 )
@@ -32,7 +33,6 @@ from mulitaminer.evaluation.scorers import (
     render_text,
     text_scorers,
 )
-from mulitaminer import settings
 from mulitaminer.models import record_type_for_source
 
 # Convenience aliases accepted by --metrics.

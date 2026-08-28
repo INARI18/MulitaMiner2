@@ -247,7 +247,9 @@ def evaluate(
         help="Text metrics to run: 'all' or comma-separated (token_f1,rouge_l,bertscore)",
     ),
     threshold: float = typer.Option(
-        settings.DEFAULT_ALIGN_THRESHOLD, "--threshold", help="Alignment similarity cutoff"),
+        settings.DEFAULT_ALIGN_THRESHOLD, "--threshold",
+        help="Alignment similarity cutoff",
+    ),
     list_metrics: bool = typer.Option(
         False, "--list-metrics", help="List the metric registry and exit"
     ),
