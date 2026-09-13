@@ -199,6 +199,7 @@ def run(config: RunConfig, client: LLMClient | None = None,
             json.dumps(
                 {
                     "config": result.config,
+                    "runtime": client.runtime_info(),
                     "block_count": result.block_count,
                     "raw_record_count": raw_count,
                     "final_record_count": len(records),

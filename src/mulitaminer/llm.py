@@ -14,6 +14,7 @@ from dataclasses import dataclass, fields
 from functools import lru_cache
 from pathlib import Path
 
+import httpx
 from openai import APIStatusError, AuthenticationError, OpenAI, PermissionDeniedError
 from pydantic import BaseModel, ValidationError
 
@@ -131,6 +132,9 @@ class LLMClient:
     ) -> None:
         self.profile = profile
         self.model = model_name or profile.model
+        # Provider's own id for what answered; often more specific than what
+        # was asked for, and the only record of which version ran.
+        self.served_model: str | None = None
         # SDK built-in exponential backoff covers rate limits / transient 5xx.
         self._client = transport or OpenAI(
             base_url=profile.base_url,
@@ -193,6 +197,7 @@ class LLMClient:
                 ) from exc
             raise
 
+        self.served_model = getattr(response, "model", None) or self.served_model
         raw = response.choices[0].message.content or ""
         cleaned = clean_response(raw, self.profile.reasoning_tags)
         data = json.loads(cleaned)
@@ -214,6 +219,20 @@ class LLMClient:
                 return response_model.model_validate({"items": [data]})
             raise
 
+    def runtime_info(self) -> dict:
+        """What actually served this run, for run.json. Call after extraction:
+        a local server only reports its loaded model while it is loaded."""
+        info = {
+            "profile": self.profile.key,
+            "requested_model": self.model,
+            "served_model": self.served_model,
+            "base_url": self.profile.base_url,
+            "request_timeout_s": self.profile.request_timeout_s,
+        }
+        if self.profile.is_local and self.profile.base_url:
+            info |= _probe_ollama(self.profile.base_url.rsplit("/v1", 1)[0])
+        return info
+
     def _package(self, parsed: BaseModel, usage, raw: str) -> tuple[BaseModel, dict]:
         prompt_tokens = getattr(usage, "prompt_tokens", 0) or 0
         completion_tokens = getattr(usage, "completion_tokens", 0) or 0
@@ -227,3 +246,23 @@ class LLMClient:
             "cost_usd": cost,
             "raw": raw,
         }
+
+
+def _probe_ollama(root: str) -> dict:
+    """Server version and whether the model ran on GPU or CPU. Neither is
+    visible in an OpenAI-compatible response, and both decide whether a run
+    is comparable to another. Best effort: a provenance probe never fails a run."""
+    out: dict = {}
+    try:
+        with httpx.Client(timeout=5.0) as http:
+            out["server_version"] = http.get(f"{root}/api/version").json().get("version")
+            loaded = http.get(f"{root}/api/ps").json().get("models") or []
+            if loaded:
+                total = loaded[0].get("size") or 0
+                vram = loaded[0].get("size_vram") or 0
+                out["processor"] = (
+                    f"{round(vram / total * 100)}% GPU" if total and vram else "100% CPU"
+                )
+    except Exception as exc:  # noqa: BLE001 - provenance is never worth a failed run
+        log.debug("runtime probe failed for %s: %s", root, exc)
+    return out

@@ -16,6 +16,9 @@ class EchoClient:
 
     profile = _Profile()
 
+    def runtime_info(self):
+        return {"profile": "echo"}
+
     def extract(self, system_prompt, user_content, response_model):
         import re
 
