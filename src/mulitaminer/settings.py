@@ -17,8 +17,9 @@ FALLBACK_CHARS_PER_TOKEN = 3.5      # when no tiktoken encoding matches the mode
 # --- Extraction retry --------------------------------------------------------
 RETRY_ROUNDS = 2                    # targeted re-sends for missing block IDs
 SDK_MAX_RETRIES = 3                 # provider SDK's transient-error retries
-# Per-request deadline; a local call slower than this is a degenerate
-# generation. On timeout the chunk goes to retry, never fatal.
+# Default per-request deadline; at GPU throughput a local call slower than
+# this is a degenerate generation. On timeout the chunk goes to retry, never
+# fatal. Profiles served from slower hardware override it (request_timeout_s).
 REQUEST_TIMEOUT_S = 120.0
 
 # --- Evaluation --------------------------------------------------------------

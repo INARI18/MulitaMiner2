@@ -101,6 +101,7 @@ else is optional with sensible defaults.
 | `reasoning_tags` | `true` strips `<think>` blocks (reasoning models like Qwen3) |
 | `temperature` | Sampling temperature; set per model to override. **Default `0`** |
 | `encoding` | tiktoken encoding for token counting; default `cl100k_base` |
+| `request_timeout_s` | Per-request deadline; default `120`. Raise it for a model served from slow hardware |
 
 **Temperature is `0` by default for every model** (deterministic extraction, the
 single most important knob for fidelity). This is sent on every call, so it also

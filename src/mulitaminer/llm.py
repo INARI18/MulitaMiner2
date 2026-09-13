@@ -47,6 +47,9 @@ class ModelProfile:
     reasoning_effort: str | None = None
     temperature: float = 0.0      # deterministic extraction
     encoding: str = "cl100k_base"
+    # Per-request deadline. The default suits GPU-class throughput; a profile
+    # served from slower hardware must raise it or healthy calls are cut.
+    request_timeout_s: float = settings.REQUEST_TIMEOUT_S
 
     @property
     def is_local(self) -> bool:
@@ -133,7 +136,7 @@ class LLMClient:
             base_url=profile.base_url,
             api_key=_resolve_api_key(profile),
             max_retries=settings.SDK_MAX_RETRIES,
-            timeout=settings.REQUEST_TIMEOUT_S,
+            timeout=profile.request_timeout_s,
         )
 
     def extract(
