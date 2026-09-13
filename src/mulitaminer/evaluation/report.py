@@ -33,17 +33,32 @@ def _metric_columns(result: EvalResult) -> list[str]:
     return [c for c in order if c in cols] + sorted(c for c in cols if c not in order)
 
 
+def _fill_rate(metrics: dict) -> float | None:
+    """Share of pairs where the extraction filled this field. A field's metrics
+    all share it, so the first one that carries it answers."""
+    for stats in metrics.values():
+        if (rate := stats.get("fill_rate_extraction")) is not None:
+            return rate
+    return None
+
+
 def summary_table(result: EvalResult) -> str:
-    """Plain-text field x metric table of MEASURED means (vacuous excluded).
+    """Plain-text field x metric table of MEASURED means (vacuous excluded),
+    each row led by the share of pairs the model actually filled.
 
     Vacuous (empty x empty) pairs score 1.0 and inflate an inclusive mean;
     all-vacuous cells print n/a instead of a fake 1.000 (audit finding).
+
+    A mean alone is not comparable across models: it is taken over the pairs
+    the model chose to answer, so one that skips the hard findings scores
+    higher on fewer of them. Read the two columns together.
     """
     cols = _metric_columns(result)
-    header = ["field", *cols]
+    header = ["field", "fill", *cols]
     rows = [header, ["-" * len(h) for h in header]]
     for field_name, metrics in result.fields.items():
-        row = [field_name]
+        rate = _fill_rate(metrics)
+        row = [field_name, "-" if rate is None else f"{rate:.3f}"]
         for c in cols:
             stats = metrics.get(c)
             # ASCII placeholders: Windows consoles often decode cp1252.
