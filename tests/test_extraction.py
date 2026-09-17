@@ -3,9 +3,13 @@ import json
 
 from mulitaminer.extraction import extract_blocks, render_chunk
 from mulitaminer.models import Block, TokenUsage
+from dataclasses import replace
+
 from mulitaminer.scanner_engine import get_scanner
 
-PROFILE = get_scanner("openvas")
+# Pinned: these test the retry/reconciliation logic, not the shipped
+# calibration, so the chunk size must not move when openvas.json is tuned.
+PROFILE = replace(get_scanner("openvas"), max_vulns_per_chunk=4)
 
 
 def _item(block_id: int, name: str = "Vuln") -> dict:

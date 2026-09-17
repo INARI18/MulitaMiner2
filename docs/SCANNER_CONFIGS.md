@@ -110,7 +110,14 @@ that wraps onto the line right after some `NVT:` names; the name-continuation
 rule would otherwise append it to the finding name. The pattern drops that whole
 line so the name stays clean.
 
-`max_vulns_per_chunk: 4`, empirical calibration.
+`max_vulns_per_chunk: 2`, calibrated against field fill, not against
+failures. At 4 nothing broke (no timeouts, no fatal JSON errors), which is
+why it stood, but the tuned 1.5B silently filled fewer fields: on
+openvas_raesene_bwapp, recall 0.906 and description 0.407 at 4 against
+recall 1.000 and description 0.741 at 1. At 2 recall already reaches 1.000
+and the run is the fastest of the three. `insight` and `cvss` decline
+monotonically as the chunk shrinks (0.683/0.644 at 4, 0.611/0.577 at 2,
+0.528/0.462 at 1), which is the cost of the change.
 
 ## Tenable WAS (`tenable.json`)
 
