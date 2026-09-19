@@ -21,6 +21,9 @@ from mulitaminer.ui import NULL_PROGRESS, Progress
 
 log = logging.getLogger(__name__)
 
+# Real transport protocols, as opposed to the scanner's pseudo-protocols.
+NETWORK_PROTOCOLS = frozenset({"tcp", "udp", "icmp", "icmpv6", "sctp"})
+
 
 @lru_cache
 def response_model_for(record_type: type[VulnRecord]) -> type[BaseModel]:
@@ -55,10 +58,12 @@ def _to_record(item: BaseModel, block: Block, profile: ScannerProfile) -> VulnRe
         record.source = profile.source
     # Backfill from segmentation context what the LLM could not see. OpenVAS
     # emits pseudo-protocols in headers ("general/CPE-T"); those stay context
-    # for the LLM but never enter the typed protocol field.
+    # for the LLM but never enter the typed protocol field. The allow-list is
+    # what keeps them out, so it has to name every real protocol: icmp reaches
+    # 13 findings in the Nessus baseline alone.
     if record.port is None and block.port is not None:
         record.port = block.port
-        if block.protocol in ("tcp", "udp"):
+        if block.protocol in NETWORK_PROTOCOLS:
             record.protocol = block.protocol
     return record
 
