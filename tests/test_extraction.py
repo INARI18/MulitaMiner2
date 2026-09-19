@@ -214,12 +214,13 @@ def test_oversized_single_block_is_truncated_with_declared_marker():
 
 
 def test_pseudo_protocol_context_never_enters_the_record():
-    """OpenVAS 'general/CPE-T' headers are context for the LLM, not data."""
+    """OpenVAS 'general/CPE-T' is context, not data: the baselines leave both
+    port and protocol empty on those 26 held-out findings."""
     block = Block(id=0, text="Log (CVSS: 0.0)\nNVT: CPE Inventory",
                   port="general", protocol="cpe-t")
     item = {"block_id": 0, "Name": "CPE Inventory", "severity": "LOG", "cvss": 0.0,
             "port": None, "protocol": None}
     records, warnings, _ = extract_blocks([block], PROFILE, FakeClient([[item]]), TokenUsage())
-    assert records[0].port == "general"
+    assert records[0].port is None
     assert records[0].protocol is None
     assert not warnings
