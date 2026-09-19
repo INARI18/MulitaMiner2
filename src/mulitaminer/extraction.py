@@ -21,8 +21,13 @@ from mulitaminer.ui import NULL_PROGRESS, Progress
 
 log = logging.getLogger(__name__)
 
-# Real transport protocols, as opposed to the scanner's pseudo-protocols.
-NETWORK_PROTOCOLS = frozenset({"tcp", "udp", "icmp", "icmpv6", "sctp"})
+
+def is_network_protocol(value: str | None) -> bool:
+    """Real protocol names are short and lowercase (tcp, udp, icmp, sctp, gre,
+    icmpv6). Scanner pseudo-ports are not: OpenVAS writes "general/CPE-T" for
+    CPE inventory findings. Shape beats an allow-list here, which would be
+    incomplete by construction and would need maintaining."""
+    return bool(value) and value.islower() and value.isalnum() and len(value) <= 8
 
 
 @lru_cache
@@ -58,12 +63,10 @@ def _to_record(item: BaseModel, block: Block, profile: ScannerProfile) -> VulnRe
         record.source = profile.source
     # Backfill from segmentation context what the LLM could not see. OpenVAS
     # emits pseudo-protocols in headers ("general/CPE-T"); those stay context
-    # for the LLM but never enter the typed protocol field. The allow-list is
-    # what keeps them out, so it has to name every real protocol: icmp reaches
-    # 13 findings in the Nessus baseline alone.
+    # for the LLM but never enter the typed protocol field.
     if record.port is None and block.port is not None:
         record.port = block.port
-        if block.protocol in NETWORK_PROTOCOLS:
+        if is_network_protocol(block.protocol):
             record.protocol = block.protocol
     return record
 
