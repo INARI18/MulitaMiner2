@@ -12,10 +12,8 @@ from typing import Any
 from rapidfuzz import fuzz
 from scipy.optimize import linear_sum_assignment
 
+from mulitaminer import settings
 from mulitaminer.consolidate import normalize_name
-
-# Minimum similarity to accept an assignment.
-FUZZY_THRESHOLD = 0.7
 
 # When composite keys CONFLICT (a concrete part differs on both sides, e.g. the
 # same finding name on two different ports), the name-only similarity is scaled
@@ -106,7 +104,7 @@ def align(
     ext_rows: list[dict],
     base_rows: list[dict],
     key_parts: tuple[str, ...] = (),
-    threshold: float = FUZZY_THRESHOLD,
+    threshold: float = settings.DEFAULT_ALIGN_THRESHOLD,
 ) -> AlignmentResult:
     ext_names = [normalize_name(str(_get(r, "Name") or "")) for r in ext_rows]
     base_names = [normalize_name(str(_get(r, "Name") or "")) for r in base_rows]
