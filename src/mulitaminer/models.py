@@ -31,6 +31,8 @@ class VulnRecord(BaseModel):
 
     # Filled by the pipeline from report context, prompt only if not defined in the json.
     host: str | None = Field(default=None, **_PIPELINE_FILLED)
+    # port is numeric or absent; the str is legacy. _to_record drops the
+    # scanner pseudo-ports ("general") that the header can carry.
     port: int | str | None = None
     protocol: str | None = None
 
