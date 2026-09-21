@@ -1,7 +1,15 @@
 """Evaluation subsystem: scorers, field mapping, alignment, orchestration."""
 import pytest
 
-from mulitaminer.evaluation.align import align, classify_false_positives, composite_key
+from rapidfuzz import fuzz
+
+from mulitaminer.evaluation.align import (
+    align,
+    cell_score,
+    classify_false_positives,
+    composite_key,
+    parts_conflict,
+)
 from mulitaminer.evaluation.fields import FieldPlan, field_plans
 from mulitaminer.evaluation.scorers import SCORERS, pair_score, render_text, text_scorers
 from mulitaminer.models import Instance, PluginDetails
@@ -605,3 +613,58 @@ def test_orchestration_instance_pairing_prefers_matching_path():
             {"instance": f"{host}/#/login", "proof": "login proof"}]
     score, _ = _structural_score(plan, ext, base)
     assert score == pytest.approx(1.0)  # crossed order still pairs correctly
+
+
+def test_key_conflict_penalty_fires_on_a_concrete_part():
+    # What the penalty is for: one name, two ports. The pair must be pushed
+    # below a same-port pairing so the assignment prefers the compatible one.
+    a = composite_key({"Name": "FTP Unencrypted", "port": 21, "protocol": "tcp"}, OV_PARTS)
+    b = composite_key({"Name": "FTP Unencrypted", "port": 2121, "protocol": "tcp"}, OV_PARTS)
+    assert parts_conflict(a, b)
+    assert cell_score(a, "ftp unencrypted", b, "ftp unencrypted") == pytest.approx(0.9)
+
+
+def test_a_different_name_alone_is_not_a_key_conflict():
+    # The name is key part 0. Counting its difference as a conflict penalised
+    # every inexact name twice, once in the similarity and once at 0.9.
+    a = composite_key({"Name": "Nginx Web Server Detected on 80 over TCP.",
+                       "port": 80, "protocol": "tcp"}, OV_PARTS)
+    b = composite_key({"Name": "Nginx Web Server Detected",
+                       "port": 80, "protocol": "tcp"}, OV_PARTS)
+    assert not parts_conflict(a, b)
+    raw = fuzz.ratio("nginx web server detected on 80 over tcp.",
+                     "nginx web server detected") / 100.0
+    assert cell_score(a, "nginx web server detected on 80 over tcp.",
+                      b, "nginx web server detected") == pytest.approx(raw)
+
+
+def test_a_qualifier_in_the_name_no_longer_blocks_the_match():
+    # Real case: the model prefixed the severity onto the finding name. Raw
+    # similarity is 0.759, over the 0.70 cutoff; the double penalty put it at
+    # 0.68 and lost the pair.
+    parts = get_scanner("zap").key_parts
+    ext = [{"Name": "Informational Modern Web Application",
+            "severity": "INFORMATIONAL", "plugin": "10109"}]
+    base = [{"Name": "Modern Web Application",
+             "severity": "INFORMATIONAL", "plugin": "10109"}]
+    assert align(ext, base, parts).pairs == [(0, 0)]
+
+
+def test_a_different_name_and_a_different_part_is_still_penalised():
+    # Two genuinely different CVEs whose names differ only in a version: the
+    # differing plugin keeps the penalty, so they stay apart.
+    parts = get_scanner("qualys").key_parts
+    row = {"host": "10.0.0.1", "port": 80, "protocol": "tcp"}
+    a = composite_key({"Name": "Apache Prior to 2.4.64 Security Vulnerabilities",
+                       "plugin": "730109", **row}, parts)
+    b = composite_key({"Name": "Apache Prior to 2.4.68 Security Vulnerabilities",
+                       "plugin": "999999", **row}, parts)
+    assert parts_conflict(a, b)
+
+
+def test_a_pipe_in_the_name_degrades_to_the_penalty():
+    # normalize_name keeps punctuation, so a '|' misaligns the split. Report a
+    # conflict rather than comparing the wrong parts against each other.
+    a = composite_key({"Name": "weird | name", "port": 80, "protocol": "tcp"}, OV_PARTS)
+    b = composite_key({"Name": "weird name", "port": 80, "protocol": "tcp"}, OV_PARTS)
+    assert parts_conflict(a, b)

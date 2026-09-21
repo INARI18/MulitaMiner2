@@ -84,12 +84,29 @@ def key_match_score(key1: str, key2: str) -> float:
     return score / len(parts1)
 
 
+def parts_conflict(key1: str, key2: str) -> bool:
+    """Do the two keys disagree on a concrete part, ignoring the name?
+
+    The name is part 0, and its difference is already priced into the name
+    similarity; letting it also count as a conflict penalized every inexact
+    name and raised the effective name threshold from 0.70 to 0.778. A name
+    carrying a literal '|' misaligns the split, so the lengths differ and this
+    reports a conflict: the penalized path, which is what such a pair got
+    before.
+    """
+    parts1, parts2 = key1.split("|")[1:], key2.split("|")[1:]
+    if len(parts1) != len(parts2):
+        return True
+    return any(a != "*" and b != "*" and a != b for a, b in zip(parts1, parts2))
+
+
 def cell_score(ek: str, en: str, bk: str, bn: str) -> float:
-    """One similarity-matrix cell: composite-key score, else penalized name."""
+    """One similarity-matrix cell: composite-key score, else the name,
+    penalized only when a concrete key part disagrees."""
     name_sim = (fuzz.ratio(en, bn) / 100.0) if en and bn else 0.0
     if keys_match(ek, bk):
         return max(key_match_score(ek, bk), name_sim)
-    return name_sim * KEY_CONFLICT_PENALTY
+    return name_sim * KEY_CONFLICT_PENALTY if parts_conflict(ek, bk) else name_sim
 
 
 @dataclass
