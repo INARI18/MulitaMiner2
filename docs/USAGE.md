@@ -34,6 +34,37 @@ uv run mulitaminer extract report.pdf --scanner openvas --model deepseek
 | `--output-dir` | Run artifacts root, default `outputs/runs/` |
 | `--debug` | Also dump layout, blocks and raw LLM traffic |
 
+### Directory mode (batch)
+
+`extract` and `experiment` both take a directory and walk it recursively. The
+scanner is resolved per file, and never guessed from the PDF's content:
+
+1. `-s/--scanner`, when given, forces one scanner for **every** file in the batch.
+2. Otherwise the PDF's **parent folder name**, which must be a registered
+   scanner (`mulitaminer scanners`).
+
+Subfolders are therefore only needed when the batch mixes scanners:
+
+```bash
+# Mixed batch: one subfolder per scanner, each detected on its own
+#   reports/openvas/scan-a.pdf   -> openvas
+#   reports/nessus/scan-b.pdf    -> nessus
+uv run mulitaminer extract reports -m deepseek
+
+# Flat folder, one scanner: no subfolder needed, force it
+uv run mulitaminer extract ~/pdfs -s openvas -m deepseek
+```
+
+A PDF whose folder is not a registered scanner fails with the list of valid
+names rather than guessing. In `extract`, one failing file does not sink the
+batch: it is recorded and the walk continues, except on a fatal provider error
+(bad key, exhausted quota), which aborts because every later file would fail
+the same way.
+
+The same folder convention feeds evaluation: a baseline XLSX sitting next to
+the PDF (`<scanner>/<stem>.pdf` + `<scanner>/<stem>.xlsx`) is picked up
+automatically, which is how `experiment` scores each run.
+
 ## evaluate
 
 ```bash
@@ -60,7 +91,8 @@ uv run mulitaminer experiment <dir> --models deepseek,qwen2.5-1.5b --runs 5
 ```
 
 Runs X extractions per (model, report) over a directory of PDFs (scanner
-auto-detected per file), evaluating each against its baseline. Local and cloud
+resolved per file, see [Directory mode](#directory-mode-batch)), evaluating
+each against the baseline XLSX next to its PDF. Local and cloud
 models run **in parallel** (grouped by the credential or server that enforces
 rate limits). Completed runs are checkpointed, so an interrupted batch resumes
 where it stopped, and a model run on another machine can be dropped into the

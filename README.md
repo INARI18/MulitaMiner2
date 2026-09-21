@@ -139,6 +139,11 @@ Windows. Each run creates `outputs/runs/<timestamp>_<input>_<model>/` with
 `results.json` (the records), `run.json` (config, tokens, cost, warnings) and
 one file per requested export.
 
+`extract` and `experiment` also take a directory. The scanner comes from each
+PDF's parent folder name, so subfolders are only needed when the batch mixes
+scanners; `-s` forces one for the whole batch
+([docs/USAGE.md](docs/USAGE.md#directory-mode-batch)).
+
 ## Evaluation and experiments
 
 Score a finished run against a ground-truth baseline with `evaluate`, or run

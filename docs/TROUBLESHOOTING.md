@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | `No API key for model '...'` | Env var missing from `.env` | Add the var shown in the message (see `mulitaminer models`) |
 | `Unknown scanner '...'` | Typo or config not registered | `mulitaminer scanners`; check `MULITAMINER_SCANNERS_DIR` |
+| `Cannot determine the scanner for '...'` | Directory mode: the PDF's parent folder is not a registered scanner | Put the PDF under a scanner-named folder, or pass `-s` to force one for the whole batch (see [USAGE.md](USAGE.md#directory-mode-batch)) |
 | `No finding blocks found` | Wrong `--scanner` for this PDF, or marker mismatch | Run `mulitaminer segment` and check the block count/preview |
 | Block count differs from the report | Marker regex too loose or too strict | Iterate on `marker_pattern` with `mulitaminer segment` (see SCANNER_CONFIGS.md) |
 | Warning `input truncated ... instances omitted` | A single block exceeds the model's output budget | Expected for findings with many instances; core fields survive. A larger-output model avoids it |
