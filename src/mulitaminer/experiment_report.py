@@ -711,7 +711,9 @@ const shortT=tg=>{const sc=(SCAN_OF[tg]||'').toLowerCase();
 function scopeTargets(scope){if(scope==='all')return TGT;const i=scope.indexOf(':'),k=scope.slice(0,i),x=scope.slice(i+1);
   return k==='scanner'?TGT.filter(t=>SCAN_OF[t]===x):[x];}
 function dimCols(colDim,tgts){return colDim==='model'?M:colDim==='baseline'?tgts:[...new Set(tgts.map(t=>SCAN_OF[t]))];}
-function colLabel(colDim,c){return colDim==='baseline'?shortT(c):c;}
+// Only a real report gets shortened; the trailing "Avg" column is a summary,
+// not a target, and has no scanner to abbreviate.
+function colLabel(colDim,c){return (colDim==='baseline'&&SCAN_OF[c])?shortT(c):c;}
 function dimCell(field,col,colDim,tgts,model,getMS){
   let ts,mdl;
   if(colDim==='model'){ts=tgts;mdl=col;}
