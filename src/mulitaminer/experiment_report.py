@@ -929,11 +929,14 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
 
   function pairTable(d){
     if(!cMet)return '';
-    const rows=d.pairs.map(([nm,by])=>[nm,by[cMet]||{}]).filter(r=>Object.keys(r[1]).length);
-    if(!rows.length)return card(`Per-finding scores · ${esc(cMet)}`,'<div class="empty">no pairs scored by this metric</div>');
+    // Every matched finding stays a row whatever the metric, so the row count
+    // always equals `matched`. A finding this metric scores nothing of reads as
+    // a blank row, which is the honest answer, not a vanished one.
+    const rows=d.pairs.map(([nm,by])=>[nm,by[cMet]||{}]);
+    if(!rows.length)return card(`Per-finding scores · ${esc(cMet)}`,'<div class="empty">no matched pairs</div>');
     const fields=[...new Set(rows.flatMap(r=>Object.keys(r[1])))].sort();
     const rowAvg=r=>{const v=fields.map(f=>r[1][f]).filter(x=>x!=null);
-      return v.length?v.reduce((a,b)=>a+b,0)/v.length:1;};
+      return v.length?v.reduce((a,b)=>a+b,0)/v.length:2;};  // nothing scored sorts last
     rows.sort((a,b)=>rowAvg(a)-rowAvg(b));   // worst first: the rows worth reading
     const vals=rows.flatMap(r=>fields.map(f=>r[1][f])).filter(v=>v!=null);
     const cf=GRAMP(vals.length?vals:[0,1]);
@@ -943,7 +946,9 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
         if(v==null){t+='<td style="color:var(--muted)">·</td>';return;}
         const c=cf(v);t+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}</td>`;});
       t+='</tr>';});
-    return card(`Per-finding scores · ${esc(cMet)} <s>worst first · blank = both sides empty (not scored)</s>`,
+    const blank=rows.length-rows.filter(r=>Object.keys(r[1]).length).length;
+    return card(`Per-finding scores · ${esc(cMet)} <span class="pill">${rows.length} findings`+
+                `${blank?` · ${blank} unscored`:''}</span> <s>worst first · blank cell = both sides empty</s>`,
                 '<div class="htab-wrap">'+t+'</tbody></table></div>');
   }
 
