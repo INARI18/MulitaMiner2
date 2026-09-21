@@ -1,5 +1,6 @@
 """LLM client tests with a stubbed transport; no network."""
 import json
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
@@ -56,11 +57,14 @@ def test_clean_response_strips_think_and_fences():
 
 def test_extract_parses_validates_and_accounts_usage():
     transport = FakeTransport('{"items": [1, 2, 3]}')
-    client = LLMClient(MODELS["deepseek"], transport=transport)
+    # Pinned prices: the arithmetic is what is under test, not the shipped rates,
+    # which change whenever the provider's table does.
+    profile = replace(MODELS["deepseek"], price_in=2.0, price_out=6.0)
+    client = LLMClient(profile, transport=transport)
     parsed, usage = client.extract("sys", "user", Items)
     assert parsed.items == [1, 2, 3]
     assert usage["prompt_tokens"] == 100 and usage["completion_tokens"] == 50
-    assert usage["cost_usd"] == pytest.approx(100 / 1e6 * 0.14 + 50 / 1e6 * 0.28)
+    assert usage["cost_usd"] == pytest.approx(100 / 1e6 * 2.0 + 50 / 1e6 * 6.0)
     # DeepSeek has no json_schema support -> json_object mode.
     assert transport.last_kwargs["response_format"] == {"type": "json_object"}
     assert transport.last_kwargs["temperature"] == 0.0
