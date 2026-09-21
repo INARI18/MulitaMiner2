@@ -1,9 +1,9 @@
 {
   "key": "deepseek",
-  "model": "deepseek-v4-flash",
+  "model": "deepseek-flash",
   "base_url": "https://api.deepseek.com/v1",
   "api_key_env": "DEEPSEEK_API_KEY",
-  "context_window": 64000,
+  "context_window": 1000000,
   "max_output_tokens": 8000,
   "price_in": 0.3,
   "price_out": 1.2
