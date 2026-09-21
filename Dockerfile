@@ -15,6 +15,14 @@ WORKDIR /app
 # metrics are simply skipped at evaluation time.
 ARG INSTALL_EVAL=false
 
+# Those metrics on a GPU make triton JIT-compile kernels at runtime, which needs
+# a C compiler the slim base does not ship. Without it every evaluation dies
+# with "Failed to find C compiler".
+RUN if [ "$INSTALL_EVAL" = "true" ]; then \
+        apt-get update && apt-get install -y --no-install-recommends gcc \
+        && rm -rf /var/lib/apt/lists/*; \
+    fi
+
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 RUN if [ "$INSTALL_EVAL" = "true" ]; then \
