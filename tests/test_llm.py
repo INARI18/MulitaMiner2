@@ -196,3 +196,19 @@ def test_token_usage_sums_provider_counters_across_calls():
     plain = TokenUsage()
     plain.add(10, 5, 0.0)
     assert plain.provider == {}
+
+
+def test_provider_counters_read_the_real_sdk_usage_object():
+    # The capture is only worth anything if it survives the SDK's own model.
+    # DeepSeek returns the cache split as extra fields on CompletionUsage; an
+    # SDK upgrade that dropped them would silently lose the billing detail.
+    from openai.types.completion_usage import CompletionUsage
+
+    usage = CompletionUsage.model_validate({
+        "prompt_tokens": 5000, "completion_tokens": 200, "total_tokens": 5200,
+        "prompt_cache_hit_tokens": 4200, "prompt_cache_miss_tokens": 800,
+    })
+    counters = _provider_counters(usage)
+    assert counters["prompt_cache_hit_tokens"] == 4200
+    assert counters["prompt_cache_miss_tokens"] == 800
+    assert "prompt_tokens_details" not in counters  # null, not a counter
