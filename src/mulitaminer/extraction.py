@@ -218,7 +218,7 @@ def _extract_chunk(
         return chunk.blocks
 
     usage.add(call_usage["prompt_tokens"], call_usage["completion_tokens"],
-              call_usage["cost_usd"])
+              call_usage["cost_usd"], call_usage.get("provider"))
     if debug_sink is not None:
         debug_sink.append({"chunk": chunk.index, "blocks": sorted(expected),
                            "response": call_usage["raw"]})

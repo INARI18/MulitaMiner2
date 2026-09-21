@@ -131,12 +131,20 @@ class TokenUsage(BaseModel):
     completion_tokens: int = 0
     calls: int = 0
     cost_usd: float = 0.0
+    # Every numeric field the provider reported, summed verbatim across calls.
+    # cost_usd is one price table applied to two token counts; providers bill on
+    # more than that (cache hits, tiers), so keep the raw counters to reprice a
+    # finished run instead of paying to re-run it.
+    provider: dict = {}
 
-    def add(self, prompt: int, completion: int, cost: float) -> None:
+    def add(self, prompt: int, completion: int, cost: float,
+            provider: dict | None = None) -> None:
         self.prompt_tokens += prompt
         self.completion_tokens += completion
         self.calls += 1
         self.cost_usd += cost
+        for name, value in (provider or {}).items():
+            self.provider[name] = self.provider.get(name, 0) + value
 
 
 # block_id reconciliation drop categories, in a fixed order so the output always

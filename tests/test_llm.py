@@ -4,7 +4,7 @@ from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from mulitaminer.llm import (
     FatalLLMError,
@@ -13,8 +13,10 @@ from mulitaminer.llm import (
     clean_response,
     get_model,
     load_llm_profile,
+    _provider_counters,
     _resolve_api_key,
 )
+from mulitaminer.models import TokenUsage
 
 # Profiles now come from configs/llms/*.json; the dict shape is unchanged.
 MODELS = all_models()
@@ -157,3 +159,40 @@ def test_registry_rejects_unknown_and_missing_fields(tmp_path):
     incomplete.write_text('{"key": "x"}', encoding="utf-8")
     with pytest.raises(ValueError, match="invalid"):
         load_llm_profile(incomplete)
+
+
+def test_provider_counters_capture_billing_detail_we_do_not_model():
+    # DeepSeek reports the cache split at the top level, OpenAI nests it. Both
+    # must survive into run.json so a finished run can be repriced later.
+    class Usage(BaseModel):
+        model_config = ConfigDict(extra="allow")
+        prompt_tokens: int
+        completion_tokens: int
+
+    usage = Usage(prompt_tokens=100, completion_tokens=50,
+                  prompt_cache_hit_tokens=80, prompt_cache_miss_tokens=20,
+                  prompt_tokens_details={"cached_tokens": 80},
+                  model_name="deepseek-flash", free=False)
+    counters = _provider_counters(usage)
+    assert counters["prompt_cache_hit_tokens"] == 80
+    assert counters["prompt_cache_miss_tokens"] == 20
+    assert counters["prompt_tokens_details.cached_tokens"] == 80
+    # Non-numeric and boolean fields are not counters.
+    assert "model_name" not in counters and "free" not in counters
+
+
+def test_provider_counters_tolerate_an_unusable_usage_object():
+    assert _provider_counters(None) == {}
+    assert _provider_counters(SimpleNamespace(prompt_tokens=1)) == {}
+
+
+def test_token_usage_sums_provider_counters_across_calls():
+    usage = TokenUsage()
+    usage.add(100, 50, 0.1, {"prompt_cache_hit_tokens": 80})
+    usage.add(200, 60, 0.2, {"prompt_cache_hit_tokens": 150})
+    assert usage.calls == 2 and usage.prompt_tokens == 300
+    assert usage.provider == {"prompt_cache_hit_tokens": 230}
+    # A run whose provider reports nothing keeps an empty dict, not a crash.
+    plain = TokenUsage()
+    plain.add(10, 5, 0.0)
+    assert plain.provider == {}

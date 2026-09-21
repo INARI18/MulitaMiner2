@@ -244,8 +244,37 @@ class LLMClient:
             "prompt_tokens": prompt_tokens,
             "completion_tokens": completion_tokens,
             "cost_usd": cost,
+            "provider": _provider_counters(usage),
             "raw": raw,
         }
+
+
+def _provider_counters(usage) -> dict:
+    """Every numeric field in the provider's usage object, one nesting level
+    flattened with dotted keys. Providers put the billing detail we do not model
+    here, under names we cannot know in advance: DeepSeek reports
+    prompt_cache_hit_tokens at the top level, OpenAI nests cached_tokens under
+    prompt_tokens_details. Recording them verbatim makes a finished run
+    repriceable without re-running it."""
+    if usage is None:
+        return {}
+    try:
+        data = usage.model_dump() if hasattr(usage, "model_dump") else dict(usage)
+    except Exception:  # noqa: BLE001 - accounting detail is never worth a failed run
+        return {}
+
+    def numbers(source: dict, prefix: str = "") -> dict:
+        out: dict = {}
+        for name, value in source.items():
+            if isinstance(value, bool) or value is None:
+                continue
+            if isinstance(value, (int, float)):
+                out[prefix + name] = value
+            elif isinstance(value, dict) and not prefix:
+                out |= numbers(value, f"{name}.")
+        return out
+
+    return numbers(data)
 
 
 def _probe_ollama(root: str) -> dict:
