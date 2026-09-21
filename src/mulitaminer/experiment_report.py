@@ -296,6 +296,7 @@ section{margin:2.2rem 0;scroll-margin-top:3.4rem}
 .toggle button{background:var(--card2);color:var(--ink2);border:1px solid var(--border);font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;
   padding:.28rem .6rem;border-radius:999px;cursor:pointer}
 .toggle button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.toggle button[disabled]{opacity:.38;cursor:not-allowed;text-decoration:line-through}
 .toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 select{background:var(--card2);color:var(--ink);border:1px solid var(--border);border-radius:6px;
   padding:.3rem .55rem;font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;cursor:pointer}
@@ -926,19 +927,26 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
   const card=(t,inner)=>`<div class="card"><div class="card-t">${t}</div>${inner}</div>`;
 
   function controls(d){
+    // Show every metric the experiment ran, and disable the ones this report has
+    // no data for: a scanner with no nested field is never scored 'structural',
+    // and a missing button looked like the metric did not exist at all.
     const seen=new Set();d.pairs.forEach(([,by])=>{for(const k in by)seen.add(k);});
-    const mets=DATA.text_metrics.concat(DATA.det_metrics).filter(x=>seen.has(x));
+    const all=DATA.text_metrics.concat(DATA.det_metrics);
+    const mets=all.filter(x=>seen.has(x));
     if(!mets.includes(cMet))cMet=mets[0]||null;
     let h='';
     if(M.length>1)h+='<span class="selg"><span class="lb">Model</span><select id="mModel">'+
       M.map(m=>`<option value="${esc(m)}"${m===cM?' selected':''}>${esc(m)}</option>`).join('')+'</select></span>';
-    if(mets.length)h+='<span class="toggle" id="mMetric"><span class="lb">Metric</span>'+
-      mets.map(x=>`<button data-v="${esc(x)}" aria-pressed="${x===cMet}"`+
-        `${METRIC_DOC[x]?` data-tip="${esc(x+': '+METRIC_DOC[x])}"`:''}>${esc(x)}</button>`).join('')+'</span>';
+    if(all.length)h+='<span class="toggle" id="mMetric"><span class="lb">Metric</span>'+
+      all.map(x=>{const on=seen.has(x);
+        const tip=(METRIC_DOC[x]||'')+(on?'':'\n\nNot scored on this report: no field here is measured by it.');
+        return `<button data-v="${esc(x)}" aria-pressed="${x===cMet}"${on?'':' disabled'}`+
+          ` data-tip="${esc(x+': '+tip)}">${esc(x)}</button>`;}).join('')+'</span>';
     el('mCtl').innerHTML=h;
     const sel=el('mModel');if(sel)sel.onchange=()=>{cM=sel.value;render();};
     const tg=el('mMetric');
-    if(tg)tg.querySelectorAll('button').forEach(b=>b.onclick=()=>{cMet=b.dataset.v;render();});
+    if(tg)tg.querySelectorAll('button:not([disabled])').forEach(
+      b=>b.onclick=()=>{cMet=b.dataset.v;render();});
   }
 
   function pairTable(d){
