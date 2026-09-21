@@ -41,6 +41,34 @@ def _box(values: list[float]) -> dict | None:
             "q3": round(q3, 4), "max": round(vs[-1], 4), "n": len(vs)}
 
 
+def _new_detail() -> dict:
+    return {"runs": 0, "base": 0, "extr": 0, "match": 0,
+            "fn": defaultdict(lambda: [0, 0]), "fp": {},
+            "fp_n": defaultdict(lambda: [0, 0]), "pairs": defaultdict(list)}
+
+
+def _tally(counts: dict, names: list[str]) -> None:
+    """Runs the name showed up in, then total hits: a name can repeat within a run."""
+    for name in set(names):
+        counts[name][0] += 1
+    for name in names:
+        counts[name][1] += 1
+
+
+def _fold_pairs(runs: list[tuple[str, dict]]) -> list:
+    """One matched finding across runs: [name, {metric: {field: mean score}}].
+    Cells vacuous in every run are left out, so the table shows them as blank."""
+    acc: dict = defaultdict(lambda: defaultdict(list))
+    for _, scores in runs:
+        for field, metrics in scores.items():
+            for metric, st in metrics.items():
+                if not st.get("vacuous") and st.get("score") is not None:
+                    acc[metric][field].append(st["score"])
+    return [runs[0][0],
+            {m: {f: round(statistics.fmean(v), 3) for f, v in fs.items()}
+             for m, fs in acc.items()}]
+
+
 def _aggregate(experiment_dir: Path) -> dict:
     manifest = json.loads((experiment_dir / "experiment.json").read_text(encoding="utf-8"))
     models = manifest["config"]["models"]
@@ -53,6 +81,8 @@ def _aggregate(experiment_dir: Path) -> dict:
     targets: dict = {}
     sev_by_scanner: dict = defaultdict(lambda: defaultdict(int))  # scanner -> sev -> count
     sev_seen: set = set()                                         # targets already counted
+    detail: dict = defaultdict(_new_detail)   # (t,m) -> drill-down payload
+    threshold = None                          # alignment cutoff, from any evaluation
 
     for r in manifest["runs"]:
         if r["status"] not in ("ok", "cached"):
@@ -68,6 +98,20 @@ def _aggregate(experiment_dir: Path) -> dict:
             fp = len(cv.get("false_positives", cv.get("spurious", [])))
             cov[key]["false_negatives"].append(fn)
             cov[key]["false_positives"].append(fp)
+            d = detail[key]
+            d["runs"] += 1
+            d["base"] += cv.get("baseline_count", 0)
+            d["extr"] += cv.get("extraction_count", 0)
+            d["match"] += cv.get("matched", 0)
+            _tally(d["fn"], [str(nm) for nm in
+                             cv.get("false_negatives", cv.get("missed", []))])
+            fp_names = []
+            for det in cv.get("false_positive_detail", []):
+                name = str(det.get("name", "?"))
+                fp_names.append(name)
+                d["fp"].setdefault(name, [det.get("category"), det.get("best_baseline"),
+                                          det.get("best_similarity")])
+            _tally(d["fp_n"], fp_names)
         if "cost_usd" in r:
             cov[key]["cost"].append(r["cost_usd"])
         if "duration_s" in r:
@@ -76,6 +120,8 @@ def _aggregate(experiment_dir: Path) -> dict:
         if not ep.is_file():
             continue
         ev = json.loads(ep.read_text(encoding="utf-8"))
+        if threshold is None:
+            threshold = ev.get("meta", {}).get("threshold")
         for field, ms in ev.get("fields", {}).items():
             fb = fe = None
             for metric, st in ms.items():
@@ -86,8 +132,11 @@ def _aggregate(experiment_dir: Path) -> dict:
                     fb, fe = st["fill_rate_baseline"], st.get("fill_rate_extraction", 0.0)
             if fb is not None:
                 fill[key][field].append(max(0.0, fb - (fe or 0.0)))
-        for pair in ev.get("pairs", []):
+        for i, pair in enumerate(ev.get("pairs", [])):
             scores = pair.get("scores", {})
+            # Key on the baseline row, the only id stable across runs.
+            pid = pair.get("baseline_index", i)
+            detail[key]["pairs"][pid].append((pair.get("name") or f"#{pid}", scores))
             for metric in _TEXT:
                 vals = [ms[metric]["score"] for ms in scores.values()
                         if metric in ms and not ms[metric]["vacuous"]]
@@ -131,6 +180,22 @@ def _aggregate(experiment_dir: Path) -> dict:
     omission = {t: {f: {m: _ms(fill[(t, m)].get(f, [])) for m in models}
                     for f in omit_fields} for t in tsorted}
 
+    # Per-report drill-down, one entry per (report, model): counts, the actual
+    # missed/invented names, and every matched finding's per-field scores.
+    detail_out = {}
+    for (t, m), d in detail.items():
+        n = max(1, d["runs"])
+        detail_out[f"{t}|{m}"] = {
+            "runs": d["runs"],
+            "base": round(d["base"] / n, 1), "extr": round(d["extr"] / n, 1),
+            "match": round(d["match"] / n, 1),
+            # [name, runs hit, total hits]; the fp rows carry the match detail too.
+            "fn": sorted(([k, *v] for k, v in d["fn"].items()), key=lambda x: (-x[2], x[0])),
+            "fp": sorted(([k, *d["fp"][k], *v] for k, v in d["fp_n"].items()),
+                         key=lambda x: (-x[5], x[0])),
+            "pairs": [_fold_pairs(v) for v in d["pairs"].values()],
+        }
+
     def dist_box(metrics):
         return {metric: {m: _box([v for t in tsorted for v in pairsc[(t, m)].get(metric, [])])
                          for m in models} for metric in metrics}
@@ -154,6 +219,7 @@ def _aggregate(experiment_dir: Path) -> dict:
         "omission": omission,
         "dist": dist_box(text_present),
         "dist_by_target": dist_box_bt(text_present),
+        "detail": detail_out, "threshold": threshold,
     }
 
 
@@ -248,7 +314,7 @@ select{background:var(--card2);color:var(--ink);border:1px solid var(--border);b
 .legend{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.6rem;font:.7rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace;color:var(--ink2)}
 .legend span{display:inline-flex;align-items:center;gap:.35rem}
 .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
-.mult{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.8rem}
+.mult{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:.8rem}
 .tctab{border-collapse:collapse;width:100%;font:.72rem ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,monospace}
 .tctab th,.tctab td{padding:.4rem .7rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
 .tctab th.l,.tctab td.l{text-align:left}
@@ -267,6 +333,39 @@ select{background:var(--card2);color:var(--ink);border:1px solid var(--border);b
   transition:opacity .12s;z-index:100;max-width:280px;white-space:pre-line}
 #tip.on{opacity:1}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.dlink{color:var(--accent);cursor:pointer;border-bottom:1px dotted var(--accent)}
+.mask{position:fixed;inset:0;background:rgba(26,26,23,.72);z-index:50;overflow:auto;padding:2rem 1rem;display:none}
+.mask.on{display:block}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:14px;max-width:1000px;
+  margin:0 auto;padding:1.3rem 1.5rem 2rem;position:relative}
+.modal .x{position:absolute;top:.5rem;right:.8rem;background:none;border:0;font:1.5rem/1 ui-monospace,Consolas,monospace;color:var(--muted);cursor:pointer}
+.modal .x:hover{color:var(--ink)}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:.6rem;margin:.9rem 0 1.1rem}
+.kpi>div{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:.5rem .65rem}
+.kpi .k{font:600 9px/1 ui-monospace,Consolas,monospace;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:700 1.05rem ui-monospace,Consolas,monospace;margin-top:.28rem}
+.kpi .s2{font:.57rem/1.3 ui-monospace,Consolas,monospace;color:var(--muted);margin-top:.2rem}
+.mlist{list-style:none;font:.72rem/1.45 ui-monospace,Consolas,monospace;max-height:300px;overflow:auto}
+.mlist li{padding:.42rem 0;border-bottom:1px solid var(--border)}
+.mlist li:last-child{border-bottom:0}
+.mlist .nm{display:flex;gap:.4rem;align-items:baseline;color:var(--ink)}
+.mlist .nm b{font-weight:600;flex:1;min-width:0;overflow-wrap:anywhere}
+.mlist .mx{display:flex;flex-wrap:wrap;gap:.25rem .5rem;align-items:center;margin-top:.28rem;
+  font-size:.64rem;color:var(--muted);overflow-wrap:anywhere}
+.mlist s,.card-t s{color:var(--muted);text-decoration:none;font-size:.64rem;font-weight:400;text-transform:none;letter-spacing:0}
+.pill{border:1px solid var(--border);background:var(--card2);border-radius:999px;padding:.05rem .42rem;
+  font:.59rem/1.5 ui-monospace,Consolas,monospace;color:var(--ink2);white-space:nowrap;flex-shrink:0;text-transform:none;letter-spacing:0}
+.pill.rep{background:var(--accent);border-color:var(--accent);color:#fff}
+/* Similarity against the alignment threshold: the tick is the cutoff, so a bar
+   stopping just short of it reads as a near miss, not an invention. */
+.simbar{position:relative;width:62px;height:7px;border-radius:4px;background:var(--card2);
+  border:1px solid var(--border);flex-shrink:0}
+.simbar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--muted)}
+.simbar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--accent);border-radius:1px}
+.ptab{width:100%;border-collapse:separate;border-spacing:2px;font:.68rem ui-monospace,Consolas,monospace}
+.ptab th{font-weight:600;font-size:.6rem;color:var(--ink2);padding:.3rem .2rem;text-align:center}
+.ptab th.l,.ptab td.l{text-align:left;font-size:.68rem;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ptab td{text-align:center;padding:.28rem .2rem;border-radius:4px}
 """
 
 _BODY = r"""
@@ -313,7 +412,7 @@ _BODY = r"""
   <div class="kick">Consistency</div>
   <h2 id="smH2">Does the winner hold across reports?</h2>
   <p class="sub" id="smSub">One panel per report (recall by model). If the order changes panel to panel,
-     the overall mean is hiding it.</p>
+     the overall mean is hiding it. Click a report or a model name to open its detail.</p>
   <div class="mult" id="sm"></div>
   <div class="legend" id="smLegend"></div>
 </section>
@@ -395,6 +494,16 @@ _BODY = r"""
     <div style="overflow-x:auto"><table class="tctab" id="timecost"></table></div></div>
 </section>
 <div id="tip" role="tooltip"></div>
+
+<div class="mask" id="mask">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="x" id="mClose" aria-label="Close">&times;</button>
+    <div class="kick">Report detail</div>
+    <h2 id="mTitle"></h2>
+    <div class="ctlbar" id="mCtl" style="margin:.8rem 0 0"></div>
+    <div id="mBody"></div>
+  </div>
+</div>
 """
 
 _JS = r"""
@@ -425,6 +534,9 @@ function hDot(rows,{W=760,rowH=28,padL=120,min=0,max=1,ticks=true}={}){
   else [0,.5,1].forEach(t=>{const x=padL+t*plotW;s+=`<line class="grid" x1="${x}" y1="${top}" x2="${x}" y2="${bottom}"/>`;});
   rows.forEach((r,i)=>{const y=top+i*rowH+rowH/2;
     s+=`<text class="ylab" x="${padL-10}" y="${y+4}" text-anchor="end">${esc(r.label)}</text>`;
+    // Hit area over the label only, so the dots keep their tooltips.
+    if(r.det)s+=`<rect x="0" y="${y-rowH/2}" width="${padL}" height="${rowH}" fill="#000" fill-opacity="0"`+
+      ` pointer-events="all" style="cursor:pointer" data-det="${esc(r.det)}"${r.detM?` data-det-m="${esc(r.detM)}"`:''}/>`;
     r.points.forEach(p=>{if(p.v==null)return;const cx=X(p.v);
       if(p.err)s+=`<line class="err" x1="${X(Math.max(min,p.v-p.err))}" y1="${y}" x2="${X(Math.min(max,p.v+p.err))}" y2="${y}"/>`;
       s+=`<circle cx="${cx}" cy="${y}" r="6" fill="${p.color}" data-tip="${esc(p.tip)}"/>`;});});
@@ -548,20 +660,20 @@ else if(M.length===1){const m=ranked[0],o=OV[m],c=MC[m];
 // ---- small multiples ----
 if(M.length===1){  // single model: small multiples degenerate to one dot each; show one bar chart instead
   const m=M[0];
-  const rows=[...TGT].map(t=>({label:t,points:[{v:DATA.by_target[t][m].recall.m,err:DATA.by_target[t][m].recall.s,color:MC[m],
+  const rows=[...TGT].map(t=>({label:t,det:t,points:[{v:DATA.by_target[t][m].recall.m,err:DATA.by_target[t][m].recall.s,color:MC[m],
     tip:`${t}\nrecall ${pct(DATA.by_target[t][m].recall.m)}`}]}))
     .sort((a,b)=>(b.points[0].v??-1)-(a.points[0].v??-1));
   el('sm').style.display='block';
   el('sm').innerHTML=`<div class="card"><div class="card-t">Recall by report<span class="dlwrap" id="dl_sm"></span></div>${hDot(rows,{W:800,padL:250,rowH:26,ticks:true})}</div>`;
   el('smH2').textContent='How does recall vary across reports?';
-  el('smSub').textContent='Recall per report for the single model under test. Short bars are the reports it struggles on.';
+  el('smSub').textContent='Recall per report for the single model under test. Short bars are the reports it struggles on. Click a report name to open its detail.';
   mkDL('dl_sm','sm','recall-by-report','smLegend');
 }else{
   el('sm').innerHTML=TGT.map(t=>{
     const rows=[...M].sort((a,b)=>(DATA.by_target[t][b].recall.m??-1)-(DATA.by_target[t][a].recall.m??-1))
-      .map(m=>({label:m,points:[{v:DATA.by_target[t][m].recall.m,err:DATA.by_target[t][m].recall.s,color:MC[m],
+      .map(m=>({label:m,det:t,detM:m,points:[{v:DATA.by_target[t][m].recall.m,err:DATA.by_target[t][m].recall.s,color:MC[m],
         tip:`${m} @ ${t}\nrecall ${pct(DATA.by_target[t][m].recall.m)} ±${((DATA.by_target[t][m].recall.s||0)*100).toFixed(1)}`}]}));
-    return `<div class="card"><div class="card-t">${esc(t)}</div>${hDot(rows,{W:520,padL:110,rowH:24,ticks:false})}</div>`;
+    return `<div class="card"><div class="card-t"><span class="dlink" data-det="${esc(t)}">${esc(t)}</span></div>${hDot(rows,{W:480,padL:150,rowH:30})}</div>`;
   }).join('')||'<div class="empty">no reports evaluated</div>';
 }
 legend('smLegend',M.map(m=>[m,MC[m]]));
@@ -767,7 +879,7 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
 (function(){
   const SEV=DATA.sev_by_scanner||{},scs=Object.keys(SEV);
   if(!scs.length){el('sevBar').innerHTML='<div class="empty">no severity data</div>';return;}
-  const CATS=['Critical','High','Medium','Low','Info'],COL={Critical:'#c81d54',High:'#d9541e',Medium:'#d9a200',Low:'#7a9a2f',Info:'#b8b4a8'};
+  const CATS=['Critical','High','Medium','Low','Info'],COL={Critical:'#c81d54',High:'#d9541e',Medium:'#d9a200',Low:'#7a9a2f',Info:'var(--muted)'};
   const bucket=k=>{k=(k||'').toUpperCase();return k==='CRITICAL'?'Critical':k==='HIGH'?'High':k==='MEDIUM'?'Medium':k==='LOW'?'Low':'Info';};
   const rows=scs.map(sc=>{const c=SEV[sc],b={Critical:0,High:0,Medium:0,Low:0,Info:0};let n=0;
     for(const k in c){b[bucket(k)]+=c[k];n+=c[k];}
@@ -784,11 +896,116 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
   if(!tg.length){tbl.innerHTML='<tbody><tr><td class="empty">no runs</td></tr></tbody>';return;}
   const fmtT=s=>s==null?'-':s>=90?(s/60).toFixed(1)+' min':Math.round(s)+' s';
   let h=`<thead><tr><th class="l">Report</th>${M.map(m=>`<th>${esc(m)} time</th><th>${esc(m)} cost</th>`).join('')}</tr></thead><tbody>`;
-  tg.forEach(t=>{h+=`<tr><td class="l">${esc(t)}</td>`;
+  tg.forEach(t=>{h+=`<tr><td class="l"><span class="dlink" data-det="${esc(t)}">${esc(t)}</span></td>`;
     M.forEach(m=>{const v=TC[t][m]||{};h+=`<td>${fmtT(v.dur)}</td><td>${v.cost?'$'+v.cost.toFixed(4):'-'}</td>`;});h+='</tr>';});
   h+=`<tr class="tot"><td class="l">Total</td>`;
   M.forEach(m=>{let dt=0,ct=0;tg.forEach(t=>{const v=TC[t][m]||{};dt+=v.dur||0;ct+=v.cost||0;});
     h+=`<td>${fmtT(dt)}</td><td>$${ct.toFixed(4)}</td>`;});
   tbl.innerHTML=h+'</tr></tbody>';
+})();
+
+// ---- per-report drill-down (modal) ----
+(function(){
+  const DET=DATA.detail||{},mask=el('mask'),THR=DATA.threshold??0.7;
+  if(!Object.keys(DET).length)return;
+  let cT=null,cM=M[0],cMet=null;
+  const cell=()=>DET[cT+'|'+cM];
+  const card=(t,inner)=>`<div class="card"><div class="card-t">${t}</div>${inner}</div>`;
+
+  function controls(d){
+    const seen=new Set();d.pairs.forEach(([,by])=>{for(const k in by)seen.add(k);});
+    const mets=DATA.text_metrics.concat(DATA.det_metrics).filter(x=>seen.has(x));
+    if(!mets.includes(cMet))cMet=mets[0]||null;
+    let h='';
+    if(M.length>1)h+='<span class="selg"><span class="lb">Model</span><select id="mModel">'+
+      M.map(m=>`<option value="${esc(m)}"${m===cM?' selected':''}>${esc(m)}</option>`).join('')+'</select></span>';
+    if(mets.length)h+='<span class="toggle" id="mMetric"><span class="lb">Metric</span>'+
+      mets.map(x=>`<button data-v="${esc(x)}" aria-pressed="${x===cMet}">${esc(x)}</button>`).join('')+'</span>';
+    el('mCtl').innerHTML=h;
+    const sel=el('mModel');if(sel)sel.onchange=()=>{cM=sel.value;render();};
+    const tg=el('mMetric');
+    if(tg)tg.querySelectorAll('button').forEach(b=>b.onclick=()=>{cMet=b.dataset.v;render();});
+  }
+
+  function pairTable(d){
+    if(!cMet)return '';
+    const rows=d.pairs.map(([nm,by])=>[nm,by[cMet]||{}]).filter(r=>Object.keys(r[1]).length);
+    if(!rows.length)return card(`Per-finding scores · ${esc(cMet)}`,'<div class="empty">no pairs scored by this metric</div>');
+    const fields=[...new Set(rows.flatMap(r=>Object.keys(r[1])))].sort();
+    const rowAvg=r=>{const v=fields.map(f=>r[1][f]).filter(x=>x!=null);
+      return v.length?v.reduce((a,b)=>a+b,0)/v.length:1;};
+    rows.sort((a,b)=>rowAvg(a)-rowAvg(b));   // worst first: the rows worth reading
+    const vals=rows.flatMap(r=>fields.map(f=>r[1][f])).filter(v=>v!=null);
+    const cf=GRAMP(vals.length?vals:[0,1]);
+    let t=`<table class="ptab"><thead><tr><th class="l">Finding</th>${fields.map(f=>`<th>${esc(f)}</th>`).join('')}</tr></thead><tbody>`;
+    rows.forEach(([nm,by])=>{t+=`<tr><td class="l" title="${esc(nm)}">${esc(nm)}</td>`;
+      fields.forEach(f=>{const v=by[f];
+        if(v==null){t+='<td style="color:var(--muted)">·</td>';return;}
+        const c=cf(v);t+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}</td>`;});
+      t+='</tr>';});
+    return card(`Per-finding scores · ${esc(cMet)} <s>worst first · blank = both sides empty (not scored)</s>`,
+                '<div class="htab-wrap">'+t+'</tbody></table></div>');
+  }
+
+  function render(){
+    const d=cell(),bt=(DATA.by_target[cT]||{})[cM]||{};
+    el('mTitle').innerHTML=esc(cT)+` <span style="color:var(--muted);font-weight:400">· ${esc(SCAN_OF[cT]||'')} · ${esc(cM)}</span>`;
+    if(!d){el('mCtl').innerHTML='';el('mBody').innerHTML='<div class="empty">this model has no evaluated run for this report</div>';return;}
+    controls(d);
+    const n=d.runs||1,miss=Math.max(0,d.base-d.match),extra=Math.max(0,d.extr-d.match);
+    let h=`<p class="sub">Counts are per run${n>1?`, averaged over ${n} runs`:''}. Missing and extra are
+      alignment outcomes at threshold ${THR}: a baseline finding left unpaired is missing, an extraction
+      left unpaired is extra. Pairing is one-to-one, so an extraction can sit above the threshold and still
+      be extra when that baseline is already claimed. The lists group by name, so a name the model repeats
+      is one entry; the bar shows its closest baseline's similarity and the tick marks the threshold.</p>`;
+    // Missing/extra count occurrences; the lists below group by name. When a name
+    // repeats the two differ, so each KPI says how many distinct names it covers.
+    const fnOcc=d.fn.reduce((s,r)=>s+r[2],0),fpOcc=d.fp.reduce((s,r)=>s+r[5],0);
+    const nsub=(names,occ)=>names<occ?`${names} distinct name${names===1?'':'s'}`:'';
+    h+='<div class="kpi">'+[['baseline vulns',d.base],['extracted',d.extr],['matched',d.match],
+      ['missing',miss,nsub(d.fn.length,fnOcc)],['extra',extra,nsub(d.fp.length,fpOcc)],
+      ['recall',pct(bt.recall&&bt.recall.m)],['precision',pct(bt.precision&&bt.precision.m)]]
+      .map(([k,v,s])=>`<div><div class="k">${k}</div><div class="v">${v}</div>`+
+        `${s?`<div class="s2">${s}</div>`:''}</div>`).join('')+'</div>';
+    h+='<div class="grid2">';
+    // Frequency pill: runs the name appeared in, and repeats within a single run.
+    const freq=(hit,tot)=>{const b=[];
+      if(n>1)b.push(`${hit}/${n} runs`);
+      if(tot>hit)b.push(`${tot}x`);
+      return b.length?`<span class="pill rep">${b.join(' · ')}</span>`:'';};
+    const head=(t,names,occ)=>`${t} <span class="pill">${names} name${names===1?'':'s'}`+
+      `${occ>names?` · ${occ} total`:''}</span>`;
+    const simbar=s=>{const p=Math.max(0,Math.min(1,s||0));
+      return `<span class="simbar" data-tip="similarity ${p.toFixed(2)} · threshold ${THR.toFixed(2)}">`+
+        `<i style="width:${(p*100).toFixed(0)}%"></i><u style="left:${(THR*100).toFixed(0)}%"></u></span>`;};
+    h+=card(head('Missing <s>baseline findings not recovered</s>',d.fn.length,fnOcc),d.fn.length
+      ?'<ul class="mlist">'+d.fn.map(([nm,hit,tot])=>
+        `<li><div class="nm"><b>${esc(nm)}</b>${freq(hit,tot)}</div></li>`).join('')+'</ul>'
+      :'<div class="empty">none</div>');
+    h+=card(head('Extra <s>extracted with no baseline match</s>',d.fp.length,fpOcc),d.fp.length
+      ?'<ul class="mlist">'+d.fp.map(([nm,kind,best,sim,hit,tot])=>
+        `<li><div class="nm"><b>${esc(nm)}</b>${freq(hit,tot)}</div><div class="mx">`+
+        `<span class="pill">${esc(kind||'?')}</span>`+
+        `${best?`<span>closest: ${esc(best)}</span>${simbar(sim)}<span>${(sim||0).toFixed(2)}</span>`:''}`+
+        '</div></li>').join('')+'</ul>'
+      :'<div class="empty">none</div>');
+    h+='</div>';
+    el('mBody').innerHTML=h+pairTable(d);
+  }
+
+  function open(t,m){
+    cT=t;
+    if(m&&DET[t+'|'+m])cM=m;
+    else if(!DET[t+'|'+cM]){const alt=M.find(x=>DET[t+'|'+x]);if(alt)cM=alt;}
+    render();mask.classList.add('on');document.body.style.overflow='hidden';
+    el('mClose').focus();
+  }
+  function close(){mask.classList.remove('on');document.body.style.overflow='';}
+  el('mClose').onclick=close;
+  mask.onclick=e=>{if(e.target===mask)close();};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+  document.addEventListener('click',e=>{
+    const h=e.target.closest&&e.target.closest('[data-det]');
+    if(h)open(h.getAttribute('data-det'),h.getAttribute('data-det-m'));});
 })();
 """

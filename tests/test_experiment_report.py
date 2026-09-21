@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-from mulitaminer.experiment_report import build_report
+from mulitaminer.experiment_report import _aggregate, build_report
 
 
 def _fabricate(root: Path) -> None:
@@ -102,3 +102,55 @@ def test_report_handles_missing_coverage(tmp_path):
     }), encoding="utf-8")
     out = build_report(tmp_path)
     assert out.is_file() and "MulitaMiner" in out.read_text(encoding="utf-8")
+
+
+def test_drilldown_detail_folds_runs(tmp_path):
+    # Two runs of one model; one baseline finding is missed in both, one
+    # invention appears in one. Pairs are keyed by baseline_index, so the same
+    # finding across runs folds into a single row.
+    runs = []
+    for n in (1, 2):
+        rd = tmp_path / "openvas" / "m" / f"run_{n}"
+        rd.mkdir(parents=True)
+        (rd / "results.json").write_text("[]", encoding="utf-8")
+        (rd / "evaluation.json").write_text(json.dumps({
+            "meta": {"threshold": 0.7},
+            "fields": {},
+            "pairs": [
+                {"baseline_index": 0, "name": "SQL Injection", "scores": {
+                    "description": {"token_f1": {"score": 0.6 if n == 1 else 0.8,
+                                                 "vacuous": False}},
+                    "impact": {"token_f1": {"score": 0.0, "vacuous": True}}}},
+            ],
+        }), encoding="utf-8")
+        runs.append({
+            "scanner": "openvas", "model": "m", "run": n, "report": "R.pdf",
+            "run_dir": str(rd), "status": "ok", "duration_s": 10.0, "cost_usd": 0.0,
+            "coverage": {"recall": 0.5, "precision": 0.5, "baseline_count": 2,
+                         "extraction_count": 2 if n == 1 else 1, "matched": 1,
+                         "false_negatives": ["XSS"],
+                         "false_positives": ["Ghost", "Ghost"] if n == 1 else [],
+                         "false_positive_detail": [
+                             {"name": "Ghost", "category": "invention",
+                              "best_baseline": "XSS", "best_similarity": 0.4}
+                         ] * 2 if n == 1 else []},
+        })
+    (tmp_path / "experiment.json").write_text(json.dumps({
+        "config": {"reports": ["R.pdf"], "models": ["m"], "runs": 2,
+                   "scanner": "openvas", "metrics": "all"},
+        "complete": True,
+        "totals": {"planned": 2, "done": 2, "failed": 0, "skipped_reports": 0,
+                   "active_seconds": 20.0, "cost_usd": 0.0},
+        "runs": runs, "skipped": [],
+    }), encoding="utf-8")
+
+    data = _aggregate(tmp_path)
+    cell = data["detail"]["R|m"]
+    assert data["threshold"] == 0.7
+    assert cell["runs"] == 2 and cell["base"] == 2.0 and cell["extr"] == 1.5
+    # [name, runs hit, total hits]: XSS is missed once in each run, and run 1
+    # reports Ghost twice, so its hits outnumber the runs it appeared in.
+    assert cell["fn"] == [["XSS", 2, 2]]
+    assert cell["fp"] == [["Ghost", "invention", "XSS", 0.4, 1, 2]]
+    # One row per baseline finding, scores averaged; the vacuous field is absent.
+    assert cell["pairs"] == [["SQL Injection", {"token_f1": {"description": 0.7}}]]
