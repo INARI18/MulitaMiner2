@@ -154,3 +154,16 @@ def test_drilldown_detail_folds_runs(tmp_path):
     assert cell["fp"] == [["Ghost", "invention", "XSS", 0.4, 1, 2]]
     # One row per baseline finding, scores averaged; the vacuous field is absent.
     assert cell["pairs"] == [["SQL Injection", {"token_f1": {"description": 0.7}}]]
+
+
+def test_every_scanner_has_a_column_abbreviation(tmp_path):
+    # The report shortens report names to "<scanner>·<name>". A hardcoded chain
+    # ending in 'OV' once labelled every unlisted scanner as OpenVAS, so ZAP
+    # reports read "OV·ZAP_JBoss7". Keep an explicit entry per shipped scanner.
+    from mulitaminer.experiment_report import _JS
+    from mulitaminer.scanner_engine import all_scanners
+
+    abbr = _JS.split("const SCAN_ABBR={", 1)[1].split("};", 1)[0]
+    missing = [name for name in all_scanners()
+               if f"{name}:" not in abbr and f"'{name}':" not in abbr]
+    assert not missing, f"no column abbreviation for {missing}"

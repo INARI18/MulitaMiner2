@@ -696,9 +696,17 @@ legend('smLegend',M.map(m=>[m,MC[m]]));
 const SCAN_OF=DATA.scanners||{};
 const SCANNERS=[...new Set(TGT.map(t=>SCAN_OF[t]).filter(Boolean))];
 const RUNS_N=(C.runs)||1, SHOW_STD=RUNS_N>1;
+// Short column label for a report. The abbreviation comes from the report's own
+// scanner, with a generic fallback: a hardcoded chain ending in "OV" labelled
+// every unlisted scanner as OpenVAS. The trailing-version strip requires a
+// separator, so "openvas_tomcat_7.0.70" loses its version but "ZAP_JBoss7"
+// keeps the 7 that is part of the product name.
+const SCAN_ABBR={openvas:'OV','openvas-v2':'OV',nessus:'NS',qualys:'QL',
+                 tenable:'TN',tenablewas:'TN',acunetix:'AX',zap:'ZAP'};
 const shortT=tg=>{const sc=(SCAN_OF[tg]||'').toLowerCase();
-  const pre=sc.includes('tenable')?'TN':sc.includes('nessus')?'NS':sc.includes('qualys')?'QL':'OV';
-  const n=tg.replace(/^(openvas|tenablewas|tenable|nessus|qualys)[_-]/i,'').replace(/[_-]?v?\d+(\.\d+)*$/,'');
+  const pre=SCAN_ABBR[sc]||(sc?sc.toUpperCase().slice(0,3):'?');
+  const n=tg.replace(new RegExp('^'+sc.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[_-]','i'),'')
+            .replace(/[_-]v?\d+(\.\d+)*$/,'');
   return pre+'·'+n;};
 function scopeTargets(scope){if(scope==='all')return TGT;const i=scope.indexOf(':'),k=scope.slice(0,i),x=scope.slice(i+1);
   return k==='scanner'?TGT.filter(t=>SCAN_OF[t]===x):[x];}
