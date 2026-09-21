@@ -100,12 +100,16 @@ else is optional with sensible defaults.
 | `price_in` / `price_out` | USD per 1M tokens, for the run cost report (default 0) |
 
 The reported cost is `prompt_tokens * price_in + completion_tokens * price_out`,
-a flat rate per token. Providers that price prompt-cache hits, off-peak hours or
-batch tiers differently bill less than this, so fill the fields with the
-provider's **most expensive** tier and read the number as a ceiling. It is an
-estimate for comparing models in a run, never the invoice: reconcile against the
-provider's billing page. The built-in `deepseek` profile follows this rule
-(peak, cache miss).
+a flat rate per token. One pair of numbers cannot express a provider that prices
+prompt-cache hits, off-peak hours or batch tiers differently, so pick the tier
+your runs actually use and record which one; the figure is for comparing models
+in a run, never the invoice. The built-in `deepseek` profile uses the off-peak
+cache-miss rates, exact on output and an upper bound on input.
+
+The exact cost does not depend on getting this right. Every numeric field the
+provider reports is summed into `usage.provider` in each run's `run.json`, under
+the provider's own names, so a finished run can be repriced from its own record
+against any table.
 | `reasoning_tags` | `true` strips `<think>` blocks (reasoning models like Qwen3) |
 | `temperature` | Sampling temperature; set per model to override. **Default `0`** |
 | `encoding` | tiktoken encoding for token counting; default `cl100k_base` |
