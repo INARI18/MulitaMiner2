@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from collections import Counter
 from functools import lru_cache
 
@@ -20,6 +21,11 @@ from mulitaminer.scanner_engine import ScannerProfile
 from mulitaminer.ui import NULL_PROGRESS, Progress
 
 log = logging.getLogger(__name__)
+
+
+# A name that is just the prompt's "### BLOCK n" marker copied back. The
+# block_id is valid, so id reconciliation cannot see it; only the name is junk.
+_MARKER_NAME_RE = re.compile(r"^\s*block\s+\d+\b", re.IGNORECASE)
 
 
 def is_network_protocol(value: str | None) -> bool:
@@ -231,11 +237,17 @@ def _extract_chunk(
             continue
         seen.add(bid)
         try:
-            records[bid] = _to_record(item, by_id[bid], profile)
-            succeeded.add(bid)
+            record = _to_record(item, by_id[bid], profile)
         except ValidationError as exc:
             warnings.append(f"block {bid}: record failed validation ({exc.error_count()} errors)")
             drops["validation_error"] += 1
+            continue
+        if _MARKER_NAME_RE.match(record.name):
+            warnings.append(f"block {bid}: name echoes the block marker; dropped")
+            drops["validation_error"] += 1
+            continue
+        records[bid] = record
+        succeeded.add(bid)
 
     missing = expected - succeeded
     log.info("Chunk %d: %d/%d blocks extracted", chunk.index, len(succeeded), len(expected))

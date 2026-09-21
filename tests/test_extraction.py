@@ -1,5 +1,6 @@
 """Block-anchored extraction loop tests with a scripted fake client."""
 import json
+from collections import Counter
 
 from mulitaminer.extraction import extract_blocks, render_chunk
 from mulitaminer.models import Block, TokenUsage
@@ -224,3 +225,27 @@ def test_pseudo_protocol_context_never_enters_the_record():
     assert records[0].port is None
     assert records[0].protocol is None
     assert not warnings
+
+
+def test_name_echoing_the_block_marker_is_rejected_and_retried():
+    # The model copies the prompt's "### BLOCK n (host: ...)" header into Name.
+    # block_id is valid, so id reconciliation cannot catch it; the name guard
+    # must, and the block goes back for another attempt.
+    block = Block(id=0, text="High (CVSS: 7.5)\nNVT: Real Finding")
+    client = FakeClient([
+        [_item(0, "BLOCK 0 (host: 10.0.0.1, port: 80/tcp)")],
+        [_item(0, "Real Finding")],
+    ])
+    drops = Counter()
+    records, warnings, _ = extract_blocks([block], PROFILE, client, TokenUsage(),
+                                          drops=drops)
+    assert [r.name for r in records] == ["Real Finding"]
+    assert drops["validation_error"] == 1
+    assert any("echoes the block marker" in w for w in warnings)
+
+
+def test_a_finding_whose_name_merely_starts_with_block_survives():
+    block = Block(id=0, text="High (CVSS: 7.5)\nNVT: Block Cipher")
+    client = FakeClient([[_item(0, "Block Cipher Weakness (64-bit)")]])
+    records, _, _ = extract_blocks([block], PROFILE, client, TokenUsage())
+    assert [r.name for r in records] == ["Block Cipher Weakness (64-bit)"]
