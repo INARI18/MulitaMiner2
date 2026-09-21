@@ -98,6 +98,14 @@ else is optional with sensible defaults.
 | `max_output_tokens` | Output cap; this drives chunk sizing, so keep it honest |
 | `supports_json_schema` | Strict schema vs `json_object` + validation (default `false`) |
 | `price_in` / `price_out` | USD per 1M tokens, for the run cost report (default 0) |
+
+The reported cost is `prompt_tokens * price_in + completion_tokens * price_out`,
+a flat rate per token. Providers that price prompt-cache hits, off-peak hours or
+batch tiers differently bill less than this, so fill the fields with the
+provider's **most expensive** tier and read the number as a ceiling. It is an
+estimate for comparing models in a run, never the invoice: reconcile against the
+provider's billing page. The built-in `deepseek` profile follows this rule
+(peak, cache miss).
 | `reasoning_tags` | `true` strips `<think>` blocks (reasoning models like Qwen3) |
 | `temperature` | Sampling temperature; set per model to override. **Default `0`** |
 | `encoding` | tiktoken encoding for token counting; default `cl100k_base` |
