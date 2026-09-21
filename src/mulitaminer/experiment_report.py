@@ -610,9 +610,22 @@ function ramp(v,min,max,hue){const t=Math.max(0,Math.min(1,(v-min)/(max-min)));c
 
 function legend(id,items){el(id).innerHTML=items.map(([l,c])=>
   `<span><span class="sw" style="background:${c}"></span>${esc(l)}</span>`).join('');}
+// What each scorer measures, in the reader's terms. Same text feeds the
+// toggle tooltips and the modal's caption, so there is one definition.
+const METRIC_DOC={
+  token_f1:'Bag-of-words overlap: F1 over the two token multisets. Order and phrasing do not matter, only which words appear and how often.',
+  rouge_l:'Longest common subsequence, as F1. Rewards keeping the same wording in the same order; purely lexical, no stemming.',
+  bertscore:'Embedding similarity: matches meaning rather than words, so a paraphrase still scores high. Needs the eval extras.',
+  nli:'1 minus the strongest contradiction an NLI model finds between the extraction and each baseline sentence. Catches negation flips a word-overlap score would miss.',
+  exact:'Normalized equality, 1 or 0. Numbers compare as numbers, so 8019.0 equals 8019.',
+  set_f1:'F1 over the two sets of items, compared as written. For list fields such as references.',
+  set_f1_ids:'set_f1 over canonicalized identifiers, so the same CVE counts as a match however it was formatted.',
+  structural:'Nested fields (a dict, or a list of objects such as instances): sub-fields are aligned and scored one by one, then averaged.',
+};
 function toggle(id,opts,active,cb){const h=el(id);
   h.querySelectorAll('button').forEach(b=>b.remove());
-  h.insertAdjacentHTML('beforeend',opts.map(o=>`<button data-v="${o}" aria-pressed="${o===active}">${o}</button>`).join(''));
+  h.insertAdjacentHTML('beforeend',opts.map(o=>`<button data-v="${o}" aria-pressed="${o===active}"`+
+    `${METRIC_DOC[o]?` data-tip="${esc(o+': '+METRIC_DOC[o])}"`:''}>${o}</button>`).join(''));
   h.querySelectorAll('button').forEach(b=>b.onclick=()=>{h.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b.dataset.v);});}
 function fillSel(id,opts,onch){const s=el(id);s.innerHTML=opts.map(o=>`<option value="${o}">${o}</option>`).join('');s.onchange=()=>onch(s.value);}
 
@@ -920,7 +933,8 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
     if(M.length>1)h+='<span class="selg"><span class="lb">Model</span><select id="mModel">'+
       M.map(m=>`<option value="${esc(m)}"${m===cM?' selected':''}>${esc(m)}</option>`).join('')+'</select></span>';
     if(mets.length)h+='<span class="toggle" id="mMetric"><span class="lb">Metric</span>'+
-      mets.map(x=>`<button data-v="${esc(x)}" aria-pressed="${x===cMet}">${esc(x)}</button>`).join('')+'</span>';
+      mets.map(x=>`<button data-v="${esc(x)}" aria-pressed="${x===cMet}"`+
+        `${METRIC_DOC[x]?` data-tip="${esc(x+': '+METRIC_DOC[x])}"`:''}>${esc(x)}</button>`).join('')+'</span>';
     el('mCtl').innerHTML=h;
     const sel=el('mModel');if(sel)sel.onchange=()=>{cM=sel.value;render();};
     const tg=el('mMetric');
@@ -947,7 +961,8 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
         const c=cf(v);t+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}</td>`;});
       t+='</tr>';});
     const blank=rows.length-rows.filter(r=>Object.keys(r[1]).length).length;
-    return card(`Per-finding scores · ${esc(cMet)} <span class="pill">${rows.length} findings`+
+    const doc=METRIC_DOC[cMet]?`<p class="sub" style="margin:.1rem 0 .7rem">${esc(METRIC_DOC[cMet])}</p>`:'';
+    return doc+card(`Per-finding scores · ${esc(cMet)} <span class="pill">${rows.length} findings`+
                 `${blank?` · ${blank} unscored`:''}</span> <s>worst first · blank cell = both sides empty</s>`,
                 '<div class="htab-wrap">'+t+'</tbody></table></div>');
   }
