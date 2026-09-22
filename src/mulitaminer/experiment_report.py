@@ -56,8 +56,13 @@ def _tally(counts: dict, names: list[str]) -> None:
 
 
 def _fold_pairs(runs: list[tuple[str, dict]]) -> list:
-    """One matched finding across runs: [name, {metric: {field: mean score}}].
-    Cells vacuous in every run are left out, so the table shows them as blank."""
+    """One matched finding: [name, {metric: {field: mean score}}, runs matched].
+
+    The row set is the UNION over runs, so a finding a non-deterministic model
+    recovered only sometimes is still a row, and its scores average only the
+    runs it appeared in. The count travels with it or a 2-run average would
+    read as a 5-run one. Cells vacuous in every run are left out and show blank.
+    """
     acc: dict = defaultdict(lambda: defaultdict(list))
     for _, scores in runs:
         for field, metrics in scores.items():
@@ -66,7 +71,8 @@ def _fold_pairs(runs: list[tuple[str, dict]]) -> list:
                     acc[metric][field].append(st["score"])
     return [runs[0][0],
             {m: {f: round(statistics.fmean(v), 3) for f, v in fs.items()}
-             for m, fs in acc.items()}]
+             for m, fs in acc.items()},
+            len(runs)]
 
 
 def _aggregate(experiment_dir: Path) -> dict:
@@ -959,12 +965,14 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
       b=>b.onclick=()=>{cMet=b.dataset.v;render();});
   }
 
-  function pairTable(d){
+  // n is the run count; it lives in render(), so pass it rather than closing
+  // over a name that is not in scope here.
+  function pairTable(d,n){
     if(!cMet)return '';
-    // Every matched finding stays a row whatever the metric, so the row count
-    // always equals `matched`. A finding this metric scores nothing of reads as
-    // a blank row, which is the honest answer, not a vanished one.
-    const rows=d.pairs.map(([nm,by])=>[nm,by[cMet]||{}]);
+    // Every matched finding stays a row whatever the metric: one this metric
+    // scores nothing of reads as a blank row, not a vanished one. The row set
+    // is the union over runs, so it can exceed the per-run matched count.
+    const rows=d.pairs.map(([nm,by,seenIn])=>[nm,by[cMet]||{},seenIn||n]);
     if(!rows.length)return card(`Per-finding scores · ${esc(cMet)}`,'<div class="empty">no matched pairs</div>');
     const fields=[...new Set(rows.flatMap(r=>Object.keys(r[1])))].sort();
     const rowAvg=r=>{const v=fields.map(f=>r[1][f]).filter(x=>x!=null);
@@ -973,15 +981,24 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
     const vals=rows.flatMap(r=>fields.map(f=>r[1][f])).filter(v=>v!=null);
     const cf=GRAMP(vals.length?vals:[0,1]);
     let t=`<table class="ptab"><thead><tr><th class="l">Finding</th>${fields.map(f=>`<th>${esc(f)}</th>`).join('')}</tr></thead><tbody>`;
-    rows.forEach(([nm,by])=>{t+=`<tr><td class="l" title="${esc(nm)}">${esc(nm)}</td>`;
+    rows.forEach(([nm,by,seenIn])=>{
+      const freq=seenIn<n?` <span class="pill">${seenIn}/${n}</span>`:'';
+      t+=`<tr><td class="l" title="${esc(nm)}">${esc(nm)}${freq}</td>`;
       fields.forEach(f=>{const v=by[f];
         if(v==null){t+='<td style="color:var(--muted)">·</td>';return;}
         const c=cf(v);t+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}</td>`;});
       t+='</tr>';});
     const blank=rows.length-rows.filter(r=>Object.keys(r[1]).length).length;
+    const partial=rows.filter(r=>r[2]<n).length;
     const doc=METRIC_DOC[cMet]?`<p class="sub" style="margin:.1rem 0 .7rem">${esc(METRIC_DOC[cMet])}</p>`:'';
+    const note=n>1
+      ? `<s>worst first · every finding matched in at least one run, so this list is `+
+        `longer than the ${d.match} matched per run`+
+        `${partial?`; ${partial} were not matched every run and carry k/${n}`:''}`+
+        ` · blank cell = both sides empty</s>`
+      : '<s>worst first · blank cell = both sides empty</s>';
     return doc+card(`Per-finding scores · ${esc(cMet)} <span class="pill">${rows.length} findings`+
-                `${blank?` · ${blank} unscored`:''}</span> <s>worst first · blank cell = both sides empty</s>`,
+                `${blank?` · ${blank} unscored`:''}</span> ${note}`,
                 '<div class="htab-wrap">'+t+'</tbody></table></div>');
   }
 
@@ -1031,7 +1048,7 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
         '</div></li>').join('')+'</ul>'
       :'<div class="empty">none</div>');
     h+='</div>';
-    el('mBody').innerHTML=h+pairTable(d);
+    el('mBody').innerHTML=h+pairTable(d,n);
   }
 
   function open(t,m){

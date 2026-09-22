@@ -153,7 +153,9 @@ def test_drilldown_detail_folds_runs(tmp_path):
     assert cell["fn"] == [["XSS", 2, 2]]
     assert cell["fp"] == [["Ghost", "invention", "XSS", 0.4, 1, 2]]
     # One row per baseline finding, scores averaged; the vacuous field is absent.
-    assert cell["pairs"] == [["SQL Injection", {"token_f1": {"description": 0.7}}]]
+    # The trailing count is how many runs matched it: the row set is the union
+    # over runs, so a 2-run average must not read as a 5-run one.
+    assert cell["pairs"] == [["SQL Injection", {"token_f1": {"description": 0.7}}, 2]]
 
 
 def test_every_scanner_has_a_column_abbreviation(tmp_path):
