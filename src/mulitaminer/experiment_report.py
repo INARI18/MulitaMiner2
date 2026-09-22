@@ -550,7 +550,10 @@ function hDot(rows,{W=760,rowH=28,padL=120,min=0,max=1,ticks=true}={}){
   return s+'</svg>';
 }
 
-function hBox(rows,{W=760,rowH=38,padL=120}={}){
+function hBox(rows,{W=760,rowH=38,padL=null}={}){
+  // Fit the gutter to the labels: a fixed 120px clipped "mulita-qwen2.5-1.5b-v4"
+  // into "a-qwen2.5-1.5b-v4", since the label is right-anchored at padL.
+  padL=padL??Math.min(260,Math.max(90,Math.max(...rows.map(r=>String(r.label).length))*6.9+22));
   const padR=40,top=30,plotW=W-padL-padR,H=top+rows.length*rowH+12,bottom=H-12;
   const X=v=>padL+v*plotW;let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`+axis(padL,plotW,top,bottom,0,1);
   rows.forEach((r,i)=>{const y=top+i*rowH+rowH/2;
