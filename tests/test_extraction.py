@@ -31,9 +31,13 @@ class FakeClient:
         self.script = list(script)
         self.calls = []
 
-    def extract(self, system_prompt, user_content, response_model):
+    def extract(self, system_prompt, user_content, response_model, usage=None):
         self.calls.append(user_content)
         payload = self.script.pop(0)
+        # The real client charges as soon as the provider answers, before the
+        # response is parsed, so a scripted failure must be billed too.
+        if usage is not None:
+            usage.add(10, 5, 0.0)
         if isinstance(payload, Exception):
             raise payload
         parsed = response_model.model_validate({"items": payload})
@@ -201,9 +205,9 @@ def test_oversized_single_block_is_truncated_with_declared_marker():
     seen = {}
 
     class CapturingClient(FakeClient):
-        def extract(self, system_prompt, user_content, response_model):
+        def extract(self, system_prompt, user_content, response_model, usage=None):
             seen["content"] = user_content
-            return super().extract(system_prompt, user_content, response_model)
+            return super().extract(system_prompt, user_content, response_model, usage)
 
     client = CapturingClient([[_item(0, "Huge")]])
     records, warnings, _ = extract_blocks([big], PROFILE, client, TokenUsage())

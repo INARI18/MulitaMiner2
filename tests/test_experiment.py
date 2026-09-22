@@ -19,8 +19,11 @@ class EchoClient:
     def runtime_info(self):
         return {"profile": "echo"}
 
-    def extract(self, system_prompt, user_content, response_model):
+    def extract(self, system_prompt, user_content, response_model, usage=None):
         import re
+
+        if usage is not None:
+            usage.add(10, 5, 0.001)
 
         ids = [int(m) for m in re.findall(r"### BLOCK (\d+)", user_content)]
         items = [{"block_id": i, "Name": f"Vuln {i}", "severity": "HIGH", "cvss": 7.5}

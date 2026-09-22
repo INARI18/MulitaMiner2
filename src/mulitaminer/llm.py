@@ -19,6 +19,7 @@ from openai import APIStatusError, AuthenticationError, OpenAI, PermissionDenied
 from pydantic import BaseModel, ValidationError
 
 from mulitaminer import settings
+from mulitaminer.models import TokenUsage
 
 log = logging.getLogger(__name__)
 
@@ -144,9 +145,13 @@ class LLMClient:
         )
 
     def extract(
-        self, system_prompt: str, user_content: str, response_model: type[BaseModel]
+        self, system_prompt: str, user_content: str, response_model: type[BaseModel],
+        usage: "TokenUsage | None" = None,
     ) -> tuple[BaseModel, dict]:
         """One structured extraction call. Returns (validated model, usage dict).
+
+        ``usage``, when given, is charged as soon as the provider answers, so a
+        response that fails to parse still counts: it was billed.
 
         Raises FatalLLMError for auth/quota/unknown-model, and lets Pydantic
         ValidationError / json.JSONDecodeError propagate so the extraction
@@ -199,12 +204,19 @@ class LLMClient:
 
         self.served_model = getattr(response, "model", None) or self.served_model
         raw = response.choices[0].message.content or ""
+        # Account before parsing. The provider bills a response whether or not
+        # it is valid JSON, and a response that fails to parse is usually one
+        # that ran into the output cap, so the calls dropped here were the
+        # expensive ones. Charging them only on success under-reported cost,
+        # and under-reported it most for the models that fail most.
+        call = self._package(getattr(response, "usage", None), raw)
+        if usage is not None:
+            usage.add(call["prompt_tokens"], call["completion_tokens"],
+                      call["cost_usd"], call["provider"])
+
         cleaned = clean_response(raw, self.profile.reasoning_tags)
         data = json.loads(cleaned)
-        parsed = self._validate_envelope(data, response_model)
-
-        usage = getattr(response, "usage", None)
-        return self._package(parsed, usage, raw)
+        return self._validate_envelope(data, response_model), call
 
     @staticmethod
     def _validate_envelope(data, response_model: type[BaseModel]) -> BaseModel:
@@ -233,14 +245,14 @@ class LLMClient:
             info |= _probe_ollama(self.profile.base_url.rsplit("/v1", 1)[0])
         return info
 
-    def _package(self, parsed: BaseModel, usage, raw: str) -> tuple[BaseModel, dict]:
+    def _package(self, usage, raw: str) -> dict:
         prompt_tokens = getattr(usage, "prompt_tokens", 0) or 0
         completion_tokens = getattr(usage, "completion_tokens", 0) or 0
         cost = (
             prompt_tokens / 1e6 * self.profile.price_in
             + completion_tokens / 1e6 * self.profile.price_out
         )
-        return parsed, {
+        return {
             "prompt_tokens": prompt_tokens,
             "completion_tokens": completion_tokens,
             "cost_usd": cost,

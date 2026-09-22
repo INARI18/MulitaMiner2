@@ -4,7 +4,7 @@ from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from mulitaminer.llm import (
     FatalLLMError,
@@ -212,3 +212,36 @@ def test_provider_counters_read_the_real_sdk_usage_object():
     assert counters["prompt_cache_hit_tokens"] == 4200
     assert counters["prompt_cache_miss_tokens"] == 800
     assert "prompt_tokens_details" not in counters  # null, not a counter
+
+
+def test_a_response_that_fails_to_parse_is_still_charged():
+    # The provider bills whatever it answered. Charging only on success hid the
+    # calls that ran into the output cap, which are the expensive ones, and hid
+    # them worst for the models that fail most.
+    transport = FakeTransport('{"items": [1, 2,')  # truncated, not valid JSON
+    usage = TokenUsage()
+    client = LLMClient(replace(MODELS["deepseek"], price_in=2.0, price_out=6.0),
+                       transport=transport)
+    with pytest.raises(json.JSONDecodeError):
+        client.extract("sys", "user", Items, usage)
+    assert usage.calls == 1
+    assert usage.prompt_tokens == 100 and usage.completion_tokens == 50
+    assert usage.cost_usd == pytest.approx(100 / 1e6 * 2.0 + 50 / 1e6 * 6.0)
+
+
+def test_a_response_that_fails_the_schema_is_still_charged():
+    transport = FakeTransport('{"items": [{"nope": 1}]}')
+    usage = TokenUsage()
+    client = LLMClient(MODELS["deepseek"], transport=transport)
+    with pytest.raises(ValidationError):
+        client.extract("sys", "user", Items, usage)
+    assert usage.calls == 1 and usage.prompt_tokens == 100
+
+
+def test_usage_is_charged_once_per_call_not_twice():
+    transport = FakeTransport('{"items": [1]}')
+    usage = TokenUsage()
+    client = LLMClient(MODELS["deepseek"], transport=transport)
+    client.extract("sys", "user", Items, usage)
+    client.extract("sys", "user", Items, usage)
+    assert usage.calls == 2 and usage.prompt_tokens == 200

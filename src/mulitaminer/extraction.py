@@ -198,7 +198,10 @@ def _extract_chunk(
     expected = {b.id for b in chunk.blocks}
     send_blocks = _truncate_oversized(chunk, client, warnings)
     try:
-        parsed, call_usage = client.extract(prompt, render_chunk(send_blocks), response_model)
+        # usage is charged inside extract(), the moment the provider answers, so
+        # a response that fails below still counts against the run's cost.
+        parsed, call_usage = client.extract(prompt, render_chunk(send_blocks),
+                                            response_model, usage)
     except (json.JSONDecodeError, ValidationError, APITimeoutError) as exc:
         # bad_json: response was not valid JSON (usually output truncated at the
         # token cap). bad_shape: JSON parsed but did not fit the response schema.
@@ -217,8 +220,6 @@ def _extract_chunk(
         progress.chunk_failed(reason)
         return chunk.blocks
 
-    usage.add(call_usage["prompt_tokens"], call_usage["completion_tokens"],
-              call_usage["cost_usd"], call_usage.get("provider"))
     if debug_sink is not None:
         debug_sink.append({"chunk": chunk.index, "blocks": sorted(expected),
                            "response": call_usage["raw"]})
