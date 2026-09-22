@@ -990,7 +990,10 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
     el('mTitle').innerHTML=esc(cT)+` <span style="color:var(--muted);font-weight:400">· ${esc(SCAN_OF[cT]||'')} · ${esc(cM)}</span>`;
     if(!d){el('mCtl').innerHTML='';el('mBody').innerHTML='<div class="empty">this model has no evaluated run for this report</div>';return;}
     controls(d);
-    const n=d.runs||1,miss=Math.max(0,d.base-d.match),extra=Math.max(0,d.extr-d.match);
+    // Counts come rounded to one decimal; subtracting them in binary floating
+    // point does not, so 246 - 240.4 renders as 5.599999999999966.
+    const r1=v=>Math.round(v*10)/10;
+    const n=d.runs||1,miss=r1(Math.max(0,d.base-d.match)),extra=r1(Math.max(0,d.extr-d.match));
     let h=`<p class="sub">Counts are per run${n>1?`, averaged over ${n} runs`:''}. Missing and extra are
       alignment outcomes at threshold ${THR}: a baseline finding left unpaired is missing, an extraction
       left unpaired is extra. Pairing is one-to-one, so an extraction can sit above the threshold and still
