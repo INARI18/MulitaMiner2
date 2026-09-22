@@ -990,16 +990,20 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
       t+='</tr>';});
     const blank=rows.length-rows.filter(r=>Object.keys(r[1]).length).length;
     const partial=rows.filter(r=>r[2]<n).length;
-    const doc=METRIC_DOC[cMet]?`<p class="sub" style="margin:.1rem 0 .7rem">${esc(METRIC_DOC[cMet])}</p>`:'';
-    const note=n>1
-      ? `<s>worst first · every finding matched in at least one run, so this list is `+
-        `longer than the ${d.match} matched per run`+
-        `${partial?`; ${partial} were not matched every run and carry k/${n}`:''}`+
-        ` · blank cell = both sides empty</s>`
-      : '<s>worst first · blank cell = both sides empty</s>';
-    return doc+card(`Per-finding scores · ${esc(cMet)} <span class="pill">${rows.length} findings`+
-                `${blank?` · ${blank} unscored`:''}</span> ${note}`,
-                '<div class="htab-wrap">'+t+'</tbody></table></div>');
+    // Counts go in pills, like the missing/extra cards; the prose that explains
+    // them goes in the caption above, not in the title.
+    const why=[METRIC_DOC[cMet]||''];
+    if(n>1)why.push(`Every finding matched in at least one of the ${n} runs is a row, `+
+                    `so the list is longer than the ${d.match} matched per run, and a `+
+                    `k/${n} badge marks the ones not matched every run.`);
+    why.push('A blank cell is a field empty on both sides, which is not scored.');
+    const pill=(v,l)=>`<span class="pill">${v} ${l}</span>`;
+    return `<p class="sub" style="margin:.1rem 0 .7rem">${esc(why.filter(Boolean).join(' '))}</p>`
+      + card(`Per-finding scores · ${esc(cMet)} <s>worst first</s> `
+             + pill(rows.length, 'findings')
+             + (partial ? pill(partial, `of ${n} runs`) : '')
+             + (blank ? pill(blank, 'unscored') : ''),
+             '<div class="htab-wrap">'+t+'</tbody></table></div>');
   }
 
   function render(){
