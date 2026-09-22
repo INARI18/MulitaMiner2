@@ -985,7 +985,7 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
     const cf=GRAMP(vals.length?vals:[0,1]);
     let t=`<table class="ptab"><thead><tr><th class="l">Finding</th>${fields.map(f=>`<th>${esc(f)}</th>`).join('')}</tr></thead><tbody>`;
     rows.forEach(([nm,by,seenIn])=>{
-      const freq=seenIn<n?` <span class="pill">${seenIn}/${n}</span>`:'';
+      const freq=seenIn<n?` <span class="pill rep">${seenIn}/${n} runs</span>`:'';
       t+=`<tr><td class="l" title="${esc(nm)}">${esc(nm)}${freq}</td>`;
       fields.forEach(f=>{const v=by[f];
         if(v==null){t+='<td style="color:var(--muted)">·</td>';return;}
@@ -1004,7 +1004,7 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
     return `<p class="sub" style="margin:.1rem 0 .7rem">${esc(why.filter(Boolean).join(' '))}</p>`
       + card(`Per-finding scores · ${esc(cMet)} <s>worst first</s> `
              + pill(rows.length, 'findings')
-             + (partial ? pill(partial, `of ${n} runs`) : '')
+             + (partial ? pill(partial, 'partial') : '')
              + (blank ? pill(blank, 'unscored') : ''),
              '<div class="htab-wrap">'+t+'</tbody></table></div>');
   }
