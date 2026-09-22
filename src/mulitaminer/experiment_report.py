@@ -373,6 +373,8 @@ select{background:var(--card2);color:var(--ink);border:1px solid var(--border);b
 .ptab th{font-weight:600;font-size:.6rem;color:var(--ink2);padding:.3rem .2rem;text-align:center}
 .ptab th.l,.ptab td.l{text-align:left;font-size:.68rem;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ptab td{text-align:center;padding:.28rem .2rem;border-radius:4px}
+.ptab th.runs,.ptab td.runs{width:1%;white-space:nowrap;padding-left:.5rem;padding-right:.5rem}
+.ptab td.runs{color:var(--muted);font-size:.62rem}
 """
 
 _BODY = r"""
@@ -983,10 +985,17 @@ el('cost').innerHTML=M.map(m=>{const c=OV[m].cost.m,d=OV[m].duration.m;
     rows.sort((a,b)=>rowAvg(a)-rowAvg(b));   // worst first: the rows worth reading
     const vals=rows.flatMap(r=>fields.map(f=>r[1][f])).filter(v=>v!=null);
     const cf=GRAMP(vals.length?vals:[0,1]);
-    let t=`<table class="ptab"><thead><tr><th class="l">Finding</th>${fields.map(f=>`<th>${esc(f)}</th>`).join('')}</tr></thead><tbody>`;
+    // The run count needs its own column: the name cell is ellipsised at a max
+    // width, so anything appended to it is the first thing clipped away.
+    const runCol=n>1;
+    let t=`<table class="ptab"><thead><tr><th class="l">Finding</th>`
+      +(runCol?'<th class="runs">runs</th>':'')
+      +`${fields.map(f=>`<th>${esc(f)}</th>`).join('')}</tr></thead><tbody>`;
     rows.forEach(([nm,by,seenIn])=>{
-      const freq=seenIn<n?` <span class="pill rep">${seenIn}/${n} runs</span>`:'';
-      t+=`<tr><td class="l" title="${esc(nm)}">${esc(nm)}${freq}</td>`;
+      t+=`<tr><td class="l" title="${esc(nm)}">${esc(nm)}</td>`;
+      if(runCol)t+=`<td class="runs">`
+        +(seenIn<n?`<span class="pill rep">${seenIn}/${n}</span>`:`${seenIn}/${n}`)
+        +'</td>';
       fields.forEach(f=>{const v=by[f];
         if(v==null){t+='<td style="color:var(--muted)">·</td>';return;}
         const c=cf(v);t+=`<td style="background:${c.bg};color:${c.tx}">${v.toFixed(2)}</td>`;});
