@@ -2,21 +2,30 @@
 (GitHub code scanning, DefectDojo, SonarQube, Azure DevOps).
 
 Network findings carry no file location, so results use logicalLocations
-(`host:port`); scanner-specific fields ride in the SARIF property bag.
+(`host:port`, or the instance URL for host-less web findings) plus a synthetic
+physicalLocation (the host at line 1, as Trivy does for container images),
+without which GitHub code scanning drops the result. Scanner-specific fields
+ride in the SARIF property bag.
 """
 from __future__ import annotations
 
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from mulitaminer import __version__
 from mulitaminer.exporters import register
+from mulitaminer.exporters.generic import endpoints
 from mulitaminer.models import VulnRecord
 
 # MulitaMiner severity -> SARIF result level.
 _LEVEL = {"CRITICAL": "error", "HIGH": "error", "MEDIUM": "warning",
           "LOW": "note", "LOG": "note", "INFO": "note"}
+
+# Label -> score used as `security-severity` when the record has no CVSS. GitHub
+# bands: >9.0 critical, 7.0-8.9 high, 4.0-6.9 medium, 0.1-3.9 low.
+_SECURITY_SEVERITY = {"CRITICAL": 9.5, "HIGH": 8.0, "MEDIUM": 5.5, "LOW": 2.0}
 
 
 def _rule_id(record: VulnRecord) -> str:
@@ -32,7 +41,7 @@ def _result(record: VulnRecord, rule_index: int) -> dict:
     result = {
         "ruleId": _rule_id(record),
         "ruleIndex": rule_index,
-        "level": _LEVEL.get(record.severity, "note"),
+        "level": _LEVEL.get(record.severity.upper(), "note"),
         "message": {"text": message},
         "properties": {
             "severity": record.severity,
@@ -42,12 +51,24 @@ def _result(record: VulnRecord, rule_index: int) -> dict:
             "protocol": record.protocol,
         },
     }
-    if record.host:
-        qualified = f"{record.host}:{record.port}" if record.port is not None else record.host
-        result["locations"] = [
-            {"logicalLocations": [{"fullyQualifiedName": qualified, "kind": "resource"}]}
-        ]
+    if not (eps := endpoints(record)):
+        return result
+    qualified = eps[0]
+    host = record.host or urlsplit(qualified).hostname or qualified
+    result["locations"] = [{
+        "physicalLocation": {"artifactLocation": {"uri": host}, "region": {"startLine": 1}},
+        "logicalLocations": [{"fullyQualifiedName": qualified, "kind": "resource"}],
+    }]
     return result
+
+
+def _security_severity(record: VulnRecord) -> float | None:
+    """GitHub and DefectDojo map this to Critical..Low; DefectDojo also stores it
+    as the CVSS score, so a real numeric CVSS wins over the label midpoint."""
+    cvss = getattr(record, "cvss", None)  # scanner-specific field
+    if isinstance(cvss, (int, float)) and cvss > 0:
+        return float(cvss)
+    return _SECURITY_SEVERITY.get(record.severity.upper())
 
 
 @register("sarif", "SARIF 2.1.0 JSON (GitHub code scanning, DefectDojo, SonarQube)")
@@ -63,6 +84,8 @@ def to_sarif(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: 
             solution = "\n".join(record.solution)
             if solution:
                 rule["help"] = {"text": solution}
+            if (score := _security_severity(record)) is not None:
+                rule["properties"] = {"security-severity": str(score), "tags": ["security"]}
             rules[rid] = rule
 
     sarif = {
@@ -77,6 +100,11 @@ def to_sarif(records: list[VulnRecord], record_type: type[VulnRecord], out_dir: 
                         "informationUri": "https://github.com/INARI18/MulitaMiner2",
                         "rules": list(rules.values()),
                     }
+                },
+                # GitHub replaces earlier analyses of the same category: one per
+                # scanner, so uploading a Nessus run keeps the OpenVAS alerts.
+                "automationDetails": {
+                    "id": f"mulitaminer/{records[0].source.lower() if records else 'unknown'}/"
                 },
                 "results": [_result(r, rule_index[_rule_id(r)]) for r in records],
             }
