@@ -668,3 +668,30 @@ def test_a_pipe_in_the_name_degrades_to_the_penalty():
     a = composite_key({"Name": "weird | name", "port": 80, "protocol": "tcp"}, OV_PARTS)
     b = composite_key({"Name": "weird name", "port": 80, "protocol": "tcp"}, OV_PARTS)
     assert parts_conflict(a, b)
+
+
+def test_placeholder_text_counts_as_empty(tmp_path):
+    import json as _json
+
+    import pandas as pd
+
+    from mulitaminer.evaluation import evaluate_run
+
+    records = [
+        OpenVASRecord(
+            name="Some Finding", severity="HIGH", source="OPENVAS",
+            solution=["N/A"], insight=["Not applicable."],
+        ).model_dump(mode="json", by_alias=True)
+    ]
+    (tmp_path / "results.json").write_text(_json.dumps(records), encoding="utf-8")
+    pd.DataFrame(
+        [{"Name": "Some Finding", "severity": "HIGH", "solution": None, "insight": "n/a"}]
+    ).to_excel(tmp_path / "base.xlsx", index=False)
+
+    res = evaluate_run(tmp_path / "results.json", baseline=tmp_path / "base.xlsx",
+                       metrics="token_f1")
+    for f in ("solution", "insight"):
+        stats = res.fields[f]["token_f1"]
+        assert stats["vacuous_n"] == 1 and stats["fill_rate_extraction"] == 0.0
+    # Not a text field: a literal severity is never blanked.
+    assert res.fields["severity"]["exact"]["mean"] == 1.0

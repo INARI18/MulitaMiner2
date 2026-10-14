@@ -118,7 +118,11 @@ The HTML report lists whichever text metrics a run actually scored, so
 `bertscore` and `nli` appear once you evaluate with them.
 
 Empty-vs-empty scores a vacuous 1.0 (flagged so reports can count it apart);
-present-vs-absent scores 0.0.
+present-vs-absent scores 0.0. A written-out "no value" (`N/A`, `NA`,
+`Not applicable.`) counts as empty on both sides, so a model that transcribes
+Qualys's `N/A` faithfully is not scored against a blank baseline cell. This
+applies to text fields only, never to `name` (alignment keys on it) or to
+literal fields such as Nessus severity `None`.
 
 ## The HTML report (experiment)
 

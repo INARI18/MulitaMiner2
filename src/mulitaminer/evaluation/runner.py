@@ -41,6 +41,11 @@ _METRIC_ALIASES = {"bert": "bertscore", "rouge": "rouge_l"}
 # Minimum key-field similarity to pair two structural list items (instances).
 _ITEM_MATCH_THRESHOLD = 0.7
 
+# "No value" written out. Scored as content it zeroes a model for transcribing
+# the PDF faithfully (Qualys prints N/A where its export is blank). Text fields
+# only: Nessus severity "None" is a real tier.
+_PLACEHOLDER_RE = re.compile(r"\s*(n/?a|not applicable)\.?\s*", re.IGNORECASE)
+
 
 @dataclass
 class EvalResult:
@@ -289,6 +294,14 @@ def _row_value(row: dict, name: str) -> Any:
     return row.get("Name") if name == "name" else None
 
 
+def _blank_placeholders(rows: list[dict], fields: set[str]) -> list[dict]:
+    return [
+        {k: None if k in fields and _PLACEHOLDER_RE.fullmatch(render_text(v)) else v
+         for k, v in row.items()}
+        for row in rows
+    ]
+
+
 def _score_pair(
     plans: list[FieldPlan],
     selected_text: list[Scorer],
@@ -432,6 +445,10 @@ def evaluate_run(
         record_type, dict(profile.field_metric_overrides) if profile else {}
     )
     selected_text = resolve_metrics(metrics)
+    # name is left alone: alignment keys on it.
+    text_fields = {p.name for p in plans if p.metric == "text"} - {"name"}
+    ext_rows = _blank_placeholders(ext_rows, text_fields)
+    base_rows = _blank_placeholders(base_rows, text_fields)
 
     key_parts = profile.key_parts if profile else ()
     alignment = align(ext_rows, base_rows, key_parts, threshold)
