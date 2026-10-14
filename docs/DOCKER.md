@@ -34,14 +34,20 @@ environment variables:
 | `RUNS` | `3` | Repetitions per (model, report) |
 | `METRICS` | `all` | Text metrics, as in `mulitaminer evaluate --metrics` |
 | `INSTALL_EVAL` | `false` | `true` builds the image with BERTScore/NLI (pulls torch) |
-| `DEEPSEEK_API_KEY` | empty | Only needed when `deepseek` is in `MODELS` |
 
 ```bash
 MODELS=mulita-qwen2.5-1.5b-v4,deepseek RUNS=5 docker compose up --build
 ```
 
-Put `DEEPSEEK_API_KEY` in `.env` (gitignored) rather than on the command
-line.
+### API keys
+
+Cloud models read their key from `.env` (gitignored) at the repo root, the
+same file the local install uses. The container receives every variable in
+it, so any profile's key works (`DEEPSEEK_API_KEY`, `OPENAI_API_KEY`,
+`GROQ_API_KEY`, `CLAUDE_API_KEY`, or the `api_key_env` of your own profile;
+see [CONFIG.md](CONFIG.md#api-keys)). The file is optional: a run with only
+local models needs no key, and an experiment skips (does not fail) a cloud
+model whose key is missing. Keys passed on the command line do not reach the container.
 
 ## What the services do
 

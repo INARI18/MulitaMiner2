@@ -1,11 +1,11 @@
 # Runs the experiment against the fine-tuned v4 model (local, GPU via Ollama)
-# and optionally DeepSeek (API). Needs the NVIDIA Container Toolkit.
+# and optionally cloud models (API). Needs the NVIDIA Container Toolkit.
 #
 #   docker compose up --build        # fetch + register v4, then run the experiment
 #   # results land in ./output_docker
 #
 # Override the run: MODELS=mulita-qwen2.5-1.5b-v4,deepseek RUNS=5 docker compose up --build
-# deepseek also needs DEEPSEEK_API_KEY in .env (gitignored; delete when done).
+# Cloud models need their key in .env (gitignored; delete when done).
 #
 # The model comes from Hugging Face at a pinned commit (tools/fetch_model.py)
 # and is registered with its Modelfile: the GGUF alone silently empties the
@@ -61,9 +61,10 @@ services:
       model-register:
         condition: service_completed_successfully
     network_mode: "service:ollama"   # the profile's localhost:11434 reaches Ollama
-    environment:
-      # Optional: only needed when 'deepseek' is in MODELS.
-      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    # Passes every API key in .env (cloud models only); a local-only run needs none.
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - ./resources:/app/resources               # input PDFs (+ baseline xlsx)
       # Own folder: each experiment rewrites the folder's experiment.json.
