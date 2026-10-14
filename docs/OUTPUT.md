@@ -24,7 +24,7 @@ the same shape; a scanner leaves the columns it does not fill empty.
 | `host` | str \| None | all | The scanned host. Recovered from the report layout, never asked of the LLM. |
 | `port` | int \| str \| None | all | Port number; `0` means host-wide, a real value (not null). |
 | `protocol` | str \| None | all | `tcp` / `udp` / `icmp` / ...; free string so non-tcp/udp survives. `None` when there is no port line. |
-| `source` | str | all | The scanner: `NESSUS`, `OPENVAS`, `TENABLEWAS`, `QUALYS`. Stamped, never prompted. |
+| `source` | str | all | The scanner: `NESSUS`, `OPENVAS`, `TENABLEWAS`, `QUALYS`, `ACUNETIX`, `ZAP`. Stamped, never prompted. |
 | `cvss` | see note | nessus, openvas, tenable | The CVSS score(s). **Type differs by scanner** (see below). |
 | `insight` | list[str] | nessus, openvas | The deeper explanation. Nessus Description, OpenVAS Vulnerability Insight. |
 | `detection_result` | list[str] | nessus, openvas | Evidence the scanner saw (Nessus Plugin Output, OpenVAS Detection Result). |
