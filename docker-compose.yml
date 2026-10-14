@@ -1,42 +1,25 @@
-# OPTIONAL Docker path (needs root / the docker group + the NVIDIA Container
-# Toolkit). On a locked-down shared GPU box without those, run vLLM in your own
-# user space instead: `uv pip install vllm && vllm serve numind/NuExtract-1.5
-# --served-model-name nuextract --port 8000` — the nuextract profile already
-# points at localhost:8000, so no container is required.
+# Runs the experiment against the fine-tuned v4 model (local, GPU via Ollama)
+# and optionally DeepSeek (API). Needs the NVIDIA Container Toolkit.
 #
-# With Docker available, run NuExtract (local, GPU) and DeepSeek (API) together:
-#   echo "DEEPSEEK_API_KEY=sk-..." > .env   # gitignored; delete when done
-#   docker compose up --build               # vLLM comes up, then the experiment runs
-#   # results land in ./output_experiments  ->  scp back to your machine
+#   docker compose up --build        # fetch + register v4, then run the experiment
+#   # results land in ./output_docker
 #
-# Override the run: MODELS=deepseek,nuextract RUNS=5 docker compose up --build
+# Override the run: MODELS=mulita-qwen2.5-1.5b-v4,deepseek RUNS=5 docker compose up --build
+# deepseek also needs DEEPSEEK_API_KEY in .env (gitignored; delete when done).
 #
-# The mulita service shares vLLM's network namespace, so the profile's
-# localhost:8000 reaches the server both here and in the user-space path.
+# The model comes from Hugging Face at a pinned commit (tools/fetch_model.py)
+# and is registered with its Modelfile: the GGUF alone silently empties the
+# structured fields.
 
 services:
-  vllm:
-    # Serves NuExtract over an OpenAI-compatible API with json_schema guided
-    # decoding (the constrained-decoding path the extractor relies on).
-    # NOTE: the RTX 5080 is Blackwell (sm_120) and needs CUDA 12.8 kernels. If
-    # you see "no kernel image is available for execution on the device", pull a
-    # newer/nightly vllm-openai tag that ships Blackwell support.
-    image: vllm/vllm-openai:latest
-    command: >
-      --model ${NUEXTRACT_MODEL:-numind/NuExtract-1.5}
-      --served-model-name nuextract
-      --max-model-len 16384
-      --gpu-memory-utilization 0.90
-      --enforce-eager
-      --host 0.0.0.0 --port 8000
-    environment:
-      HF_HOME: /hf
-      HUGGING_FACE_HUB_TOKEN: ${HF_TOKEN:-}
+  ollama:
+    # Pinned: changing the Ollama version moves the scores (Mulita-Training
+    # TRAINING.md 6h), so compare numbers only within the same tag.
+    image: ollama/ollama:0.34.0
     volumes:
-      - ./.cache/hf:/hf          # persist model weights across restarts
-    ports:
-      - "8000:8000"              # optional: reach the server from the host
-    ipc: host                    # vLLM needs host IPC for its shared-memory tensors
+      - ollama:/root/.ollama
+    # No host port: the other services share this netns, and a host Ollama
+    # usually holds 11434 already.
     deploy:
       resources:
         reservations:
@@ -45,11 +28,29 @@ services:
               count: all
               capabilities: [gpu]
     healthcheck:
-      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
-      interval: 15s
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
       timeout: 5s
-      retries: 80                # first run also downloads the weights (~8GB); give it room
-      start_period: 120s
+      retries: 30
+
+  model-fetch:
+    image: python:3.11-slim
+    volumes:
+      - ./tools/fetch_model.py:/fetch_model.py:ro
+      - model:/model
+    command: ["python", "/fetch_model.py", "/model"]
+
+  model-register:
+    image: ollama/ollama:0.34.0
+    depends_on:
+      ollama:
+        condition: service_healthy
+      model-fetch:
+        condition: service_completed_successfully
+    network_mode: "service:ollama"   # the CLI talks to the server on localhost:11434
+    volumes:
+      - model:/model:ro
+    entrypoint: ["ollama", "create", "mulita-qwen2.5-1.5b-v4", "-f", "/model/Modelfile"]
 
   mulita:
     build:
@@ -57,18 +58,22 @@ services:
       args:
         INSTALL_EVAL: "${INSTALL_EVAL:-false}"
     depends_on:
-      vllm:
-        condition: service_healthy
-    network_mode: "service:vllm"   # share vLLM's netns so localhost:8000 reaches it
+      model-register:
+        condition: service_completed_successfully
+    network_mode: "service:ollama"   # the profile's localhost:11434 reaches Ollama
     environment:
-      # Optional: only needed when 'deepseek' is in MODELS. A nuextract-only run
-      # on a shared GPU box needs no key at all.
+      # Optional: only needed when 'deepseek' is in MODELS.
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
     volumes:
       - ./resources:/app/resources               # input PDFs (+ baseline xlsx)
-      - ./output_experiments:/app/output_experiments
+      # Own folder: each experiment rewrites the folder's experiment.json.
+      - ./output_docker:/app/output_experiments
     command: >
       experiment ${REPORTS:-resources}
-      --models ${MODELS:-deepseek,nuextract}
+      --models ${MODELS:-mulita-qwen2.5-1.5b-v4}
       --runs ${RUNS:-3}
       --metrics ${METRICS:-all}
+
+volumes:
+  ollama:
+  model:

@@ -50,7 +50,7 @@ ground-truth baselines.
 | --- | --- |
 | Scanners | OpenVAS/Greenbone, Tenable WAS, Tenable Nessus, Qualys |
 | Cloud models | DeepSeek, OpenAI (gpt-4o, gpt-4o-mini), Groq (Llama 3.3 70B), Claude (Haiku) |
-| Local models | Ollama, LM Studio, any OpenAI-compatible server. No API key needed |
+| Local models | Ollama, LM Studio, any OpenAI-compatible server. No API key needed. Includes a [fine-tuned 1.5B extractor](#fine-tuned-local-model) |
 | Exports | XLSX, CSV, SARIF 2.1.0, DefectDojo Generic JSON, CAIS, CSAF 2.0 |
 | Evaluation | Coverage + per-field metrics (exact, set F1, token F1, ROUGE-L, optional BERTScore/NLI) |
 
@@ -144,6 +144,33 @@ PDF's parent folder name, so subfolders are only needed when the batch mixes
 scanners; `-s` forces one for the whole batch
 ([docs/USAGE.md](docs/USAGE.md#directory-mode-batch)).
 
+## Fine-tuned local model
+
+`mulita-qwen2.5-1.5b-v4` is a Qwen2.5-1.5B fine-tuned for this tool's
+extraction task, published on
+[Hugging Face](https://huggingface.co/Inari18/mulita-extractor-qwen2.5-1.5b)
+with its evaluation. It runs on Ollama, fully offline. Register it with the
+`Modelfile` from the same repo; the GGUF alone silently empties the
+structured fields (`hf` comes with `pip install huggingface_hub`):
+
+```bash
+hf download Inari18/mulita-extractor-qwen2.5-1.5b --local-dir mulita-model
+cd mulita-model && ollama create mulita-qwen2.5-1.5b-v4 -f Modelfile && cd ..
+uv run mulitaminer extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulita-qwen2.5-1.5b-v4
+```
+
+## Docker
+
+With Docker and an NVIDIA GPU, one command downloads the model, serves it
+with Ollama and runs an experiment, with nothing else installed:
+
+```bash
+docker compose up --build    # results in ./output_docker
+```
+
+Options, other commands and running on CPU are in
+[docs/DOCKER.md](docs/DOCKER.md).
+
 ## Evaluation and experiments
 
 Score a finished run against a ground-truth baseline with `evaluate`, or run
@@ -174,6 +201,7 @@ taxonomy and the HTML report are in [docs/EVALUATION.md](docs/EVALUATION.md).
 | [docs/EVALUATION.md](docs/EVALUATION.md) | Coverage, metrics, false-positive taxonomy, HTML report |
 | [docs/CONFIG.md](docs/CONFIG.md) | API keys, model profiles and tunables |
 | [docs/ADDING_A_MODEL.md](docs/ADDING_A_MODEL.md) | Plug a new LLM, cloud or local |
+| [docs/DOCKER.md](docs/DOCKER.md) | Run the fine-tuned model and experiments with Docker Compose |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline stages, modules and design rules |
 | [docs/SCANNER_CONFIGS.md](docs/SCANNER_CONFIGS.md) | Adding a scanner and the built-in config rationale |
 | [docs/EXPORTS.md](docs/EXPORTS.md) | Export formats, who consumes each, field mapping |

@@ -1,6 +1,6 @@
 # App image: runs `mulitaminer` (extraction, experiment, evaluation, report).
-# It talks to DeepSeek over the API and to the local NuExtract via the vllm
-# service (see docker-compose.yml). No GPU needed here; the GPU belongs to vllm.
+# It talks to DeepSeek over the API and to the local v4 model via the ollama
+# service (see docker-compose.yml). No GPU needed here; the GPU belongs to ollama.
 FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
