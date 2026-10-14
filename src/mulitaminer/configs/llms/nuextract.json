@@ -1,8 +1,0 @@
-{
-  "key": "nuextract",
-  "model": "nuextract",
-  "base_url": "http://localhost:8000/v1",
-  "context_window": 16000,
-  "max_output_tokens": 8000,
-  "supports_json_schema": true
-}

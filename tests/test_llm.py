@@ -41,7 +41,7 @@ class FakeTransport:
 
 
 def test_local_profiles_are_keyless():
-    assert _resolve_api_key(MODELS["nuextract"]) == "local"
+    assert _resolve_api_key(MODELS["qwen2.5-1.5b"]) == "local"
 
 
 def test_cloud_profile_without_env_raises_actionable_error(monkeypatch):
@@ -119,17 +119,17 @@ def test_unknown_model_key_raises():
 
 def test_registry_loads_builtin_profiles():
     models = all_models()
-    for key in ("deepseek", "gpt-4o-mini", "gpt-4o", "llama-3.3-70b",
-                "nuextract", "haiku"):
+    for key in ("deepseek", "gpt-4o-mini", "llama-3.3-70b",
+                "qwen2.5-1.5b", "haiku"):
         assert key in models
     assert models["haiku"].api_key_env == "CLAUDE_API_KEY"
     assert models["haiku"].base_url.startswith("https://api.anthropic.com")
 
 
 def test_registry_local_profile_omits_api_key_field():
-    # nuextract.json has no api_key_env at all -> keyless local profile
-    assert all_models()["nuextract"].is_local
-    assert all_models()["nuextract"].price_in == 0.0
+    # qwen2.5-1.5b.json has no api_key_env at all -> keyless local profile
+    assert all_models()["qwen2.5-1.5b"].is_local
+    assert all_models()["qwen2.5-1.5b"].price_in == 0.0
 
 
 def test_registry_user_dir_plugs_new_model(tmp_path, monkeypatch):

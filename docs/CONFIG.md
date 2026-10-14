@@ -8,7 +8,7 @@ profile reads one env var; local profiles need none.
 | Env var | Used by |
 | --- | --- |
 | `DEEPSEEK_API_KEY` | `deepseek` |
-| `OPENAI_API_KEY` | `gpt-4o`, `gpt-4o-mini` |
+| `OPENAI_API_KEY` | `gpt-4o-mini` |
 | `GROQ_API_KEY` | `llama-3.3-70b` |
 | `CLAUDE_API_KEY` | `haiku` |
 

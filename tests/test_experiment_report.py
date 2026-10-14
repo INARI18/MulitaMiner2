@@ -8,9 +8,9 @@ from mulitaminer.experiment_report import _aggregate, build_report
 def _fabricate(root: Path) -> None:
     """Two models x one scanner x two runs, with per-run evaluation.json."""
     runs = []
-    coverage = {"deepseek": (1.0, 1.0), "nuextract": (0.82, 0.97)}
-    field_mean = {"deepseek": 0.96, "nuextract": 0.74}
-    for model in ("deepseek", "nuextract"):
+    coverage = {"deepseek": (1.0, 1.0), "qwen2.5-1.5b": (0.82, 0.97)}
+    field_mean = {"deepseek": 0.96, "qwen2.5-1.5b": 0.74}
+    for model in ("deepseek", "qwen2.5-1.5b"):
         rec, prec = coverage[model]
         for n in (1, 2):
             rd = root / "openvas" / model / f"run_{n}" / "Report"
@@ -44,7 +44,7 @@ def _fabricate(root: Path) -> None:
                              "false_positives": []},
             })
     manifest = {
-        "config": {"reports": ["Report.pdf"], "models": ["deepseek", "nuextract"],
+        "config": {"reports": ["Report.pdf"], "models": ["deepseek", "qwen2.5-1.5b"],
                    "runs": 2, "scanner": None, "metrics": "all"},
         "complete": True,
         "totals": {"planned": 4, "done": 4, "failed": 0, "skipped_reports": 0,
@@ -64,7 +64,7 @@ def test_report_builds_and_is_self_contained(tmp_path):
     assert "MulitaMiner" in doc and "const DATA=" in doc and "<svg" in doc
     for heading in ("Coverage", "Consistency", "Field quality", "Omission", "Distribution"):
         assert heading in doc
-    assert "deepseek" in doc and "nuextract" in doc
+    assert "deepseek" in doc and "qwen2.5-1.5b" in doc
 
     # Self-contained: no external resource loads and no chart library.
     for bad in ("<script src", "<link", "@import", "cdnjs", "googleapis", "chart.js"):

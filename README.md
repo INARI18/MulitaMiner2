@@ -49,7 +49,7 @@ ground-truth baselines.
 | | |
 | --- | --- |
 | Scanners | OpenVAS/Greenbone, Tenable WAS, Tenable Nessus, Qualys |
-| Cloud models | DeepSeek, OpenAI (gpt-4o, gpt-4o-mini), Groq (Llama 3.3 70B), Claude (Haiku) |
+| Cloud models | DeepSeek, OpenAI (gpt-4o-mini), Groq (Llama 3.3 70B), Claude (Haiku) |
 | Local models | Ollama, LM Studio, any OpenAI-compatible server. No API key needed. Includes a [fine-tuned 1.5B extractor](#fine-tuned-local-model) |
 | Exports | XLSX, CSV, SARIF 2.1.0, DefectDojo Generic JSON, CAIS, CSAF 2.0 |
 | Evaluation | Coverage + per-field metrics (exact, set F1, token F1, ROUGE-L, optional BERTScore/NLI) |
