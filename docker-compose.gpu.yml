@@ -1,0 +1,15 @@
+# Hands the NVIDIA GPU to Ollama. Needs the NVIDIA Container Toolkit (or Docker
+# Desktop with an NVIDIA driver). Without an NVIDIA GPU the container cannot be
+# created at all, which is why this lives apart from docker-compose.yml.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

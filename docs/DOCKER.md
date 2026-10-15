@@ -1,17 +1,18 @@
 # Docker
 
 `docker compose up` runs an experiment against the fine-tuned local model
-(`mulita-qwen2.5-1.5b-v4`, served by Ollama on the GPU) with nothing
-installed on the host except Docker.
+(`mulita-qwen2.5-1.5b-v4`, served by Ollama) with nothing installed on the
+host except Docker.
 
 ## Requirements
 
-- Docker with Compose v2.
-- An NVIDIA GPU and the
-  [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
-  Without one, see [Running on CPU](#running-on-cpu).
+- Docker with Compose 2.24 or newer.
 - About 3 GB of disk: the model is downloaded once (~1 GB) and Ollama keeps
   its own copy.
+- Optional: an NVIDIA GPU with the
+  [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+  (Docker Desktop on Windows only needs the NVIDIA driver). See
+  [Using the GPU](#using-the-gpu).
 
 ## Run
 
@@ -22,6 +23,28 @@ docker compose up --build
 The first run downloads the model; later runs reuse it. Results land in
 `./output_docker`, one folder per (model, report, run) plus the
 experiment's `report.html`.
+
+### Using the GPU
+
+By default Ollama runs on the CPU: a container only sees the GPU when Compose
+is told to hand it over, and Compose cannot do that conditionally, so the
+NVIDIA reservation lives in `docker-compose.gpu.yml`. Add it to the command:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+```
+
+On a machine without an NVIDIA GPU this fails to create the `ollama`
+container (`could not select device driver "nvidia"`): drop the extra file.
+
+To skip the two `-f` flags on a machine that always uses the GPU, put
+`COMPOSE_FILE=docker-compose.yml;docker-compose.gpu.yml` in `.env`; plain
+`docker compose up --build` then picks both files.
+
+On the CPU the model works but is much slower, and the default 120 s request
+timeout can cut healthy calls short. Raise `request_timeout_s` in
+`src/mulitaminer/configs/llms/mulita-qwen2.5-1.5b-v4.json` and rebuild
+(see [ADDING_A_MODEL.md](ADDING_A_MODEL.md)).
 
 The defaults run `mulitaminer experiment resources --models
 mulita-qwen2.5-1.5b-v4 --runs 3 --metrics all`. Override them with
@@ -53,7 +76,7 @@ model whose key is missing. Keys passed on the command line do not reach the con
 
 | Service | Image | Role |
 | --- | --- | --- |
-| `ollama` | `ollama/ollama:0.34.0` | Model server on the GPU. Not published on the host, so it does not clash with a local Ollama on 11434 |
+| `ollama` | `ollama/ollama:0.34.0` | Model server (CPU, or GPU with `docker-compose.gpu.yml`). Not published on the host, so it does not clash with a local Ollama on 11434 |
 | `model-fetch` | `python:3.11-slim` | Runs `tools/fetch_model.py`: downloads the GGUF and `Modelfile` from [Hugging Face](https://huggingface.co/Inari18/mulita-extractor-qwen2.5-1.5b) at a pinned commit and checks the GGUF's sha256 |
 | `model-register` | `ollama/ollama:0.34.0` | `ollama create mulita-qwen2.5-1.5b-v4 -f Modelfile`, then exits |
 | `mulita` | built from `Dockerfile` | The tool; starts once the model is registered |
@@ -79,14 +102,6 @@ by default; mount `outputs/` too for `extract`:
 docker compose run --rm -v ./outputs:/app/outputs mulita \
   extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulita-qwen2.5-1.5b-v4
 ```
-
-## Running on CPU
-
-Remove the `deploy:` block from the `ollama` service and Ollama falls back to
-the CPU. It works, but much slower, and the default 120 s request timeout can
-cut healthy calls short. Raise `request_timeout_s` in
-`src/mulitaminer/configs/llms/mulita-qwen2.5-1.5b-v4.json` and rebuild
-(see [ADDING_A_MODEL.md](ADDING_A_MODEL.md)).
 
 ## Cleaning up
 

@@ -1,8 +1,12 @@
-# Runs the experiment against the fine-tuned v4 model (local, GPU via Ollama)
-# and optionally cloud models (API). Needs the NVIDIA Container Toolkit.
+# Runs the experiment against the fine-tuned v4 model (local, via Ollama) and
+# optionally cloud models (API).
 #
 #   docker compose up --build        # fetch + register v4, then run the experiment
 #   # results land in ./output_docker
+#
+# Ollama runs on the CPU unless the container is handed an NVIDIA GPU; Compose
+# cannot do that conditionally, so docker-compose.gpu.yml adds it:
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
 #
 # Override the run: MODELS=mulita-qwen2.5-1.5b-v4,deepseek RUNS=5 docker compose up --build
 # Cloud models need their key in .env (gitignored; delete when done).
@@ -20,13 +24,6 @@ services:
       - ollama:/root/.ollama
     # No host port: the other services share this netns, and a host Ollama
     # usually holds 11434 already.
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 5s

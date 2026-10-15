@@ -161,14 +161,14 @@ uv run mulitaminer extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulit
 
 ## Docker
 
-With Docker and an NVIDIA GPU, one command downloads the model, serves it
-with Ollama and runs an experiment, with nothing else installed:
+With Docker alone, one command downloads the model, serves it with Ollama and
+runs an experiment:
 
 ```bash
 docker compose up --build    # results in ./output_docker
 ```
 
-Options, other commands and running on CPU are in
+Options, other commands and using an NVIDIA GPU are in
 [docs/DOCKER.md](docs/DOCKER.md).
 
 ## Evaluation and experiments
