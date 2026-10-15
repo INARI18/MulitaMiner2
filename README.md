@@ -161,15 +161,15 @@ uv run mulitaminer extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulit
 
 ## Docker
 
-With Docker alone, one command downloads the model, serves it with Ollama and
-runs an experiment:
+With Docker alone, no Python or Ollama on the host: Compose downloads the
+model, serves it and runs any `mulitaminer` command against it.
 
 ```bash
-docker compose up --build    # results in ./output_docker
+docker compose run --rm mulita extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulita-qwen2.5-1.5b-v4
 ```
 
-Options, other commands and using an NVIDIA GPU are in
-[docs/DOCKER.md](docs/DOCKER.md).
+Results land in `outputs/` as usual. API keys, the NVIDIA GPU and the rest
+are in [docs/DOCKER.md](docs/DOCKER.md).
 
 ## Evaluation and experiments
 
@@ -201,7 +201,7 @@ taxonomy and the HTML report are in [docs/EVALUATION.md](docs/EVALUATION.md).
 | [docs/EVALUATION.md](docs/EVALUATION.md) | Coverage, metrics, false-positive taxonomy, HTML report |
 | [docs/CONFIG.md](docs/CONFIG.md) | API keys, model profiles and tunables |
 | [docs/ADDING_A_MODEL.md](docs/ADDING_A_MODEL.md) | Plug a new LLM, cloud or local |
-| [docs/DOCKER.md](docs/DOCKER.md) | Run the fine-tuned model and experiments with Docker Compose |
+| [docs/DOCKER.md](docs/DOCKER.md) | Run the tool and the fine-tuned model with Docker Compose |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Pipeline stages, modules and design rules |
 | [docs/SCANNER_CONFIGS.md](docs/SCANNER_CONFIGS.md) | Adding a scanner and the built-in config rationale |
 | [docs/EXPORTS.md](docs/EXPORTS.md) | Export formats, who consumes each, field mapping |

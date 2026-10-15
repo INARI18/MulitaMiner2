@@ -1,8 +1,8 @@
 # Docker
 
-`docker compose up` runs an experiment against the fine-tuned local model
-(`mulita-qwen2.5-1.5b-v4`, served by Ollama) with nothing installed on the
-host except Docker.
+Docker Compose serves the fine-tuned local model (`mulita-qwen2.5-1.5b-v4`,
+on Ollama) and runs the `mulitaminer` CLI against it, with nothing installed
+on the host except Docker.
 
 ## Requirements
 
@@ -14,15 +14,25 @@ host except Docker.
   (Docker Desktop on Windows only needs the NVIDIA driver). See
   [Using the GPU](#using-the-gpu).
 
-## Run
+## Use
+
+`docker compose run --rm mulita` followed by any `mulitaminer` command
+([USAGE.md](USAGE.md)). The first call builds the image, downloads the model
+and registers it in Ollama; later calls reuse all of it.
 
 ```bash
-docker compose up --build
+docker compose run --rm mulita extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulita-qwen2.5-1.5b-v4
+docker compose run --rm mulita experiment resources --models mulita-qwen2.5-1.5b-v4,deepseek --runs 5 --output-dir outputs/experiments
+docker compose run --rm mulita --help
 ```
 
-The first run downloads the model; later runs reuse it. Results land in
-`./output_docker`, one folder per (model, report, run) plus the
-experiment's `report.html`.
+The container sees two folders of the repo, so paths work as in a local
+install: `resources/` (input PDFs and baselines) and `outputs/` (results).
+Anything written elsewhere stays in the container, which is why the
+`experiment` example sets `--output-dir` under `outputs/`.
+
+`docker compose build --build-arg INSTALL_EVAL=true mulita` builds the image
+with the BERTScore/NLI metrics (pulls torch).
 
 ### Using the GPU
 
@@ -31,7 +41,7 @@ is told to hand it over, and Compose cannot do that conditionally, so the
 NVIDIA reservation lives in `docker-compose.gpu.yml`. Add it to the command:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --rm mulita extract ...
 ```
 
 On a machine without an NVIDIA GPU this fails to create the `ollama`
@@ -39,28 +49,13 @@ container (`could not select device driver "nvidia"`): drop the extra file.
 
 To skip the two `-f` flags on a machine that always uses the GPU, put
 `COMPOSE_FILE=docker-compose.yml;docker-compose.gpu.yml` in `.env`; plain
-`docker compose up --build` then picks both files.
+`docker compose run ...` then picks both files.
 
-On the CPU the model works but is much slower, and the default 120 s request
-timeout can cut healthy calls short. Raise `request_timeout_s` in
+On the CPU the model works but is much slower (about 13 minutes for the
+34-finding `OpenVAS_JuiceShop.pdf` on a desktop CPU), and the default 120 s
+request timeout can cut healthy calls short. Raise `request_timeout_s` in
 `src/mulitaminer/configs/llms/mulita-qwen2.5-1.5b-v4.json` and rebuild
 (see [ADDING_A_MODEL.md](ADDING_A_MODEL.md)).
-
-The defaults run `mulitaminer experiment resources --models
-mulita-qwen2.5-1.5b-v4 --runs 3 --metrics all`. Override them with
-environment variables:
-
-| Variable | Default | What |
-| --- | --- | --- |
-| `REPORTS` | `resources` | PDF file or directory, relative to the repo (mounted at `/app/resources`) |
-| `MODELS` | `mulita-qwen2.5-1.5b-v4` | Comma-separated model profiles |
-| `RUNS` | `3` | Repetitions per (model, report) |
-| `METRICS` | `all` | Text metrics, as in `mulitaminer evaluate --metrics` |
-| `INSTALL_EVAL` | `false` | `true` builds the image with BERTScore/NLI (pulls torch) |
-
-```bash
-MODELS=mulita-qwen2.5-1.5b-v4,deepseek RUNS=5 docker compose up --build
-```
 
 ### API keys
 
@@ -79,7 +74,7 @@ model whose key is missing. Keys passed on the command line do not reach the con
 | `ollama` | `ollama/ollama:0.34.0` | Model server (CPU, or GPU with `docker-compose.gpu.yml`). Not published on the host, so it does not clash with a local Ollama on 11434 |
 | `model-fetch` | `python:3.11-slim` | Runs `tools/fetch_model.py`: downloads the GGUF and `Modelfile` from [Hugging Face](https://huggingface.co/Inari18/mulita-extractor-qwen2.5-1.5b) at a pinned commit and checks the GGUF's sha256 |
 | `model-register` | `ollama/ollama:0.34.0` | `ollama create mulita-qwen2.5-1.5b-v4 -f Modelfile`, then exits |
-| `mulita` | built from `Dockerfile` | The tool; starts once the model is registered |
+| `mulita` | built from `Dockerfile` | The CLI; `run` starts the three above first |
 
 Two things are pinned on purpose:
 
@@ -92,20 +87,9 @@ Two things are pinned on purpose:
 The `Modelfile` is required, not optional: registering the GGUF without its
 chat template silently leaves `references`, `instances` and `plugin` empty.
 
-## Other commands
-
-The `mulita` service's entrypoint is `mulitaminer`, so any command works with
-`docker compose run`. Only `resources/` and `output_docker/` are mounted
-by default; mount `outputs/` too for `extract`:
-
-```bash
-docker compose run --rm -v ./outputs:/app/outputs mulita \
-  extract resources/openvas/OpenVAS_JuiceShop.pdf --model mulita-qwen2.5-1.5b-v4
-```
-
 ## Cleaning up
 
 ```bash
-docker compose down      # stop the containers, keep the model
+docker compose down      # stop Ollama, keep the model
 docker compose down -v   # also delete the downloaded and registered model
 ```
